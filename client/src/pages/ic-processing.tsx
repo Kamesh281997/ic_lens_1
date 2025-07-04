@@ -20,6 +20,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { icPlanSelectionSchema, type IcPlanSelectionData } from "@shared/schema";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useMutation } from "@tanstack/react-query";
 import { apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
@@ -142,11 +143,14 @@ export default function IcProcessing() {
                             Product Name
                           </FormLabel>
                           <FormControl>
-                            <Input
-                              placeholder="Enter product name"
-                              {...field}
-                              className="h-12 text-lg bg-gray-50 dark:bg-gray-800 border-gray-300 dark:border-gray-600 focus:border-blue-500"
-                            />
+                            <Select onValueChange={field.onChange} defaultValue={field.value}>
+                              <SelectTrigger className="h-12 text-lg bg-gray-50 dark:bg-gray-800 border-gray-300 dark:border-gray-600 focus:border-blue-500">
+                                <SelectValue placeholder="Select product name" />
+                              </SelectTrigger>
+                              <SelectContent>
+                                <SelectItem value="Prevnar-B">Prevnar-B</SelectItem>
+                              </SelectContent>
+                            </Select>
                           </FormControl>
                           <FormMessage />
                         </FormItem>
@@ -163,11 +167,15 @@ export default function IcProcessing() {
                             Team Name
                           </FormLabel>
                           <FormControl>
-                            <Input
-                              placeholder="Enter team name"
-                              {...field}
-                              className="h-12 text-lg bg-gray-50 dark:bg-gray-800 border-gray-300 dark:border-gray-600 focus:border-blue-500"
-                            />
+                            <Select onValueChange={field.onChange} defaultValue={field.value}>
+                              <SelectTrigger className="h-12 text-lg bg-gray-50 dark:bg-gray-800 border-gray-300 dark:border-gray-600 focus:border-blue-500">
+                                <SelectValue placeholder="Select team name" />
+                              </SelectTrigger>
+                              <SelectContent>
+                                <SelectItem value="VS">VS</SelectItem>
+                                <SelectItem value="VIS">VIS</SelectItem>
+                              </SelectContent>
+                            </Select>
                           </FormControl>
                           <FormMessage />
                         </FormItem>

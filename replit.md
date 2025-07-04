@@ -137,6 +137,8 @@ Changelog:
 - July 04, 2025. Updated first landing page card to show coming soon for authenticated and unauthenticated users
 - July 04, 2025. Updated Data Insights to show coming soon message for all users (authenticated and unauthenticated)
 - July 04, 2025. Fixed IC Processing navigation: "Back to Home" button now correctly goes to home page
+- July 04, 2025. Updated IC Processing page: Product Name dropdown with "Prevnar-B" option
+- July 04, 2025. Updated IC Processing page: Team Name dropdown with "VS" and "VIS" options
 ```
 
 ## User Preferences
