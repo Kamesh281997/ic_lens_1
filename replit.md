@@ -139,6 +139,10 @@ Changelog:
 - July 04, 2025. Fixed IC Processing navigation: "Back to Home" button now correctly goes to home page
 - July 04, 2025. Updated IC Processing page: Product Name dropdown with "Prevnar-B" option
 - July 04, 2025. Updated IC Processing page: Team Name dropdown with "VS" and "VIS" options
+- July 04, 2025. Added quota data upload option to Data Upload page
+- July 04, 2025. Added paycurve selection (Goal Attainment vs Goal Attainment with Relative Rank) to Data Upload page
+- July 04, 2025. Implemented conditional paycurve enabling based on IC plan type selection from IC Processing page
+- July 04, 2025. Changed Data Upload page back button from "Back to Home" to "Back to IC Processing"
 ```
 
 ## User Preferences

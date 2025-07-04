@@ -61,6 +61,8 @@ export default function IcProcessing() {
   });
 
   const onSubmit = (data: IcPlanSelectionData) => {
+    // Store the plan type in localStorage for the data upload page
+    localStorage.setItem('icPlanType', data.planType);
     processingMutation.mutate(data);
   };
 

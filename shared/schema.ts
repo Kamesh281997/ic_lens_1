@@ -122,9 +122,10 @@ export const insertPayoutCalculationSchema = createInsertSchema(payoutCalculatio
 });
 
 // File upload validation schema
-export const fileTypeEnum = z.enum(["hierarchy", "rep_roster", "rep_territory", "sales_data", "target_pay"]);
+export const fileTypeEnum = z.enum(["hierarchy", "rep_roster", "rep_territory", "sales_data", "target_pay", "quota_data"]);
 export const fileUploadSchema = z.object({
   fileTypes: z.array(fileTypeEnum).min(1, "Please select at least one file type"),
+  paycurve: z.enum(["Goal Attainment", "Goal Attainment with Relative Rank"]).optional(),
 });
 
 // IC Plan selection schema

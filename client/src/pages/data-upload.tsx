@@ -21,12 +21,14 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { fileUploadSchema, type FileUploadData } from "@shared/schema";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { useMutation } from "@tanstack/react-query";
 import { apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
 
 const fileTypeOptions: Array<{
-  id: "hierarchy" | "rep_roster" | "rep_territory" | "sales_data" | "target_pay";
+  id: "hierarchy" | "rep_roster" | "rep_territory" | "sales_data" | "target_pay" | "quota_data";
   label: string;
   icon: any;
   description: string;
@@ -61,6 +63,12 @@ const fileTypeOptions: Array<{
     icon: DollarSign, 
     description: "Target compensation and quota information" 
   },
+  { 
+    id: "quota_data", 
+    label: "Quota Data", 
+    icon: BarChart3, 
+    description: "Quota targets and performance metrics" 
+  },
 ];
 
 export default function DataUpload() {
@@ -69,11 +77,17 @@ export default function DataUpload() {
   const { toast } = useToast();
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
   const [uploadProgress, setUploadProgress] = useState<Record<string, number>>({});
+  
+  // Get IC plan type from localStorage to determine which paycurve option to disable
+  const [icPlanType, setIcPlanType] = useState<string | null>(
+    localStorage.getItem('icPlanType') || null
+  );
 
   const form = useForm<FileUploadData>({
     resolver: zodResolver(fileUploadSchema),
     defaultValues: {
       fileTypes: [],
+      paycurve: icPlanType as "Goal Attainment" | "Goal Attainment with Relative Rank" | undefined,
     },
   });
 
@@ -165,10 +179,10 @@ export default function DataUpload() {
         </Link>
         <div className="flex items-center space-x-4">
           <ThemeToggle />
-          <Link href="/">
+          <Link href="/ic-processing">
             <Button variant="ghost" className="text-gray-600 dark:text-gray-300">
               <ArrowLeft className="h-4 w-4 mr-2" />
-              Back to Home
+              Back to IC Processing
             </Button>
           </Link>
         </div>
@@ -250,6 +264,85 @@ export default function DataUpload() {
                           })}
                         </div>
                         <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  {/* Paycurve Selection */}
+                  <FormField
+                    control={form.control}
+                    name="paycurve"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel className="text-lg font-semibold text-gray-900 dark:text-white">
+                          Paycurve Selection
+                        </FormLabel>
+                        <FormControl>
+                          <RadioGroup
+                            onValueChange={field.onChange}
+                            defaultValue={field.value}
+                            className="grid grid-cols-1 md:grid-cols-2 gap-4"
+                          >
+                            <div className={`flex items-center space-x-3 p-6 border rounded-lg transition-colors ${
+                              icPlanType === "Goal Attainment" 
+                                ? "border-blue-500 bg-blue-50 dark:bg-blue-900/20" 
+                                : "border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-800"
+                            }`}>
+                              <RadioGroupItem 
+                                value="Goal Attainment" 
+                                id="goal-attainment-curve"
+                                disabled={icPlanType !== "Goal Attainment"}
+                              />
+                              <div className="flex-1">
+                                <Label 
+                                  htmlFor="goal-attainment-curve" 
+                                  className={`cursor-pointer ${
+                                    icPlanType !== "Goal Attainment" ? "text-gray-400 dark:text-gray-500" : "text-gray-900 dark:text-white"
+                                  }`}
+                                >
+                                  <div>
+                                    <p className="font-semibold">Goal Attainment</p>
+                                    <p className="text-sm text-gray-600 dark:text-gray-400">
+                                      Standard goal attainment paycurve
+                                    </p>
+                                  </div>
+                                </Label>
+                              </div>
+                            </div>
+                            <div className={`flex items-center space-x-3 p-6 border rounded-lg transition-colors ${
+                              icPlanType === "Goal Attainment with Relative Rank" 
+                                ? "border-blue-500 bg-blue-50 dark:bg-blue-900/20" 
+                                : "border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-800"
+                            }`}>
+                              <RadioGroupItem 
+                                value="Goal Attainment with Relative Rank" 
+                                id="goal-attainment-rank-curve"
+                                disabled={icPlanType !== "Goal Attainment with Relative Rank"}
+                              />
+                              <div className="flex-1">
+                                <Label 
+                                  htmlFor="goal-attainment-rank-curve" 
+                                  className={`cursor-pointer ${
+                                    icPlanType !== "Goal Attainment with Relative Rank" ? "text-gray-400 dark:text-gray-500" : "text-gray-900 dark:text-white"
+                                  }`}
+                                >
+                                  <div>
+                                    <p className="font-semibold">Goal Attainment with Relative Rank</p>
+                                    <p className="text-sm text-gray-600 dark:text-gray-400">
+                                      Performance-based ranking system
+                                    </p>
+                                  </div>
+                                </Label>
+                              </div>
+                            </div>
+                          </RadioGroup>
+                        </FormControl>
+                        <FormMessage />
+                        {icPlanType && (
+                          <p className="text-sm text-blue-600 dark:text-blue-400 mt-2">
+                            Selected based on your IC Plan Type: {icPlanType}
+                          </p>
+                        )}
                       </FormItem>
                     )}
                   />
