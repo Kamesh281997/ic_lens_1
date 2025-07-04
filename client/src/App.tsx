@@ -14,6 +14,7 @@ import IcProcessing from "@/pages/ic-processing";
 import DataValidation from "@/pages/data-validation";
 import PayoutCalculation from "@/pages/payout-calculation";
 import DataInsights from "@/pages/data-insights";
+import IcPlanConfiguration from "@/pages/ic-plan-configuration";
 
 function Router() {
   return (
@@ -29,6 +30,7 @@ function Router() {
       <Route path="/data-validation" component={DataValidation} />
       <Route path="/payout-calculation" component={PayoutCalculation} />
       <Route path="/data-insights" component={DataInsights} />
+      <Route path="/ic-plan-configuration" component={IcPlanConfiguration} />
       <Route component={NotFound} />
     </Switch>
   );

@@ -146,7 +146,7 @@ export default function Landing() {
       <section className="px-6 lg:px-12 py-20">
         <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-8">
           {/* IC Plan Configuration */}
-          <Link href={isAuthenticated ? "/ic-processing" : "/auth?redirect=/ic-processing"}>
+          <Link href={isAuthenticated ? "/ic-plan-configuration" : "/auth?redirect=/ic-plan-configuration"}>
             <div className="bg-gray-900 dark:bg-gray-800 border border-gray-800 dark:border-gray-700 rounded-xl p-10 text-center hover:bg-gray-800 dark:hover:bg-gray-700 transition-all duration-300 cursor-pointer transform hover:scale-105">
               <div className="flex justify-center mb-8">
                 <Settings className="h-20 w-20 text-white" />
