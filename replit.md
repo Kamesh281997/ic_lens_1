@@ -35,6 +35,18 @@ This is a comprehensive web application for ICLens, an AI-Powered Incentive Comp
 - **Feature Cards**: Interactive cards for IC Plan Configuration, IC Processing, and IC Insights & Analytics
 - **Professional Design**: Dark theme with red accent colors matching the brand
 
+### About Page
+- **Company Mission**: Detailed explanation of ICLens mission and vision
+- **Feature Highlights**: Key capabilities including automation, collaboration, and security
+- **Company Story**: Background and founding story of ICLens
+- **Call-to-Action**: Direct link to authentication for user engagement
+
+### Contact Page
+- **Contact Form**: Interactive form for user inquiries with validation
+- **Contact Information**: Complete business details including email, phone, and address
+- **Business Hours**: Operating hours and availability information
+- **Quick Actions**: Direct links to trial signup, demo scheduling, and more information
+
 ### Authentication System
 - **User Registration**: Username, email, and password validation
 - **Login**: Username/password authentication with bcrypt
@@ -106,6 +118,9 @@ Changelog:
 - July 04, 2025. Created professional landing page with hero section and feature cards
 - July 04, 2025. Added responsive navigation with mobile menu support
 - July 04, 2025. Integrated landing page routing to authentication system
+- July 04, 2025. Created comprehensive About page with company mission and story
+- July 04, 2025. Built Contact page with interactive form and business information
+- July 04, 2025. Updated routing system to include About and Contact pages
 ```
 
 ## User Preferences

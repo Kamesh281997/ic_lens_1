@@ -7,11 +7,15 @@ import { ThemeProvider } from "@/components/theme-provider";
 import NotFound from "@/pages/not-found";
 import Auth from "@/pages/auth";
 import Landing from "@/pages/landing";
+import About from "@/pages/about";
+import Contact from "@/pages/contact";
 
 function Router() {
   return (
     <Switch>
       <Route path="/" component={Landing} />
+      <Route path="/about" component={About} />
+      <Route path="/contact" component={Contact} />
       <Route path="/auth" component={Auth} />
       <Route path="/login" component={Auth} />
       <Route path="/signup" component={Auth} />
