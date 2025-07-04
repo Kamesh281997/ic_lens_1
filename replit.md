@@ -129,6 +129,8 @@ Changelog:
 - July 04, 2025. Implemented workflow routing: IC Processing → Data Upload → Validation → Payout
 - July 04, 2025. Added redirect parameters for seamless authentication flow
 - July 04, 2025. Updated landing page with proper workflow navigation
+- July 04, 2025. Enhanced authentication flow: Login button returns to landing page
+- July 04, 2025. Added smart "GET STARTED" button that adapts to authentication status
 ```
 
 ## User Preferences

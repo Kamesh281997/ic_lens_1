@@ -126,11 +126,19 @@ export default function Landing() {
           <p className="text-2xl md:text-3xl lg:text-4xl mb-16 text-gray-400 font-light">
             Automate. Analyze. Optimize.
           </p>
-          <Link href="/auth">
-            <Button className="bg-red-500 hover:bg-red-600 text-white px-12 py-6 text-xl rounded-full font-semibold transform hover:scale-105 transition-all duration-200 shadow-lg">
-              GET STARTED
-            </Button>
-          </Link>
+          {isAuthenticated ? (
+            <Link href="/ic-processing">
+              <Button className="bg-red-500 hover:bg-red-600 text-white px-12 py-6 text-xl rounded-full font-semibold transform hover:scale-105 transition-all duration-200 shadow-lg">
+                START WORKFLOW
+              </Button>
+            </Link>
+          ) : (
+            <Link href="/auth">
+              <Button className="bg-red-500 hover:bg-red-600 text-white px-12 py-6 text-xl rounded-full font-semibold transform hover:scale-105 transition-all duration-200 shadow-lg">
+                GET STARTED
+              </Button>
+            </Link>
+          )}
         </div>
       </main>
 

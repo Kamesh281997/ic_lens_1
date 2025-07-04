@@ -25,7 +25,7 @@ export default function Auth() {
 
   // Get redirect parameter from URL
   const urlParams = new URLSearchParams(window.location.search);
-  const redirectTo = urlParams.get('redirect') || '/ic-processing';
+  const redirectTo = urlParams.get('redirect') || '/';
 
   const loginForm = useForm<LoginData>({
     resolver: zodResolver(loginSchema),
