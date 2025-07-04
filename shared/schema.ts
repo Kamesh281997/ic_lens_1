@@ -24,6 +24,23 @@ export const icPlans = pgTable("ic_plans", {
   createdAt: timestamp("created_at").defaultNow().notNull(),
 });
 
+// Hierarchy table
+export const hierarchy = pgTable("hierarchy", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id").references(() => users.id).notNull(),
+  teamId: text("team_id").notNull(),
+  terrId: text("terr_id").notNull(),
+  terrName: text("terr_name").notNull(),
+  roleCd: text("role_cd").notNull(),
+  level1ParentId: text("level1_parent_id"),
+  level1ParentName: text("level1_parent_name"),
+  level1ParentRoleCd: text("level1_parent_role_cd"),
+  level2ParentId: text("level2_parent_id"),
+  level2ParentName: text("level2_parent_name"),
+  level2ParentRoleCd: text("level2_parent_role_cd"),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+});
+
 // File Uploads table
 export const fileUploads = pgTable("file_uploads", {
   id: serial("id").primaryKey(),
@@ -97,6 +114,19 @@ export const insertIcPlanSchema = createInsertSchema(icPlans).pick({
   rules: true,
 });
 
+export const insertHierarchySchema = createInsertSchema(hierarchy).pick({
+  teamId: true,
+  terrId: true,
+  terrName: true,
+  roleCd: true,
+  level1ParentId: true,
+  level1ParentName: true,
+  level1ParentRoleCd: true,
+  level2ParentId: true,
+  level2ParentName: true,
+  level2ParentRoleCd: true,
+});
+
 export const insertFileUploadSchema = createInsertSchema(fileUploads).pick({
   fileName: true,
   fileType: true,
@@ -144,6 +174,8 @@ export type ForgotPasswordData = z.infer<typeof forgotPasswordSchema>;
 
 export type IcPlan = typeof icPlans.$inferSelect;
 export type InsertIcPlan = z.infer<typeof insertIcPlanSchema>;
+export type Hierarchy = typeof hierarchy.$inferSelect;
+export type InsertHierarchy = z.infer<typeof insertHierarchySchema>;
 export type FileUpload = typeof fileUploads.$inferSelect;
 export type InsertFileUpload = z.infer<typeof insertFileUploadSchema>;
 export type SalesData = typeof salesData.$inferSelect;

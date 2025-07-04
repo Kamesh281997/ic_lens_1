@@ -147,6 +147,9 @@ Changelog:
 - July 04, 2025. Redesigned Data Upload page with individual file upload for each option
 - July 04, 2025. Added individual upload buttons and status tracking for each file type
 - July 04, 2025. Added "Back to Home" and "Proceed to Validation" action buttons
+- July 04, 2025. Created hierarchy database table with columns: TeamID, TERR_ID, TERR_NAME, ROLE_CD, LEVEL1_PARENT_ID, LEVEL1_PARENT_NAME, LEVEL_1_PARENT_ROLE_CD, LEVEL2_PARENT_ID, LEVEL2_PARENT_NAME, LEVEL_2_PARENT_ROLE_CD
+- July 04, 2025. Implemented CSV file processing for hierarchy uploads with multer and csv-parser
+- July 04, 2025. Added real file upload functionality that stores hierarchy data in PostgreSQL database
 ```
 
 ## User Preferences

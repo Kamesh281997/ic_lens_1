@@ -3,6 +3,17 @@ import { createServer, type Server } from "http";
 import { storage } from "./storage";
 import { loginSchema, signupSchema, forgotPasswordSchema } from "@shared/schema";
 import { z } from "zod";
+import multer from "multer";
+import csv from "csv-parser";
+import { Readable } from "stream";
+import { db } from "./db";
+import { hierarchy } from "@shared/schema";
+
+// Configure multer for file uploads
+const upload = multer({ 
+  storage: multer.memoryStorage(),
+  limits: { fileSize: 10 * 1024 * 1024 } // 10MB limit
+});
 
 export async function registerRoutes(app: Express): Promise<Server> {
   // Login endpoint
@@ -134,17 +145,78 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // File upload endpoint
-  app.post("/api/upload", async (req, res) => {
+  app.post("/api/upload", upload.single('file'), async (req, res) => {
     try {
-      // Simulate file upload
-      const uploadResult = {
-        uploadedFiles: 3,
-        status: "uploaded",
-        message: "Files uploaded successfully"
-      };
+      if (!req.file) {
+        return res.status(400).json({ message: "No file uploaded" });
+      }
+
+      if (!(req.session as any).userId) {
+        return res.status(401).json({ message: "Not authenticated" });
+      }
+
+      const userId = (req.session as any).userId;
+      const fileType = req.body.fileType;
+      const fileName = req.file.originalname;
+      const fileSize = req.file.size;
+
+      // Process hierarchy files
+      if (fileType === 'hierarchy') {
+        const csvData: any[] = [];
+        const stream = Readable.from(req.file.buffer.toString());
+        
+        await new Promise((resolve, reject) => {
+          stream
+            .pipe(csv())
+            .on('data', (data) => {
+              csvData.push(data);
+            })
+            .on('end', async () => {
+              try {
+                // Process and insert hierarchy data
+                for (const row of csvData) {
+                  await db.insert(hierarchy).values({
+                    userId: userId,
+                    teamId: row.TeamID || row.TEAM_ID || '',
+                    terrId: row.TERR_ID || '',
+                    terrName: row.TERR_NAME || '',
+                    roleCd: row.ROLE_CD || '',
+                    level1ParentId: row.LEVEL1_PARENT_ID || null,
+                    level1ParentName: row.LEVEL1_PARENT_NAME || null,
+                    level1ParentRoleCd: row.LEVEL_1_PARENT_ROLE_CD || null,
+                    level2ParentId: row.LEVEL2_PARENT_ID || null,
+                    level2ParentName: row.LEVEL2_PARENT_NAME || null,
+                    level2ParentRoleCd: row.LEVEL_2_PARENT_ROLE_CD || null,
+                  });
+                }
+                resolve(csvData);
+              } catch (error) {
+                reject(error);
+              }
+            })
+            .on('error', reject);
+        });
+
+        res.json({
+          status: "uploaded",
+          message: `Hierarchy file uploaded successfully. Processed ${csvData.length} records.`,
+          fileType: fileType,
+          fileName: fileName,
+          recordsProcessed: csvData.length
+        });
+      } else {
+        // For other file types, just acknowledge the upload for now
+        res.json({
+          status: "uploaded",
+          message: `${fileType} file uploaded successfully`,
+          fileType: fileType,
+          fileName: fileName,
+          fileSize: fileSize
+        });
+      }
       
-      res.json(uploadResult);
     } catch (error) {
+      console.error('File upload error:', error);
       res.status(500).json({ message: "File upload failed" });
     }
   });
