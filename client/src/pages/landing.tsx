@@ -1,11 +1,13 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { ThemeToggle } from "@/components/theme-toggle";
-import { Settings, RefreshCw, BarChart3, Menu, X } from "lucide-react";
+import { Settings, RefreshCw, BarChart3, Menu, X, User, LogOut } from "lucide-react";
 import { Link } from "wouter";
+import { useAuth } from "@/hooks/use-auth";
 
 export default function Landing() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const { user, isAuthenticated, logout } = useAuth();
 
   return (
     <div className="min-h-screen bg-black dark:bg-gray-950 text-white">
@@ -32,11 +34,28 @@ export default function Landing() {
         {/* Desktop Actions */}
         <div className="hidden md:flex items-center space-x-4">
           <ThemeToggle />
-          <Link href="/auth">
-            <Button className="bg-red-500 hover:bg-red-600 text-white px-6 py-3 rounded-full text-lg font-medium">
-              + Login
-            </Button>
-          </Link>
+          {isAuthenticated ? (
+            <div className="flex items-center space-x-4">
+              <div className="flex items-center space-x-2 text-white">
+                <User className="h-5 w-5" />
+                <span className="text-lg">Welcome, {user?.username}</span>
+              </div>
+              <Button
+                variant="outline"
+                onClick={() => logout.mutate()}
+                className="border-red-500 text-red-500 hover:bg-red-500 hover:text-white px-4 py-2 rounded-full"
+              >
+                <LogOut className="h-4 w-4 mr-2" />
+                Logout
+              </Button>
+            </div>
+          ) : (
+            <Link href="/auth">
+              <Button className="bg-red-500 hover:bg-red-600 text-white px-6 py-3 rounded-full text-lg font-medium">
+                + Login
+              </Button>
+            </Link>
+          )}
         </div>
 
         {/* Mobile Menu Button */}
@@ -69,11 +88,28 @@ export default function Landing() {
             <Link href="/contact" className="text-white hover:text-gray-300 transition-colors text-lg">
               Contact
             </Link>
-            <Link href="/auth" className="pt-4">
-              <Button className="bg-red-500 hover:bg-red-600 text-white px-6 py-3 rounded-full text-lg font-medium w-full">
-                + Login
-              </Button>
-            </Link>
+            {isAuthenticated ? (
+              <div className="pt-4 space-y-4">
+                <div className="flex items-center space-x-2 text-white">
+                  <User className="h-5 w-5" />
+                  <span className="text-lg">Welcome, {user?.username}</span>
+                </div>
+                <Button
+                  variant="outline"
+                  onClick={() => logout.mutate()}
+                  className="border-red-500 text-red-500 hover:bg-red-500 hover:text-white px-4 py-2 rounded-full w-full"
+                >
+                  <LogOut className="h-4 w-4 mr-2" />
+                  Logout
+                </Button>
+              </div>
+            ) : (
+              <Link href="/auth" className="pt-4">
+                <Button className="bg-red-500 hover:bg-red-600 text-white px-6 py-3 rounded-full text-lg font-medium w-full">
+                  + Login
+                </Button>
+              </Link>
+            )}
           </nav>
         </div>
       )}

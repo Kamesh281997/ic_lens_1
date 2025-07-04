@@ -20,6 +20,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(401).json({ message: "Invalid username or password" });
       }
 
+      // Store user session
+      (req.session as any).userId = user.id;
+      (req.session as any).user = { id: user.id, username: user.username, email: user.email };
+
       // Don't send password back to client
       const { password: _, ...userWithoutPassword } = user;
       res.json({ user: userWithoutPassword, message: "Login successful" });
@@ -49,6 +53,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
 
       const user = await storage.createUser({ username, email, password });
+      
+      // Store user session
+      (req.session as any).userId = user.id;
+      (req.session as any).user = { id: user.id, username: user.username, email: user.email };
       
       // Don't send password back to client
       const { password: _, ...userWithoutPassword } = user;
@@ -85,8 +93,28 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   // Check current user endpoint
   app.get("/api/auth/me", async (req, res) => {
-    // TODO: Implement session management
-    res.status(401).json({ message: "Not authenticated" });
+    const session = req.session as any;
+    if (!session?.userId) {
+      return res.status(401).json({ message: "Not authenticated" });
+    }
+    
+    const user = await storage.getUser(session.userId);
+    if (!user) {
+      return res.status(401).json({ message: "User not found" });
+    }
+    
+    const { password: _, ...userWithoutPassword } = user;
+    res.json({ user: userWithoutPassword });
+  });
+
+  // Logout endpoint
+  app.post("/api/auth/logout", async (req, res) => {
+    req.session.destroy((err) => {
+      if (err) {
+        return res.status(500).json({ message: "Could not log out" });
+      }
+      res.json({ message: "Logged out successfully" });
+    });
   });
 
   const httpServer = createServer(app);
