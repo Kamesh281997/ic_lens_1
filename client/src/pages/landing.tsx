@@ -171,15 +171,15 @@ export default function Landing() {
             </div>
           </Link>
 
-          {/* Data Validation */}
-          <Link href={isAuthenticated ? "/data-validation" : "/auth?redirect=/data-validation"}>
+          {/* Data Insights */}
+          <Link href={isAuthenticated ? "/data-validation" : "/auth?redirect=/data-insights"}>
             <div className="bg-gray-900 dark:bg-gray-800 border border-gray-800 dark:border-gray-700 rounded-xl p-10 text-center hover:bg-gray-800 dark:hover:bg-gray-700 transition-all duration-300 cursor-pointer transform hover:scale-105">
               <div className="flex justify-center mb-8">
                 <BarChart3 className="h-20 w-20 text-white" />
               </div>
-              <h3 className="text-2xl lg:text-3xl font-bold mb-6">Validation</h3>
+              <h3 className="text-2xl lg:text-3xl font-bold mb-6">Data Insights</h3>
               <p className="text-gray-400 text-lg lg:text-xl">
-                Validate data and view payout calculations.
+                Advanced analytics and compensation insights.
               </p>
             </div>
           </Link>

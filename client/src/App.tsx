@@ -13,6 +13,7 @@ import DataUpload from "@/pages/data-upload";
 import IcProcessing from "@/pages/ic-processing";
 import DataValidation from "@/pages/data-validation";
 import PayoutCalculation from "@/pages/payout-calculation";
+import DataInsights from "@/pages/data-insights";
 
 function Router() {
   return (
@@ -27,6 +28,7 @@ function Router() {
       <Route path="/ic-processing" component={IcProcessing} />
       <Route path="/data-validation" component={DataValidation} />
       <Route path="/payout-calculation" component={PayoutCalculation} />
+      <Route path="/data-insights" component={DataInsights} />
       <Route component={NotFound} />
     </Switch>
   );

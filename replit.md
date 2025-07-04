@@ -131,6 +131,8 @@ Changelog:
 - July 04, 2025. Updated landing page with proper workflow navigation
 - July 04, 2025. Enhanced authentication flow: Login button returns to landing page
 - July 04, 2025. Added smart "GET STARTED" button that adapts to authentication status
+- July 04, 2025. Created Data Insights page with "coming soon" message for authenticated users
+- July 04, 2025. Updated landing page: "Validation" renamed to "Data Insights"
 ```
 
 ## User Preferences
