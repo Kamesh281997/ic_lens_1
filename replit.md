@@ -143,6 +143,10 @@ Changelog:
 - July 04, 2025. Added paycurve selection (Goal Attainment vs Goal Attainment with Relative Rank) to Data Upload page
 - July 04, 2025. Implemented conditional paycurve enabling based on IC plan type selection from IC Processing page
 - July 04, 2025. Changed Data Upload page back button from "Back to Home" to "Back to IC Processing"
+- July 04, 2025. Made hierarchy, target pay, and paycurve optional (light shade) while other options are mandatory
+- July 04, 2025. Redesigned Data Upload page with individual file upload for each option
+- July 04, 2025. Added individual upload buttons and status tracking for each file type
+- July 04, 2025. Added "Back to Home" and "Proceed to Validation" action buttons
 ```
 
 ## User Preferences

@@ -32,42 +32,49 @@ const fileTypeOptions: Array<{
   label: string;
   icon: any;
   description: string;
+  mandatory: boolean;
 }> = [
   { 
     id: "hierarchy", 
     label: "Hierarchy", 
     icon: FileText, 
-    description: "Organizational structure and reporting relationships" 
+    description: "Organizational structure and reporting relationships",
+    mandatory: false
   },
   { 
     id: "rep_roster", 
     label: "Rep Roster", 
     icon: Users, 
-    description: "Sales representative information and details" 
+    description: "Sales representative information and details",
+    mandatory: true
   },
   { 
     id: "rep_territory", 
     label: "Rep Territory Assignment", 
     icon: MapPin, 
-    description: "Territory assignments for sales representatives" 
+    description: "Territory assignments for sales representatives",
+    mandatory: true
   },
   { 
     id: "sales_data", 
     label: "Sales Data", 
     icon: BarChart3, 
-    description: "Sales performance and transaction data" 
+    description: "Sales performance and transaction data",
+    mandatory: true
   },
   { 
     id: "target_pay", 
     label: "Target Pay", 
     icon: DollarSign, 
-    description: "Target compensation and quota information" 
+    description: "Target compensation and quota information",
+    mandatory: false
   },
   { 
     id: "quota_data", 
     label: "Quota Data", 
     icon: BarChart3, 
-    description: "Quota targets and performance metrics" 
+    description: "Quota targets and performance metrics",
+    mandatory: true
   },
 ];
 
@@ -75,7 +82,8 @@ export default function DataUpload() {
   const { user, isAuthenticated } = useAuth();
   const [, navigate] = useLocation();
   const { toast } = useToast();
-  const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
+  const [selectedFiles, setSelectedFiles] = useState<Record<string, File | null>>({});
+  const [uploadedFiles, setUploadedFiles] = useState<Set<string>>(new Set());
   const [uploadProgress, setUploadProgress] = useState<Record<string, number>>({});
   
   // Get IC plan type from localStorage to determine which paycurve option to disable
@@ -92,60 +100,66 @@ export default function DataUpload() {
   });
 
   const uploadMutation = useMutation({
-    mutationFn: async (data: { fileTypes: string[]; files: File[] }) => {
+    mutationFn: async (data: { fileType: string; file: File }) => {
       const formData = new FormData();
-      data.files.forEach((file, index) => {
-        formData.append(`file_${index}`, file);
-        formData.append(`fileType_${index}`, data.fileTypes[index]);
-      });
+      formData.append('file', data.file);
+      formData.append('fileType', data.fileType);
       
       const response = await apiRequest("POST", "/api/upload", formData);
       return response.json();
     },
-    onSuccess: (data) => {
+    onSuccess: (data, variables) => {
       toast({
         title: "Upload Successful",
-        description: `${data.uploadedFiles} files uploaded successfully`,
+        description: `${variables.fileType} file uploaded successfully`,
       });
-      navigate("/data-validation");
+      setUploadedFiles(prev => {
+        const newSet = new Set(prev);
+        newSet.add(variables.fileType);
+        return newSet;
+      });
     },
-    onError: (error: Error) => {
+    onError: (error: Error, variables) => {
       toast({
         title: "Upload Failed",
-        description: error.message || "Failed to upload files",
+        description: `Failed to upload ${variables.fileType}: ${error.message}`,
         variant: "destructive",
       });
     },
   });
 
-  const handleFileSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const files = Array.from(event.target.files || []);
-    setSelectedFiles(files);
+  const handleFileSelect = (fileType: string, event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      setSelectedFiles(prev => ({
+        ...prev,
+        [fileType]: file
+      }));
+    }
+  };
+
+  const handleUpload = (fileType: string) => {
+    const file = selectedFiles[fileType];
+    if (file) {
+      uploadMutation.mutate({ fileType, file });
+    }
   };
 
   const onSubmit = (data: FileUploadData) => {
-    if (selectedFiles.length === 0) {
+    // Check if all mandatory files are uploaded
+    const mandatoryOptions = fileTypeOptions.filter(opt => opt.mandatory);
+    const missingMandatory = mandatoryOptions.filter(opt => !uploadedFiles.has(opt.id));
+    
+    if (missingMandatory.length > 0) {
       toast({
-        title: "No Files Selected",
-        description: "Please select files to upload",
+        title: "Missing Required Files",
+        description: `Please upload: ${missingMandatory.map(opt => opt.label).join(', ')}`,
         variant: "destructive",
       });
       return;
     }
 
-    if (selectedFiles.length !== data.fileTypes.length) {
-      toast({
-        title: "File Count Mismatch",
-        description: "Number of files must match selected file types",
-        variant: "destructive",
-      });
-      return;
-    }
-
-    uploadMutation.mutate({
-      fileTypes: data.fileTypes,
-      files: selectedFiles,
-    });
+    navigate("/data-validation");
   };
 
   if (!isAuthenticated) {
@@ -215,212 +229,134 @@ export default function DataUpload() {
             <CardContent>
               <Form {...form}>
                 <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-                  {/* File Type Selection */}
-                  <FormField
-                    control={form.control}
-                    name="fileTypes"
-                    render={() => (
-                      <FormItem>
-                        <FormLabel className="text-lg font-semibold text-gray-900 dark:text-white">
-                          Select File Types
-                        </FormLabel>
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                          {fileTypeOptions.map((option) => {
-                            const Icon = option.icon;
-                            return (
-                              <FormField
-                                key={option.id}
-                                control={form.control}
-                                name="fileTypes"
-                                render={({ field }) => (
-                                  <FormItem>
-                                    <FormControl>
-                                      <div className="flex items-center space-x-3 p-4 border rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors">
-                                        <Checkbox
-                                          checked={field.value?.includes(option.id)}
-                                          onCheckedChange={(checked) => {
-                                            const currentValues = field.value || [];
-                                            const updatedValue = checked
-                                              ? [...currentValues, option.id]
-                                              : currentValues.filter((value) => value !== option.id);
-                                            field.onChange(updatedValue);
-                                          }}
-                                        />
-                                        <Icon className="h-6 w-6 text-blue-600" />
-                                        <div className="flex-1">
-                                          <Label className="text-sm font-medium text-gray-900 dark:text-white">
-                                            {option.label}
-                                          </Label>
-                                          <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
-                                            {option.description}
-                                          </p>
-                                        </div>
-                                      </div>
-                                    </FormControl>
-                                  </FormItem>
-                                )}
-                              />
-                            );
-                          })}
-                        </div>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-
-                  {/* Paycurve Selection */}
-                  <FormField
-                    control={form.control}
-                    name="paycurve"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel className="text-lg font-semibold text-gray-900 dark:text-white">
-                          Paycurve Selection
-                        </FormLabel>
-                        <FormControl>
-                          <RadioGroup
-                            onValueChange={field.onChange}
-                            defaultValue={field.value}
-                            className="grid grid-cols-1 md:grid-cols-2 gap-4"
-                          >
-                            <div className={`flex items-center space-x-3 p-6 border rounded-lg transition-colors ${
-                              icPlanType === "Goal Attainment" 
-                                ? "border-blue-500 bg-blue-50 dark:bg-blue-900/20" 
-                                : "border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-800"
-                            }`}>
-                              <RadioGroupItem 
-                                value="Goal Attainment" 
-                                id="goal-attainment-curve"
-                                disabled={icPlanType !== "Goal Attainment"}
-                              />
-                              <div className="flex-1">
-                                <Label 
-                                  htmlFor="goal-attainment-curve" 
-                                  className={`cursor-pointer ${
-                                    icPlanType !== "Goal Attainment" ? "text-gray-400 dark:text-gray-500" : "text-gray-900 dark:text-white"
-                                  }`}
-                                >
-                                  <div>
-                                    <p className="font-semibold">Goal Attainment</p>
-                                    <p className="text-sm text-gray-600 dark:text-gray-400">
-                                      Standard goal attainment paycurve
-                                    </p>
-                                  </div>
-                                </Label>
-                              </div>
-                            </div>
-                            <div className={`flex items-center space-x-3 p-6 border rounded-lg transition-colors ${
-                              icPlanType === "Goal Attainment with Relative Rank" 
-                                ? "border-blue-500 bg-blue-50 dark:bg-blue-900/20" 
-                                : "border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-800"
-                            }`}>
-                              <RadioGroupItem 
-                                value="Goal Attainment with Relative Rank" 
-                                id="goal-attainment-rank-curve"
-                                disabled={icPlanType !== "Goal Attainment with Relative Rank"}
-                              />
-                              <div className="flex-1">
-                                <Label 
-                                  htmlFor="goal-attainment-rank-curve" 
-                                  className={`cursor-pointer ${
-                                    icPlanType !== "Goal Attainment with Relative Rank" ? "text-gray-400 dark:text-gray-500" : "text-gray-900 dark:text-white"
-                                  }`}
-                                >
-                                  <div>
-                                    <p className="font-semibold">Goal Attainment with Relative Rank</p>
-                                    <p className="text-sm text-gray-600 dark:text-gray-400">
-                                      Performance-based ranking system
-                                    </p>
-                                  </div>
-                                </Label>
-                              </div>
-                            </div>
-                          </RadioGroup>
-                        </FormControl>
-                        <FormMessage />
-                        {icPlanType && (
-                          <p className="text-sm text-blue-600 dark:text-blue-400 mt-2">
-                            Selected based on your IC Plan Type: {icPlanType}
-                          </p>
-                        )}
-                      </FormItem>
-                    )}
-                  />
-
-                  {/* File Upload */}
-                  <div className="space-y-4">
-                    <Label className="text-lg font-semibold text-gray-900 dark:text-white">
-                      Choose Files
-                    </Label>
-                    <div className="border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-lg p-8 text-center hover:border-blue-500 dark:hover:border-blue-400 transition-colors">
-                      <Upload className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-                      <p className="text-lg text-gray-600 dark:text-gray-300 mb-4">
-                        Drag and drop your files here, or click to browse
-                      </p>
-                      <input
-                        type="file"
-                        multiple
-                        accept=".csv,.xlsx,.xls"
-                        onChange={handleFileSelect}
-                        className="hidden"
-                        id="file-upload"
-                      />
-                      <Label
-                        htmlFor="file-upload"
-                        className="inline-flex items-center px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 cursor-pointer transition-colors"
-                      >
-                        <Upload className="h-5 w-5 mr-2" />
-                        Browse Files
-                      </Label>
+                  {/* Individual File Upload Sections */}
+                  <div className="space-y-6">
+                    <div className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
+                      File Upload Options
                     </div>
-                    
-                    {/* Selected Files Display */}
-                    {selectedFiles.length > 0 && (
-                      <div className="mt-4">
-                        <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-3">
-                          Selected Files ({selectedFiles.length})
-                        </h3>
-                        <div className="space-y-2">
-                          {selectedFiles.map((file, index) => (
-                            <div key={index} className="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-800 rounded-lg">
-                              <div className="flex items-center space-x-3">
-                                <FileText className="h-5 w-5 text-blue-600" />
-                                <div>
-                                  <p className="font-medium text-gray-900 dark:text-white">
-                                    {file.name}
-                                  </p>
-                                  <p className="text-sm text-gray-500 dark:text-gray-400">
-                                    {(file.size / 1024 / 1024).toFixed(2)} MB
-                                  </p>
-                                </div>
+                    {fileTypeOptions.map((option) => {
+                      const Icon = option.icon;
+                      const isUploaded = uploadedFiles.has(option.id);
+                      const selectedFile = selectedFiles[option.id];
+                      const isOptional = !option.mandatory;
+                      
+                      return (
+                        <div 
+                          key={option.id} 
+                          className={`p-6 border rounded-lg transition-colors ${
+                            isOptional 
+                              ? 'border-gray-200 dark:border-gray-600 bg-gray-50 dark:bg-gray-800/50 opacity-75' 
+                              : 'border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900'
+                          }`}
+                        >
+                          <div className="flex items-center justify-between mb-4">
+                            <div className="flex items-center space-x-3">
+                              <Icon className={`h-6 w-6 ${isOptional ? 'text-gray-400' : 'text-blue-600'}`} />
+                              <div>
+                                <Label className={`text-lg font-medium ${
+                                  isOptional ? 'text-gray-500 dark:text-gray-400' : 'text-gray-900 dark:text-white'
+                                }`}>
+                                  {option.label}
+                                  {option.mandatory && <span className="text-red-500 ml-1">*</span>}
+                                  {isOptional && <span className="text-sm text-gray-400 ml-2">(Optional)</span>}
+                                </Label>
+                                <p className={`text-sm ${
+                                  isOptional ? 'text-gray-400' : 'text-gray-600 dark:text-gray-400'
+                                } mt-1`}>
+                                  {option.description}
+                                </p>
                               </div>
-                              <CheckCircle className="h-5 w-5 text-green-500" />
                             </div>
-                          ))}
+                            {isUploaded && (
+                              <CheckCircle className="h-6 w-6 text-green-500" />
+                            )}
+                          </div>
+                          
+                          <div className="flex items-center space-x-4">
+                            <input
+                              type="file"
+                              accept=".csv,.xlsx,.xls"
+                              onChange={(e) => handleFileSelect(option.id, e)}
+                              className="hidden"
+                              id={`file-upload-${option.id}`}
+                            />
+                            <Label
+                              htmlFor={`file-upload-${option.id}`}
+                              className={`inline-flex items-center px-4 py-2 border rounded-lg cursor-pointer transition-colors ${
+                                isOptional 
+                                  ? 'border-gray-300 text-gray-500 hover:bg-gray-100 dark:hover:bg-gray-700' 
+                                  : 'border-blue-500 text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-900/20'
+                              }`}
+                            >
+                              <Upload className="h-4 w-4 mr-2" />
+                              {selectedFile ? 'Change File' : 'Choose File'}
+                            </Label>
+                            
+                            {selectedFile && (
+                              <div className="flex-1 flex items-center justify-between">
+                                <span className="text-sm text-gray-600 dark:text-gray-400 truncate">
+                                  {selectedFile.name}
+                                </span>
+                                <Button
+                                  type="button"
+                                  onClick={() => handleUpload(option.id)}
+                                  disabled={uploadMutation.isPending || isUploaded}
+                                  className="ml-4"
+                                  size="sm"
+                                >
+                                  {uploadMutation.isPending ? 'Uploading...' : isUploaded ? 'Uploaded' : 'Upload'}
+                                </Button>
+                              </div>
+                            )}
+                          </div>
                         </div>
-                      </div>
-                    )}
+                      );
+                    })}
                   </div>
 
-                  {/* Submit Button */}
-                  <div className="flex justify-center pt-6">
+                  {/* Paycurve Selection - Only show if IC plan type is available */}
+                  {icPlanType && (
+                    <div className="p-6 border rounded-lg bg-blue-50 dark:bg-blue-900/20 border-blue-200 dark:border-blue-700">
+                      <div className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
+                        Paycurve Selection
+                      </div>
+                      <p className="text-sm text-blue-600 dark:text-blue-400 mb-4">
+                        Based on your IC Plan Type: <span className="font-semibold">{icPlanType}</span>
+                      </p>
+                      <div className="p-4 bg-white dark:bg-gray-800 rounded-lg border border-blue-300 dark:border-blue-600">
+                        <div className="flex items-center space-x-3">
+                          <CheckCircle className="h-5 w-5 text-green-500" />
+                          <div>
+                            <p className="font-medium text-gray-900 dark:text-white">{icPlanType}</p>
+                            <p className="text-sm text-gray-600 dark:text-gray-400">
+                              {icPlanType === "Goal Attainment" 
+                                ? "Standard goal attainment paycurve" 
+                                : "Performance-based ranking system"}
+                            </p>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Action Buttons */}
+                  <div className="flex flex-col sm:flex-row gap-4 pt-6">
+                    <Button
+                      type="button"
+                      variant="outline"
+                      size="lg"
+                      className="flex-1 px-8 py-3"
+                      onClick={() => navigate("/")}
+                    >
+                      Back to Home
+                    </Button>
                     <Button
                       type="submit"
                       size="lg"
-                      className="px-8 py-3 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg"
+                      className="flex-1 px-8 py-3 bg-blue-600 hover:bg-blue-700 text-white font-semibold"
                       disabled={uploadMutation.isPending}
                     >
-                      {uploadMutation.isPending ? (
-                        <>
-                          <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white mr-2" />
-                          Uploading...
-                        </>
-                      ) : (
-                        <>
-                          <Upload className="h-5 w-5 mr-2" />
-                          Upload Files
-                        </>
-                      )}
+                      Proceed to Validation
                     </Button>
                   </div>
                 </form>
