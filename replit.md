@@ -1,8 +1,8 @@
-# Full-Stack Web Application
+# ICLens Authentication System
 
 ## Overview
 
-This is a full-stack web application built with React (frontend) and Express.js (backend), featuring user authentication and a modern UI. The application uses TypeScript throughout and implements a clean separation between client and server code with shared types and schemas.
+This is a comprehensive authentication system for ICLens, a Vision Intelligence Platform, built with React (frontend) and Express.js (backend). The application features user authentication with login, signup, and password reset functionality, along with a modern UI that supports both light and dark themes. The application uses TypeScript throughout and implements a clean separation between client and server code with shared types and schemas.
 
 ## System Architecture
 
@@ -37,9 +37,11 @@ This is a full-stack web application built with React (frontend) and Express.js 
 
 ### UI Components
 - **Design System**: shadcn/ui components with Radix UI primitives
-- **Theming**: CSS variables for consistent theming
+- **Theming**: CSS variables for consistent theming with dark mode support
+- **Theme Toggle**: Light/dark mode switching with system preference detection
 - **Responsive Design**: Mobile-first approach with Tailwind CSS
 - **Form Components**: Reusable form components with validation
+- **Brand Colors**: Custom ICLens color scheme for consistent branding
 
 ### Database Schema
 - **Users Table**: Core user information with timestamps
@@ -92,6 +94,9 @@ This is a full-stack web application built with React (frontend) and Express.js 
 ```
 Changelog:
 - July 04, 2025. Initial setup
+- July 04, 2025. Updated branding from ILens to ICLens
+- July 04, 2025. Added dark mode support with theme toggle
+- July 04, 2025. Enhanced UI with dark mode styling for all components
 ```
 
 ## User Preferences

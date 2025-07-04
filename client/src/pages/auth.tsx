@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Eye, EyeOff, User, Lock, Mail, ArrowLeft } from "lucide-react";
+import { Eye, EyeOff, User, Lock, Mail, ArrowLeft, Sun, Moon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -9,6 +9,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Card, CardContent } from "@/components/ui/card";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { useAuth } from "@/hooks/use-auth";
+import { ThemeToggle } from "@/components/theme-toggle";
 import { loginSchema, signupSchema, forgotPasswordSchema } from "@shared/schema";
 import type { LoginData, SignupData, ForgotPasswordData } from "@shared/schema";
 
@@ -60,8 +61,8 @@ export default function Auth() {
   const renderLoginForm = () => (
     <div className="space-y-6">
       <div className="text-center">
-        <h2 className="text-2xl font-semibold text-gray-900 mb-2">Welcome back</h2>
-        <p className="text-ilens-slate">Sign in to your account</p>
+        <h2 className="text-2xl font-semibold text-gray-900 dark:text-white mb-2">Welcome back</h2>
+        <p className="text-ilens-slate dark:text-slate-300">Sign in to your account</p>
       </div>
 
       <Form {...loginForm}>
@@ -78,7 +79,7 @@ export default function Auth() {
                     <Input
                       {...field}
                       placeholder="Enter your username"
-                      className="pl-10 py-3 bg-gray-50 focus:bg-white border-gray-300 focus:border-ilens-blue focus:ring-2 focus:ring-ilens-blue"
+                      className="pl-10 py-3 bg-gray-50 dark:bg-gray-800 focus:bg-white dark:focus:bg-gray-700 border-gray-300 dark:border-gray-600 focus:border-ilens-blue focus:ring-2 focus:ring-ilens-blue dark:text-white"
                     />
                   </div>
                 </FormControl>
@@ -100,7 +101,7 @@ export default function Auth() {
                       {...field}
                       type={showPassword ? "text" : "password"}
                       placeholder="Enter your password"
-                      className="pl-10 pr-12 py-3 bg-gray-50 focus:bg-white border-gray-300 focus:border-ilens-blue focus:ring-2 focus:ring-ilens-blue"
+                      className="pl-10 pr-12 py-3 bg-gray-50 dark:bg-gray-800 focus:bg-white dark:focus:bg-gray-700 border-gray-300 dark:border-gray-600 focus:border-ilens-blue focus:ring-2 focus:ring-ilens-blue dark:text-white"
                     />
                     <button
                       type="button"
@@ -119,7 +120,7 @@ export default function Auth() {
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-2">
               <Checkbox id="remember" />
-              <Label htmlFor="remember" className="text-sm text-gray-700">
+              <Label htmlFor="remember" className="text-sm text-gray-700 dark:text-gray-300">
                 Remember me
               </Label>
             </div>
@@ -150,7 +151,7 @@ export default function Auth() {
       </div>
 
       <div className="text-center">
-        <p className="text-gray-600">
+        <p className="text-gray-600 dark:text-gray-300">
           Don't have an account?{" "}
           <Button
             variant="ghost"
@@ -167,8 +168,8 @@ export default function Auth() {
   const renderSignupForm = () => (
     <div className="space-y-6">
       <div className="text-center">
-        <h2 className="text-2xl font-semibold text-gray-900 mb-2">Create account</h2>
-        <p className="text-ilens-slate">Join ILens today</p>
+        <h2 className="text-2xl font-semibold text-gray-900 dark:text-white mb-2">Create account</h2>
+        <p className="text-ilens-slate dark:text-slate-300">Join ICLens today</p>
       </div>
 
       <Form {...signupForm}>
@@ -185,7 +186,7 @@ export default function Auth() {
                     <Input
                       {...field}
                       placeholder="Choose a username"
-                      className="pl-10 py-3 bg-gray-50 focus:bg-white border-gray-300 focus:border-ilens-blue focus:ring-2 focus:ring-ilens-blue"
+                      className="pl-10 py-3 bg-gray-50 dark:bg-gray-800 focus:bg-white dark:focus:bg-gray-700 border-gray-300 dark:border-gray-600 focus:border-ilens-blue focus:ring-2 focus:ring-ilens-blue dark:text-white"
                     />
                   </div>
                 </FormControl>
@@ -207,7 +208,7 @@ export default function Auth() {
                       {...field}
                       type="email"
                       placeholder="Enter your email"
-                      className="pl-10 py-3 bg-gray-50 focus:bg-white border-gray-300 focus:border-ilens-blue focus:ring-2 focus:ring-ilens-blue"
+                      className="pl-10 py-3 bg-gray-50 dark:bg-gray-800 focus:bg-white dark:focus:bg-gray-700 border-gray-300 dark:border-gray-600 focus:border-ilens-blue focus:ring-2 focus:ring-ilens-blue dark:text-white"
                     />
                   </div>
                 </FormControl>
@@ -229,7 +230,7 @@ export default function Auth() {
                       {...field}
                       type={showPassword ? "text" : "password"}
                       placeholder="Create a password"
-                      className="pl-10 pr-12 py-3 bg-gray-50 focus:bg-white border-gray-300 focus:border-ilens-blue focus:ring-2 focus:ring-ilens-blue"
+                      className="pl-10 pr-12 py-3 bg-gray-50 dark:bg-gray-800 focus:bg-white dark:focus:bg-gray-700 border-gray-300 dark:border-gray-600 focus:border-ilens-blue focus:ring-2 focus:ring-ilens-blue dark:text-white"
                     />
                     <button
                       type="button"
@@ -258,7 +259,7 @@ export default function Auth() {
                       {...field}
                       type={showConfirmPassword ? "text" : "password"}
                       placeholder="Confirm your password"
-                      className="pl-10 pr-12 py-3 bg-gray-50 focus:bg-white border-gray-300 focus:border-ilens-blue focus:ring-2 focus:ring-ilens-blue"
+                      className="pl-10 pr-12 py-3 bg-gray-50 dark:bg-gray-800 focus:bg-white dark:focus:bg-gray-700 border-gray-300 dark:border-gray-600 focus:border-ilens-blue focus:ring-2 focus:ring-ilens-blue dark:text-white"
                     />
                     <button
                       type="button"
@@ -276,7 +277,7 @@ export default function Auth() {
 
           <div className="flex items-start space-x-2">
             <Checkbox id="terms" className="mt-1" />
-            <Label htmlFor="terms" className="text-sm text-gray-700">
+            <Label htmlFor="terms" className="text-sm text-gray-700 dark:text-gray-300">
               I agree to the{" "}
               <a href="#" className="text-ilens-blue hover:text-ilens-sky">
                 Terms of Service
@@ -299,7 +300,7 @@ export default function Auth() {
       </Form>
 
       <div className="text-center">
-        <p className="text-gray-600">
+        <p className="text-gray-600 dark:text-gray-300">
           Already have an account?{" "}
           <Button
             variant="ghost"
@@ -316,8 +317,8 @@ export default function Auth() {
   const renderForgotForm = () => (
     <div className="space-y-6">
       <div className="text-center">
-        <h2 className="text-2xl font-semibold text-gray-900 mb-2">Reset password</h2>
-        <p className="text-ilens-slate">Enter your email to reset your password</p>
+        <h2 className="text-2xl font-semibold text-gray-900 dark:text-white mb-2">Reset password</h2>
+        <p className="text-ilens-slate dark:text-slate-300">Enter your email to reset your password</p>
       </div>
 
       <Form {...forgotForm}>
@@ -335,7 +336,7 @@ export default function Auth() {
                       {...field}
                       type="email"
                       placeholder="Enter your email"
-                      className="pl-10 py-3 bg-gray-50 focus:bg-white border-gray-300 focus:border-ilens-blue focus:ring-2 focus:ring-ilens-blue"
+                      className="pl-10 py-3 bg-gray-50 dark:bg-gray-800 focus:bg-white dark:focus:bg-gray-700 border-gray-300 dark:border-gray-600 focus:border-ilens-blue focus:ring-2 focus:ring-ilens-blue dark:text-white"
                     />
                   </div>
                 </FormControl>
@@ -368,19 +369,24 @@ export default function Auth() {
   );
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50 flex items-center justify-center p-4">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50 dark:from-gray-900 dark:to-gray-800 flex items-center justify-center p-4">
       <div className="w-full max-w-md">
+        {/* Theme Toggle */}
+        <div className="flex justify-end mb-4">
+          <ThemeToggle />
+        </div>
+        
         {/* Logo and Brand */}
         <div className="text-center mb-8">
           <div className="inline-flex items-center justify-center w-16 h-16 bg-ilens-blue rounded-xl mb-4 shadow-lg">
             <Eye className="text-white h-8 w-8" />
           </div>
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">ILens</h1>
-          <p className="text-ilens-slate">Vision Intelligence Platform</p>
+          <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">ICLens</h1>
+          <p className="text-ilens-slate dark:text-slate-300">Vision Intelligence Platform</p>
         </div>
 
         {/* Main Auth Card */}
-        <Card className="bg-white shadow-xl border border-gray-100">
+        <Card className="bg-white dark:bg-gray-900 shadow-xl border border-gray-100 dark:border-gray-700">
           <CardContent className="p-8">
             {currentView === "login" && renderLoginForm()}
             {currentView === "signup" && renderSignupForm()}
@@ -389,8 +395,8 @@ export default function Auth() {
         </Card>
 
         {/* Footer */}
-        <div className="text-center mt-8 text-sm text-gray-500">
-          <p>&copy; 2024 ILens. All rights reserved.</p>
+        <div className="text-center mt-8 text-sm text-gray-500 dark:text-gray-400">
+          <p>&copy; 2024 ICLens. All rights reserved.</p>
         </div>
       </div>
     </div>
