@@ -130,9 +130,9 @@ export default function DataInsights() {
                 Return to Home
               </Button>
             </Link>
-            <Link href="/data-validation">
+            <Link href="/ic-processing">
               <Button size="lg" className="px-8 bg-blue-600 hover:bg-blue-700">
-                Continue Workflow
+                Try IC Processing
               </Button>
             </Link>
           </div>

@@ -172,7 +172,7 @@ export default function Landing() {
           </Link>
 
           {/* Data Insights */}
-          <Link href={isAuthenticated ? "/data-validation" : "/auth?redirect=/data-insights"}>
+          <Link href={isAuthenticated ? "/data-insights" : "/auth?redirect=/data-insights"}>
             <div className="bg-gray-900 dark:bg-gray-800 border border-gray-800 dark:border-gray-700 rounded-xl p-10 text-center hover:bg-gray-800 dark:hover:bg-gray-700 transition-all duration-300 cursor-pointer transform hover:scale-105">
               <div className="flex justify-center mb-8">
                 <BarChart3 className="h-20 w-20 text-white" />

@@ -135,6 +135,7 @@ Changelog:
 - July 04, 2025. Updated landing page: "Validation" renamed to "Data Insights"
 - July 04, 2025. Created IC Plan Configuration page with "coming soon" message for all users
 - July 04, 2025. Updated first landing page card to show coming soon for authenticated and unauthenticated users
+- July 04, 2025. Updated Data Insights to show coming soon message for all users (authenticated and unauthenticated)
 ```
 
 ## User Preferences
