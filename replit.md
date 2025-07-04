@@ -150,6 +150,9 @@ Changelog:
 - July 04, 2025. Created hierarchy database table with columns: TeamID, TERR_ID, TERR_NAME, ROLE_CD, LEVEL1_PARENT_ID, LEVEL1_PARENT_NAME, LEVEL_1_PARENT_ROLE_CD, LEVEL2_PARENT_ID, LEVEL2_PARENT_NAME, LEVEL_2_PARENT_ROLE_CD
 - July 04, 2025. Implemented CSV file processing for hierarchy uploads with multer and csv-parser
 - July 04, 2025. Added real file upload functionality that stores hierarchy data in PostgreSQL database
+- July 04, 2025. Created complete database schema for all file upload types: rep_roster (REP_ID, REP_NAME, EMAIL_ID), rep_assignment (TERR_ID, REP_ID, START_DATE, END_DATE), sales_data_detailed (48 product/market columns), quota_data_detailed (48 product/market columns), pay_curve_goal_attainment (Percentile Rank, Bonus Attainment), pay_curve_goal_rank_attainment (Goal Attainment, Bonus Attainment)
+- July 04, 2025. Enhanced file upload processing to handle all 6 file types with proper CSV parsing and database insertion
+- July 04, 2025. Added sample data for all database tables to verify proper structure and data flow
 ```
 
 ## User Preferences
