@@ -46,9 +46,9 @@ export default function IcProcessing() {
     onSuccess: (data) => {
       toast({
         title: "IC Plan Selected",
-        description: "Proceeding to data validation",
+        description: "Proceeding to data upload",
       });
-      navigate("/data-validation");
+      navigate("/data-upload");
     },
     onError: (error: Error) => {
       toast({

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Eye, EyeOff, User, Lock, Mail, ArrowLeft, Sun, Moon } from "lucide-react";
@@ -12,6 +12,7 @@ import { useAuth } from "@/hooks/use-auth";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { loginSchema, signupSchema, forgotPasswordSchema } from "@shared/schema";
 import type { LoginData, SignupData, ForgotPasswordData } from "@shared/schema";
+import { useLocation } from "wouter";
 
 type AuthView = "login" | "signup" | "forgot";
 
@@ -19,7 +20,12 @@ export default function Auth() {
   const [currentView, setCurrentView] = useState<AuthView>("login");
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [, navigate] = useLocation();
   const { login, signup, forgotPassword } = useAuth();
+
+  // Get redirect parameter from URL
+  const urlParams = new URLSearchParams(window.location.search);
+  const redirectTo = urlParams.get('redirect') || '/ic-processing';
 
   const loginForm = useForm<LoginData>({
     resolver: zodResolver(loginSchema),
@@ -47,11 +53,19 @@ export default function Auth() {
   });
 
   const onLoginSubmit = (data: LoginData) => {
-    login.mutate(data);
+    login.mutate(data, {
+      onSuccess: () => {
+        navigate(redirectTo);
+      }
+    });
   };
 
   const onSignupSubmit = (data: SignupData) => {
-    signup.mutate(data);
+    signup.mutate(data, {
+      onSuccess: () => {
+        navigate(redirectTo);
+      }
+    });
   };
 
   const onForgotSubmit = (data: ForgotPasswordData) => {

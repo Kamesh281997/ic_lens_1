@@ -126,6 +126,9 @@ Changelog:
 - July 04, 2025. Built ICLens MVP with data upload, IC processing, validation, and analytics
 - July 04, 2025. Created database schema for IC plans, file uploads, sales data, and payouts
 - July 04, 2025. Developed complete workflow: Upload → Processing → Validation → Calculation
+- July 04, 2025. Implemented workflow routing: IC Processing → Data Upload → Validation → Payout
+- July 04, 2025. Added redirect parameters for seamless authentication flow
+- July 04, 2025. Updated landing page with proper workflow navigation
 ```
 
 ## User Preferences

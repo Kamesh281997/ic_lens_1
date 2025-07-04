@@ -137,21 +137,21 @@ export default function Landing() {
       {/* Features Section */}
       <section className="px-6 lg:px-12 py-20">
         <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-8">
-          {/* Data Upload */}
-          <Link href={isAuthenticated ? "/data-upload" : "/auth"}>
+          {/* IC Plan Configuration */}
+          <Link href={isAuthenticated ? "/ic-processing" : "/auth?redirect=/ic-processing"}>
             <div className="bg-gray-900 dark:bg-gray-800 border border-gray-800 dark:border-gray-700 rounded-xl p-10 text-center hover:bg-gray-800 dark:hover:bg-gray-700 transition-all duration-300 cursor-pointer transform hover:scale-105">
               <div className="flex justify-center mb-8">
                 <Settings className="h-20 w-20 text-white" />
               </div>
-              <h3 className="text-2xl lg:text-3xl font-bold mb-6">Data Upload</h3>
+              <h3 className="text-2xl lg:text-3xl font-bold mb-6">IC Plan Configuration</h3>
               <p className="text-gray-400 text-lg lg:text-xl">
-                Upload sales data, hierarchy, and compensation files.
+                Configure IC plans by product, team, and role.
               </p>
             </div>
           </Link>
 
           {/* IC Processing */}
-          <Link href={isAuthenticated ? "/ic-processing" : "/auth"}>
+          <Link href={isAuthenticated ? "/ic-processing" : "/auth?redirect=/ic-processing"}>
             <div className="bg-gray-900 dark:bg-gray-800 border border-gray-800 dark:border-gray-700 rounded-xl p-10 text-center hover:bg-gray-800 dark:hover:bg-gray-700 transition-all duration-300 cursor-pointer transform hover:scale-105">
               <div className="flex justify-center mb-8">
                 <RefreshCw className="h-20 w-20 text-white" />
@@ -164,7 +164,7 @@ export default function Landing() {
           </Link>
 
           {/* Data Validation */}
-          <Link href={isAuthenticated ? "/data-validation" : "/auth"}>
+          <Link href={isAuthenticated ? "/data-validation" : "/auth?redirect=/data-validation"}>
             <div className="bg-gray-900 dark:bg-gray-800 border border-gray-800 dark:border-gray-700 rounded-xl p-10 text-center hover:bg-gray-800 dark:hover:bg-gray-700 transition-all duration-300 cursor-pointer transform hover:scale-105">
               <div className="flex justify-center mb-8">
                 <BarChart3 className="h-20 w-20 text-white" />

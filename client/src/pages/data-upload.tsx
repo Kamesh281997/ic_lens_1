@@ -25,7 +25,12 @@ import { useMutation } from "@tanstack/react-query";
 import { apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
 
-const fileTypeOptions = [
+const fileTypeOptions: Array<{
+  id: "hierarchy" | "rep_roster" | "rep_territory" | "sales_data" | "target_pay";
+  label: string;
+  icon: any;
+  description: string;
+}> = [
   { 
     id: "hierarchy", 
     label: "Hierarchy", 
@@ -88,7 +93,7 @@ export default function DataUpload() {
         title: "Upload Successful",
         description: `${data.uploadedFiles} files uploaded successfully`,
       });
-      navigate("/ic-processing");
+      navigate("/data-validation");
     },
     onError: (error: Error) => {
       toast({

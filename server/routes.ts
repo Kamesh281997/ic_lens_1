@@ -117,6 +117,53 @@ export async function registerRoutes(app: Express): Promise<Server> {
     });
   });
 
+  // IC Processing endpoint
+  app.post("/api/ic-processing", async (req, res) => {
+    try {
+      // Simulate IC processing
+      const processingResult = {
+        planId: "plan_" + Date.now(),
+        status: "configured",
+        message: "IC plan configured successfully"
+      };
+      
+      res.json(processingResult);
+    } catch (error) {
+      res.status(500).json({ message: "IC processing failed" });
+    }
+  });
+
+  // File upload endpoint
+  app.post("/api/upload", async (req, res) => {
+    try {
+      // Simulate file upload
+      const uploadResult = {
+        uploadedFiles: 3,
+        status: "uploaded",
+        message: "Files uploaded successfully"
+      };
+      
+      res.json(uploadResult);
+    } catch (error) {
+      res.status(500).json({ message: "File upload failed" });
+    }
+  });
+
+  // Data validation endpoint
+  app.post("/api/validation/proceed", async (req, res) => {
+    try {
+      // Simulate validation completion
+      const validationResult = {
+        status: "validated",
+        message: "Data validation completed successfully"
+      };
+      
+      res.json(validationResult);
+    } catch (error) {
+      res.status(500).json({ message: "Validation failed" });
+    }
+  });
+
   const httpServer = createServer(app);
   return httpServer;
 }
