@@ -9,6 +9,10 @@ import Auth from "@/pages/auth";
 import Landing from "@/pages/landing";
 import About from "@/pages/about";
 import Contact from "@/pages/contact";
+import DataUpload from "@/pages/data-upload";
+import IcProcessing from "@/pages/ic-processing";
+import DataValidation from "@/pages/data-validation";
+import PayoutCalculation from "@/pages/payout-calculation";
 
 function Router() {
   return (
@@ -19,6 +23,10 @@ function Router() {
       <Route path="/auth" component={Auth} />
       <Route path="/login" component={Auth} />
       <Route path="/signup" component={Auth} />
+      <Route path="/data-upload" component={DataUpload} />
+      <Route path="/ic-processing" component={IcProcessing} />
+      <Route path="/data-validation" component={DataValidation} />
+      <Route path="/payout-calculation" component={PayoutCalculation} />
       <Route component={NotFound} />
     </Switch>
   );

@@ -137,41 +137,41 @@ export default function Landing() {
       {/* Features Section */}
       <section className="px-6 lg:px-12 py-20">
         <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-8">
-          {/* IC Plan Configuration */}
-          <Link href="/auth">
+          {/* Data Upload */}
+          <Link href={isAuthenticated ? "/data-upload" : "/auth"}>
             <div className="bg-gray-900 dark:bg-gray-800 border border-gray-800 dark:border-gray-700 rounded-xl p-10 text-center hover:bg-gray-800 dark:hover:bg-gray-700 transition-all duration-300 cursor-pointer transform hover:scale-105">
               <div className="flex justify-center mb-8">
                 <Settings className="h-20 w-20 text-white" />
               </div>
-              <h3 className="text-2xl lg:text-3xl font-bold mb-6">IC Plan Configuration</h3>
+              <h3 className="text-2xl lg:text-3xl font-bold mb-6">Data Upload</h3>
               <p className="text-gray-400 text-lg lg:text-xl">
-                Set up and manage compensation plans.
+                Upload sales data, hierarchy, and compensation files.
               </p>
             </div>
           </Link>
 
           {/* IC Processing */}
-          <Link href="/auth">
+          <Link href={isAuthenticated ? "/ic-processing" : "/auth"}>
             <div className="bg-gray-900 dark:bg-gray-800 border border-gray-800 dark:border-gray-700 rounded-xl p-10 text-center hover:bg-gray-800 dark:hover:bg-gray-700 transition-all duration-300 cursor-pointer transform hover:scale-105">
               <div className="flex justify-center mb-8">
                 <RefreshCw className="h-20 w-20 text-white" />
               </div>
               <h3 className="text-2xl lg:text-3xl font-bold mb-6">IC Processing</h3>
               <p className="text-gray-400 text-lg lg:text-xl">
-                Efficient incentive calculation and processing.
+                Configure IC plans and processing parameters.
               </p>
             </div>
           </Link>
 
-          {/* IC Insights and Analytics */}
-          <Link href="/auth">
+          {/* Data Validation */}
+          <Link href={isAuthenticated ? "/data-validation" : "/auth"}>
             <div className="bg-gray-900 dark:bg-gray-800 border border-gray-800 dark:border-gray-700 rounded-xl p-10 text-center hover:bg-gray-800 dark:hover:bg-gray-700 transition-all duration-300 cursor-pointer transform hover:scale-105">
               <div className="flex justify-center mb-8">
                 <BarChart3 className="h-20 w-20 text-white" />
               </div>
-              <h3 className="text-2xl lg:text-3xl font-bold mb-6">IC Insights and Analytics</h3>
+              <h3 className="text-2xl lg:text-3xl font-bold mb-6">Validation</h3>
               <p className="text-gray-400 text-lg lg:text-xl">
-                Gain insights through detailed analytics.
+                Validate data and view payout calculations.
               </p>
             </div>
           </Link>
