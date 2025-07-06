@@ -280,47 +280,48 @@ export default function DataValidation() {
           )}
 
           {/* Action Buttons */}
-          {allValidationComplete && (
-            <div className="space-y-6 mt-12">
+          <div className="space-y-6 mt-12">
               {/* Validation Actions */}
-              <div className="flex justify-center space-x-4">
-                <Button
-                  variant="outline"
-                  onClick={() => validateMutation.mutate()}
-                  disabled={validateMutation.isPending}
-                  className="px-6 py-3"
-                >
-                  {validateMutation.isPending ? (
-                    <>
-                      <RefreshCw className="h-4 w-4 mr-2 animate-spin" />
-                      Re-validating...
-                    </>
-                  ) : (
-                    <>
-                      <RefreshCw className="h-4 w-4 mr-2" />
-                      Re-validate
-                    </>
-                  )}
-                </Button>
+              {allValidationComplete && (
+                <div className="flex justify-center space-x-4">
+                  <Button
+                    variant="outline"
+                    onClick={() => validateMutation.mutate()}
+                    disabled={validateMutation.isPending}
+                    className="px-6 py-3"
+                  >
+                    {validateMutation.isPending ? (
+                      <>
+                        <RefreshCw className="h-4 w-4 mr-2 animate-spin" />
+                        Re-validating...
+                      </>
+                    ) : (
+                      <>
+                        <RefreshCw className="h-4 w-4 mr-2" />
+                        Re-validate
+                      </>
+                    )}
+                  </Button>
 
-                <Button
-                  onClick={() => proceedMutation.mutate()}
-                  disabled={hasErrors || proceedMutation.isPending}
-                  className="px-8 py-3 bg-blue-600 hover:bg-blue-700 text-white font-semibold"
-                >
-                  {proceedMutation.isPending ? (
-                    <>
-                      <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2" />
-                      Processing...
-                    </>
-                  ) : (
-                    <>
-                      Proceed to Calculation
-                      <ArrowRight className="h-4 w-4 ml-2" />
-                    </>
-                  )}
-                </Button>
-              </div>
+                  <Button
+                    onClick={() => proceedMutation.mutate()}
+                    disabled={hasErrors || proceedMutation.isPending}
+                    className="px-8 py-3 bg-blue-600 hover:bg-blue-700 text-white font-semibold"
+                  >
+                    {proceedMutation.isPending ? (
+                      <>
+                        <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2" />
+                        Processing...
+                      </>
+                    ) : (
+                      <>
+                        Proceed to Calculation
+                        <ArrowRight className="h-4 w-4 ml-2" />
+                      </>
+                    )}
+                  </Button>
+                </div>
+              )}
 
               {/* Navigation Options after Validation */}
               <div className="border-t dark:border-gray-700 pt-6">
@@ -354,7 +355,6 @@ export default function DataValidation() {
                 </div>
               </div>
             </div>
-          )}
 
           {hasErrors && allValidationComplete && (
             <Card className="bg-red-50 dark:bg-red-900/20 border-red-200 dark:border-red-800 mt-8">

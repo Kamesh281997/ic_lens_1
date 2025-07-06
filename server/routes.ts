@@ -391,6 +391,140 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Payout calculation endpoints
+  app.get("/api/payout/results", async (req, res) => {
+    try {
+      // Sample payout results data with new column structure
+      const sampleResults = [
+        {
+          repId: "10000000",
+          repName: "Michael Garcia",
+          region: "North America",
+          quota: 500000,
+          actualSales: 625000,
+          attainmentPercent: 125.0,
+          payoutCurveType: "Goal Attainment",
+          finalPayout: 75000,
+          percentOfTargetPay: 150.0,
+          anyAdjustment: "None",
+          notes: "Exceeded quota by 25%"
+        },
+        {
+          repId: "10000001",
+          repName: "Sarah Johnson",
+          region: "Europe",
+          quota: 400000,
+          actualSales: 380000,
+          attainmentPercent: 95.0,
+          payoutCurveType: "Goal Attainment with Relative Rank",
+          finalPayout: 38000,
+          percentOfTargetPay: 95.0,
+          anyAdjustment: "Q4 Adjustment +$2k",
+          notes: "Strong performance in challenging market"
+        },
+        {
+          repId: "10000002",
+          repName: "David Chen",
+          region: "Asia Pacific",
+          quota: 600000,
+          actualSales: 720000,
+          attainmentPercent: 120.0,
+          payoutCurveType: "Goal Attainment",
+          finalPayout: 84000,
+          percentOfTargetPay: 140.0,
+          anyAdjustment: "None",
+          notes: "Top performer in region"
+        },
+        {
+          repId: "10000003",
+          repName: "Emily Rodriguez",
+          region: "South America",
+          quota: 350000,
+          actualSales: 425000,
+          attainmentPercent: 121.4,
+          payoutCurveType: "Goal Attainment with Relative Rank",
+          finalPayout: 51000,
+          percentOfTargetPay: 145.7,
+          anyAdjustment: "Territory Expansion Bonus +$3k",
+          notes: "Excellent growth in new territory"
+        }
+      ];
+
+      res.json({ results: sampleResults });
+    } catch (error) {
+      res.status(500).json({ message: "Failed to fetch payout results" });
+    }
+  });
+
+  app.post("/api/payout/calculate", async (req, res) => {
+    try {
+      // Simulate calculation process
+      const calculationResult = {
+        status: "completed",
+        message: "Payout calculations completed successfully",
+        recordsProcessed: 4,
+        totalPayout: 248000
+      };
+      
+      res.json(calculationResult);
+    } catch (error) {
+      res.status(500).json({ message: "Payout calculation failed" });
+    }
+  });
+
+  app.get("/api/payout/export", async (req, res) => {
+    try {
+      // Create CSV export
+      const csvHeaders = "Rep ID,Rep Name,Region,Quota,Actual Sales,Attainment %,Payout Curve Type,Final Payout ($),% of Target Pay,Any Adjustment,Notes\n";
+      const csvData = [
+        "10000000,Michael Garcia,North America,500000,625000,125.0,Goal Attainment,75000,150.0,None,Exceeded quota by 25%",
+        "10000001,Sarah Johnson,Europe,400000,380000,95.0,Goal Attainment with Relative Rank,38000,95.0,Q4 Adjustment +$2k,Strong performance in challenging market",
+        "10000002,David Chen,Asia Pacific,600000,720000,120.0,Goal Attainment,84000,140.0,None,Top performer in region",
+        "10000003,Emily Rodriguez,South America,350000,425000,121.4,Goal Attainment with Relative Rank,51000,145.7,Territory Expansion Bonus +$3k,Excellent growth in new territory"
+      ].join("\n");
+
+      res.setHeader('Content-Type', 'text/csv');
+      res.setHeader('Content-Disposition', 'attachment; filename="payout_results.csv"');
+      res.send(csvHeaders + csvData);
+    } catch (error) {
+      res.status(500).json({ message: "Export failed" });
+    }
+  });
+
+  app.get("/api/analytics/insights", async (req, res) => {
+    try {
+      // Sample analytics data
+      const analyticsData = {
+        topPerformingReps: [
+          { repId: "10000002", repName: "David Chen", payoutAmount: 84000, quotaAttainment: 120.0 },
+          { repId: "10000000", repName: "Michael Garcia", payoutAmount: 75000, quotaAttainment: 125.0 },
+          { repId: "10000003", repName: "Emily Rodriguez", payoutAmount: 51000, quotaAttainment: 121.4 }
+        ],
+        territoryEffectiveness: [
+          { territory: "Asia Pacific", avgQuotaAttainment: 120.0, totalPayout: 84000, repCount: 1 },
+          { territory: "North America", avgQuotaAttainment: 125.0, totalPayout: 75000, repCount: 1 },
+          { territory: "South America", avgQuotaAttainment: 121.4, totalPayout: 51000, repCount: 1 },
+          { territory: "Europe", avgQuotaAttainment: 95.0, totalPayout: 38000, repCount: 1 }
+        ],
+        payoutDistribution: [
+          { range: "$75,000+", count: 2, percentage: 50 },
+          { range: "$50,000-$74,999", count: 1, percentage: 25 },
+          { range: "$25,000-$49,999", count: 1, percentage: 25 }
+        ],
+        summary: {
+          totalPayout: 248000,
+          avgQuotaAttainment: 115.4,
+          totalReps: 4,
+          topPerformerThreshold: 120.0
+        }
+      };
+
+      res.json(analyticsData);
+    } catch (error) {
+      res.status(500).json({ message: "Failed to fetch analytics data" });
+    }
+  });
+
   const httpServer = createServer(app);
   return httpServer;
 }

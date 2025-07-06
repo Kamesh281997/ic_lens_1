@@ -27,13 +27,15 @@ import { useToast } from "@/hooks/use-toast";
 interface PayoutResult {
   repId: string;
   repName: string;
-  territory: string;
+  region: string;
   quota: number;
-  salesAmount: number;
-  quotaAttainment: number;
-  targetPay: number;
-  payoutAmount: number;
-  rank: number;
+  actualSales: number;
+  attainmentPercent: number;
+  payoutCurveType: string;
+  finalPayout: number;
+  percentOfTargetPay: number;
+  anyAdjustment: string;
+  notes: string;
 }
 
 interface AnalyticsData {
@@ -287,13 +289,15 @@ export default function PayoutCalculation() {
                           <TableRow>
                             <TableHead>Rep ID</TableHead>
                             <TableHead>Rep Name</TableHead>
-                            <TableHead>Territory</TableHead>
+                            <TableHead>Region</TableHead>
                             <TableHead className="text-right">Quota</TableHead>
-                            <TableHead className="text-right">Sales</TableHead>
+                            <TableHead className="text-right">Actual Sales</TableHead>
                             <TableHead className="text-right">Attainment %</TableHead>
-                            <TableHead className="text-right">Target Pay</TableHead>
-                            <TableHead className="text-right">Payout</TableHead>
-                            <TableHead className="text-right">Rank</TableHead>
+                            <TableHead>Payout Curve Type</TableHead>
+                            <TableHead className="text-right">Final Payout ($)</TableHead>
+                            <TableHead className="text-right">% of Target Pay</TableHead>
+                            <TableHead>Any Adjustment</TableHead>
+                            <TableHead>Notes</TableHead>
                           </TableRow>
                         </TableHeader>
                         <TableBody>
@@ -301,19 +305,21 @@ export default function PayoutCalculation() {
                             <TableRow key={result.repId}>
                               <TableCell className="font-medium">{result.repId}</TableCell>
                               <TableCell>{result.repName}</TableCell>
-                              <TableCell>{result.territory}</TableCell>
+                              <TableCell>{result.region}</TableCell>
                               <TableCell className="text-right">${result.quota.toLocaleString()}</TableCell>
-                              <TableCell className="text-right">${result.salesAmount.toLocaleString()}</TableCell>
+                              <TableCell className="text-right">${result.actualSales.toLocaleString()}</TableCell>
                               <TableCell className="text-right">
-                                <Badge variant={result.quotaAttainment >= 100 ? "default" : "secondary"}>
-                                  {result.quotaAttainment.toFixed(1)}%
+                                <Badge variant={result.attainmentPercent >= 100 ? "default" : "secondary"}>
+                                  {result.attainmentPercent.toFixed(1)}%
                                 </Badge>
                               </TableCell>
-                              <TableCell className="text-right">${result.targetPay.toLocaleString()}</TableCell>
+                              <TableCell>{result.payoutCurveType}</TableCell>
                               <TableCell className="text-right font-semibold text-green-600">
-                                ${result.payoutAmount.toLocaleString()}
+                                ${result.finalPayout.toLocaleString()}
                               </TableCell>
-                              <TableCell className="text-right">#{result.rank}</TableCell>
+                              <TableCell className="text-right">{result.percentOfTargetPay.toFixed(1)}%</TableCell>
+                              <TableCell>{result.anyAdjustment}</TableCell>
+                              <TableCell className="text-sm text-gray-600 dark:text-gray-400">{result.notes}</TableCell>
                             </TableRow>
                           ))}
                         </TableBody>
