@@ -271,8 +271,8 @@ export default function IcProcessing() {
                     </CardContent>
                   </Card>
 
-                  {/* Submit Button */}
-                  <div className="flex justify-center pt-6">
+                  {/* Action Buttons */}
+                  <div className="flex flex-col sm:flex-row gap-4 justify-center pt-6">
                     <Button
                       type="submit"
                       size="lg"
@@ -286,11 +286,22 @@ export default function IcProcessing() {
                         </>
                       ) : (
                         <>
-                          Proceed to Validation
+                          Proceed to Data Upload
                           <ArrowRight className="h-5 w-5 ml-2" />
                         </>
                       )}
                     </Button>
+                    
+                    <Link href="/data-validation">
+                      <Button
+                        variant="outline"
+                        size="lg"
+                        className="px-8 py-3 border-gray-300 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-800"
+                      >
+                        Skip to Data Validation
+                        <ArrowRight className="h-5 w-5 ml-2" />
+                      </Button>
+                    </Link>
                   </div>
                 </form>
               </Form>
