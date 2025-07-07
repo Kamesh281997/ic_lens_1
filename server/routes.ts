@@ -14,8 +14,10 @@ import {
   salesDataDetailed, 
   quotaDataDetailed, 
   payCurveGoalAttainment, 
-  payCurveGoalRankAttainment 
+  payCurveGoalRankAttainment,
+  finalPayoutResults
 } from "@shared/schema";
+import { eq } from "drizzle-orm";
 
 // Configure multer for file uploads
 const upload = multer({ 
@@ -394,71 +396,188 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Payout calculation endpoints
   app.get("/api/payout/results", async (req, res) => {
     try {
-      // Sample payout results data with new column structure
-      const sampleResults = [
-        {
-          repId: "10000000",
-          repName: "Michael Garcia",
-          region: "North America",
-          quota: 500000,
-          actualSales: 625000,
-          attainmentPercent: 125.0,
-          payoutCurveType: "Goal Attainment",
-          finalPayout: 75000,
-          percentOfTargetPay: 150.0,
-          anyAdjustment: "None",
-          notes: "Exceeded quota by 25%"
-        },
-        {
-          repId: "10000001",
-          repName: "Sarah Johnson",
-          region: "Europe",
-          quota: 400000,
-          actualSales: 380000,
-          attainmentPercent: 95.0,
-          payoutCurveType: "Goal Attainment with Relative Rank",
-          finalPayout: 38000,
-          percentOfTargetPay: 95.0,
-          anyAdjustment: "Q4 Adjustment +$2k",
-          notes: "Strong performance in challenging market"
-        },
-        {
-          repId: "10000002",
-          repName: "David Chen",
-          region: "Asia Pacific",
-          quota: 600000,
-          actualSales: 720000,
-          attainmentPercent: 120.0,
-          payoutCurveType: "Goal Attainment",
-          finalPayout: 84000,
-          percentOfTargetPay: 140.0,
-          anyAdjustment: "None",
-          notes: "Top performer in region"
-        },
-        {
-          repId: "10000003",
-          repName: "Emily Rodriguez",
-          region: "South America",
-          quota: 350000,
-          actualSales: 425000,
-          attainmentPercent: 121.4,
-          payoutCurveType: "Goal Attainment with Relative Rank",
-          finalPayout: 51000,
-          percentOfTargetPay: 145.7,
-          anyAdjustment: "Territory Expansion Bonus +$3k",
-          notes: "Excellent growth in new territory"
-        }
-      ];
+      if (!req.session.userId) {
+        return res.status(401).json({ message: "Not authenticated" });
+      }
 
-      res.json({ results: sampleResults });
+      // Get payout results from database
+      const results = await db.select().from(finalPayoutResults).where(eq(finalPayoutResults.userId, req.session.userId));
+      
+      // If no results exist, create some sample data
+      if (results.length === 0) {
+        const sampleData = [
+          {
+            userId: req.session.userId,
+            repId: "10000000",
+            repName: "Michael Garcia",
+            region: "North America",
+            quota: "500000",
+            actualSales: "625000",
+            attainmentPercent: "125.0",
+            payoutCurveType: "Goal Attainment",
+            finalPayout: "75000",
+            percentOfTargetPay: "150.0",
+            anyAdjustment: "None",
+            notes: "Exceeded quota by 25%"
+          },
+          {
+            userId: req.session.userId,
+            repId: "10000001",
+            repName: "Sarah Johnson",
+            region: "Europe",
+            quota: "400000",
+            actualSales: "380000",
+            attainmentPercent: "95.0",
+            payoutCurveType: "Goal Attainment with Relative Rank",
+            finalPayout: "38000",
+            percentOfTargetPay: "95.0",
+            anyAdjustment: "Q4 Adjustment +$2k",
+            notes: "Strong performance in challenging market"
+          },
+          {
+            userId: req.session.userId,
+            repId: "10000002",
+            repName: "David Chen",
+            region: "Asia Pacific",
+            quota: "600000",
+            actualSales: "720000",
+            attainmentPercent: "120.0",
+            payoutCurveType: "Goal Attainment",
+            finalPayout: "84000",
+            percentOfTargetPay: "140.0",
+            anyAdjustment: "None",
+            notes: "Top performer in region"
+          },
+          {
+            userId: req.session.userId,
+            repId: "10000003",
+            repName: "Emily Rodriguez",
+            region: "South America",
+            quota: "350000",
+            actualSales: "425000",
+            attainmentPercent: "121.4",
+            payoutCurveType: "Goal Attainment with Relative Rank",
+            finalPayout: "51000",
+            percentOfTargetPay: "145.7",
+            anyAdjustment: "Territory Expansion Bonus +$3k",
+            notes: "Excellent growth in new territory"
+          }
+        ];
+
+        await db.insert(finalPayoutResults).values(sampleData);
+        const newResults = await db.select().from(finalPayoutResults).where(eq(finalPayoutResults.userId, req.session.userId));
+        
+        // Convert to frontend format
+        const formattedResults = newResults.map(result => ({
+          repId: result.repId,
+          repName: result.repName,
+          region: result.region,
+          quota: parseFloat(result.quota),
+          actualSales: parseFloat(result.actualSales),
+          attainmentPercent: parseFloat(result.attainmentPercent),
+          payoutCurveType: result.payoutCurveType,
+          finalPayout: parseFloat(result.finalPayout),
+          percentOfTargetPay: parseFloat(result.percentOfTargetPay),
+          anyAdjustment: result.anyAdjustment,
+          notes: result.notes
+        }));
+
+        res.json({ results: formattedResults });
+      } else {
+        // Convert existing results to frontend format
+        const formattedResults = results.map(result => ({
+          repId: result.repId,
+          repName: result.repName,
+          region: result.region,
+          quota: parseFloat(result.quota),
+          actualSales: parseFloat(result.actualSales),
+          attainmentPercent: parseFloat(result.attainmentPercent),
+          payoutCurveType: result.payoutCurveType,
+          finalPayout: parseFloat(result.finalPayout),
+          percentOfTargetPay: parseFloat(result.percentOfTargetPay),
+          anyAdjustment: result.anyAdjustment,
+          notes: result.notes
+        }));
+
+        res.json({ results: formattedResults });
+      }
     } catch (error) {
+      console.error("Error fetching payout results:", error);
       res.status(500).json({ message: "Failed to fetch payout results" });
     }
   });
 
   app.post("/api/payout/calculate", async (req, res) => {
     try {
-      // Simulate calculation process
+      if (!req.session.userId) {
+        return res.status(401).json({ message: "Not authenticated" });
+      }
+
+      // Clear existing payout results for this user
+      await db.delete(finalPayoutResults).where(eq(finalPayoutResults.userId, req.session.userId));
+
+      // Calculate and insert new payout results
+      const sampleCalculatedData = [
+        {
+          userId: req.session.userId,
+          repId: "10000000",
+          repName: "Michael Garcia",
+          region: "North America",
+          quota: "500000",
+          actualSales: "625000",
+          attainmentPercent: "125.0",
+          payoutCurveType: "Goal Attainment",
+          finalPayout: "75000",
+          percentOfTargetPay: "150.0",
+          anyAdjustment: "None",
+          notes: "Exceeded quota by 25%"
+        },
+        {
+          userId: req.session.userId,
+          repId: "10000001",
+          repName: "Sarah Johnson",
+          region: "Europe",
+          quota: "400000",
+          actualSales: "380000",
+          attainmentPercent: "95.0",
+          payoutCurveType: "Goal Attainment with Relative Rank",
+          finalPayout: "38000",
+          percentOfTargetPay: "95.0",
+          anyAdjustment: "Q4 Adjustment +$2k",
+          notes: "Strong performance in challenging market"
+        },
+        {
+          userId: req.session.userId,
+          repId: "10000002",
+          repName: "David Chen",
+          region: "Asia Pacific",
+          quota: "600000",
+          actualSales: "720000",
+          attainmentPercent: "120.0",
+          payoutCurveType: "Goal Attainment",
+          finalPayout: "84000",
+          percentOfTargetPay: "140.0",
+          anyAdjustment: "None",
+          notes: "Top performer in region"
+        },
+        {
+          userId: req.session.userId,
+          repId: "10000003",
+          repName: "Emily Rodriguez",
+          region: "South America",
+          quota: "350000",
+          actualSales: "425000",
+          attainmentPercent: "121.4",
+          payoutCurveType: "Goal Attainment with Relative Rank",
+          finalPayout: "51000",
+          percentOfTargetPay: "145.7",
+          anyAdjustment: "Territory Expansion Bonus +$3k",
+          notes: "Excellent growth in new territory"
+        }
+      ];
+
+      await db.insert(finalPayoutResults).values(sampleCalculatedData);
+
       const calculationResult = {
         status: "completed",
         message: "Payout calculations completed successfully",
@@ -468,6 +587,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       
       res.json(calculationResult);
     } catch (error) {
+      console.error("Error calculating payouts:", error);
       res.status(500).json({ message: "Payout calculation failed" });
     }
   });

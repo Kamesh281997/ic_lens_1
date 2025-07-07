@@ -79,6 +79,25 @@ export const payoutCalculations = pgTable("payout_calculations", {
   calculatedAt: timestamp("calculated_at").defaultNow().notNull(),
 });
 
+// Final Payout Results table - comprehensive payout data
+export const finalPayoutResults = pgTable("final_payout_results", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id").references(() => users.id).notNull(),
+  repId: text("rep_id").notNull(),
+  repName: text("rep_name").notNull(),
+  region: text("region").notNull(),
+  quota: decimal("quota", { precision: 15, scale: 2 }).notNull(),
+  actualSales: decimal("actual_sales", { precision: 15, scale: 2 }).notNull(),
+  attainmentPercent: decimal("attainment_percent", { precision: 5, scale: 2 }).notNull(),
+  payoutCurveType: text("payout_curve_type").notNull(),
+  finalPayout: decimal("final_payout", { precision: 15, scale: 2 }).notNull(),
+  percentOfTargetPay: decimal("percent_of_target_pay", { precision: 5, scale: 2 }).notNull(),
+  anyAdjustment: text("any_adjustment").notNull().default("None"),
+  notes: text("notes").notNull().default(""),
+  calculatedAt: timestamp("calculated_at").defaultNow().notNull(),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+});
+
 export const insertUserSchema = createInsertSchema(users).pick({
   username: true,
   email: true,
@@ -151,6 +170,20 @@ export const insertPayoutCalculationSchema = createInsertSchema(payoutCalculatio
   targetPay: true,
 });
 
+export const insertFinalPayoutResultSchema = createInsertSchema(finalPayoutResults).pick({
+  repId: true,
+  repName: true,
+  region: true,
+  quota: true,
+  actualSales: true,
+  attainmentPercent: true,
+  payoutCurveType: true,
+  finalPayout: true,
+  percentOfTargetPay: true,
+  anyAdjustment: true,
+  notes: true,
+});
+
 // File upload validation schema
 export const fileTypeEnum = z.enum(["hierarchy", "rep_roster", "rep_territory", "sales_data", "target_pay", "quota_data"]);
 export const fileUploadSchema = z.object({
@@ -182,6 +215,8 @@ export type SalesData = typeof salesData.$inferSelect;
 export type InsertSalesData = z.infer<typeof insertSalesDataSchema>;
 export type PayoutCalculation = typeof payoutCalculations.$inferSelect;
 export type InsertPayoutCalculation = z.infer<typeof insertPayoutCalculationSchema>;
+export type FinalPayoutResult = typeof finalPayoutResults.$inferSelect;
+export type InsertFinalPayoutResult = z.infer<typeof insertFinalPayoutResultSchema>;
 
 export type FileUploadData = z.infer<typeof fileUploadSchema>;
 export type IcPlanSelectionData = z.infer<typeof icPlanSelectionSchema>;
