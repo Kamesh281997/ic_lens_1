@@ -85,7 +85,7 @@ export default function DataInsights() {
       {/* Header */}
       <header className="flex items-center justify-between px-6 lg:px-12 py-6">
         <Link href="/">
-          <div className="text-3xl font-bold text-gray-900 dark:text-white hover:text-blue-600 dark:hover:text-blue-400 transition-colors cursor-pointer">
+          <div className="text-4xl font-bold text-gray-900 dark:text-white hover:text-blue-600 dark:hover:text-blue-400 transition-colors cursor-pointer">
             ICLens
           </div>
         </Link>
@@ -105,10 +105,10 @@ export default function DataInsights() {
         <div className="max-w-7xl mx-auto">
           {/* Page Title */}
           <div className="text-center mb-12">
-            <h1 className="text-4xl md:text-5xl font-bold text-gray-900 dark:text-white mb-4">
+            <h1 className="text-5xl md:text-6xl font-bold text-gray-900 dark:text-white mb-4">
               Data Insights & Analytics
             </h1>
-            <p className="text-xl text-gray-600 dark:text-gray-300">
+            <p className="text-2xl text-gray-600 dark:text-gray-300">
               Comprehensive performance analytics and compensation insights
             </p>
           </div>
@@ -146,7 +146,7 @@ export default function DataInsights() {
           {isLoading ? (
             <div className="flex items-center justify-center py-12">
               <RefreshCw className="h-8 w-8 text-blue-600 animate-spin" />
-              <span className="ml-3 text-lg text-gray-600 dark:text-gray-300">
+              <span className="ml-3 text-xl text-gray-600 dark:text-gray-300">
                 Loading analytics data...
               </span>
             </div>
@@ -177,14 +177,14 @@ export default function DataInsights() {
                   {/* Summary Cards */}
                   <Card className="bg-white dark:bg-gray-900 shadow-xl border border-gray-200 dark:border-gray-700">
                     <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                      <CardTitle className="text-sm font-medium">Total Payout</CardTitle>
-                      <DollarSign className="h-4 w-4 text-green-600" />
+                      <CardTitle className="text-lg font-medium">Total Payout</CardTitle>
+                      <DollarSign className="h-6 w-6 text-green-600" />
                     </CardHeader>
                     <CardContent>
-                      <div className="text-2xl font-bold text-green-600">
+                      <div className="text-3xl font-bold text-green-600">
                         ${analyticsData.summary.totalPayout.toLocaleString()}
                       </div>
-                      <p className="text-xs text-gray-600 dark:text-gray-400">
+                      <p className="text-base text-gray-600 dark:text-gray-400">
                         Across all representatives
                       </p>
                     </CardContent>
@@ -192,14 +192,14 @@ export default function DataInsights() {
 
                   <Card className="bg-white dark:bg-gray-900 shadow-xl border border-gray-200 dark:border-gray-700">
                     <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                      <CardTitle className="text-sm font-medium">Average Attainment</CardTitle>
-                      <Target className="h-4 w-4 text-blue-600" />
+                      <CardTitle className="text-lg font-medium">Average Attainment</CardTitle>
+                      <Target className="h-6 w-6 text-blue-600" />
                     </CardHeader>
                     <CardContent>
-                      <div className="text-2xl font-bold text-blue-600">
+                      <div className="text-3xl font-bold text-blue-600">
                         {analyticsData.summary.avgQuotaAttainment.toFixed(1)}%
                       </div>
-                      <p className="text-xs text-gray-600 dark:text-gray-400">
+                      <p className="text-base text-gray-600 dark:text-gray-400">
                         Quota achievement rate
                       </p>
                     </CardContent>
@@ -207,14 +207,14 @@ export default function DataInsights() {
 
                   <Card className="bg-white dark:bg-gray-900 shadow-xl border border-gray-200 dark:border-gray-700">
                     <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                      <CardTitle className="text-sm font-medium">Total Reps</CardTitle>
-                      <Users className="h-4 w-4 text-purple-600" />
+                      <CardTitle className="text-lg font-medium">Total Reps</CardTitle>
+                      <Users className="h-6 w-6 text-purple-600" />
                     </CardHeader>
                     <CardContent>
-                      <div className="text-2xl font-bold text-purple-600">
+                      <div className="text-3xl font-bold text-purple-600">
                         {analyticsData.summary.totalReps}
                       </div>
-                      <p className="text-xs text-gray-600 dark:text-gray-400">
+                      <p className="text-base text-gray-600 dark:text-gray-400">
                         Active representatives
                       </p>
                     </CardContent>
@@ -222,14 +222,14 @@ export default function DataInsights() {
 
                   <Card className="bg-white dark:bg-gray-900 shadow-xl border border-gray-200 dark:border-gray-700">
                     <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                      <CardTitle className="text-sm font-medium">Top Performer Threshold</CardTitle>
-                      <Award className="h-4 w-4 text-orange-600" />
+                      <CardTitle className="text-lg font-medium">Top Performer Threshold</CardTitle>
+                      <Award className="h-6 w-6 text-orange-600" />
                     </CardHeader>
                     <CardContent>
-                      <div className="text-2xl font-bold text-orange-600">
+                      <div className="text-3xl font-bold text-orange-600">
                         {analyticsData.summary.topPerformerThreshold.toFixed(1)}%
                       </div>
-                      <p className="text-xs text-gray-600 dark:text-gray-400">
+                      <p className="text-base text-gray-600 dark:text-gray-400">
                         Excellence benchmark
                       </p>
                     </CardContent>
@@ -239,11 +239,11 @@ export default function DataInsights() {
                 {/* Payout Distribution */}
                 <Card className="bg-white dark:bg-gray-900 shadow-xl border border-gray-200 dark:border-gray-700">
                   <CardHeader>
-                    <CardTitle className="text-xl text-gray-900 dark:text-white flex items-center">
-                      <DollarSign className="h-5 w-5 mr-3 text-green-600" />
+                    <CardTitle className="text-2xl text-gray-900 dark:text-white flex items-center">
+                      <DollarSign className="h-7 w-7 mr-3 text-green-600" />
                       Payout Distribution
                     </CardTitle>
-                    <CardDescription>
+                    <CardDescription className="text-lg">
                       Distribution of payouts across different ranges
                     </CardDescription>
                   </CardHeader>
@@ -252,11 +252,11 @@ export default function DataInsights() {
                       {analyticsData.payoutDistribution.map((item, index) => (
                         <div key={index} className="flex items-center justify-between">
                           <div className="flex items-center space-x-3">
-                            <div className="font-medium text-gray-900 dark:text-white min-w-[120px]">
+                            <div className="font-medium text-lg text-gray-900 dark:text-white min-w-[120px]">
                               {item.range}
                             </div>
                             <Progress value={item.percentage} className="w-32" />
-                            <span className="text-sm text-gray-600 dark:text-gray-400">
+                            <span className="text-lg text-gray-600 dark:text-gray-400">
                               {item.percentage}%
                             </span>
                           </div>
@@ -274,11 +274,11 @@ export default function DataInsights() {
               <TabsContent value="performance">
                 <Card className="bg-white dark:bg-gray-900 shadow-xl border border-gray-200 dark:border-gray-700">
                   <CardHeader>
-                    <CardTitle className="text-xl text-gray-900 dark:text-white flex items-center">
-                      <TrendingUp className="h-5 w-5 mr-3 text-blue-600" />
+                    <CardTitle className="text-2xl text-gray-900 dark:text-white flex items-center">
+                      <TrendingUp className="h-7 w-7 mr-3 text-blue-600" />
                       Top Performing Representatives
                     </CardTitle>
-                    <CardDescription>
+                    <CardDescription className="text-lg">
                       Highest earning sales representatives and their performance metrics
                     </CardDescription>
                   </CardHeader>
@@ -293,16 +293,16 @@ export default function DataInsights() {
                               </span>
                             </div>
                             <div>
-                              <div className="font-semibold text-gray-900 dark:text-white">
+                              <div className="font-semibold text-lg text-gray-900 dark:text-white">
                                 {rep.repName}
                               </div>
-                              <div className="text-sm text-gray-600 dark:text-gray-400">
+                              <div className="text-base text-gray-600 dark:text-gray-400">
                                 ID: {rep.repId}
                               </div>
                             </div>
                           </div>
                           <div className="text-right">
-                            <div className="font-bold text-green-600">
+                            <div className="font-bold text-xl text-green-600">
                               ${rep.payoutAmount.toLocaleString()}
                             </div>
                             <Badge variant={rep.quotaAttainment >= 120 ? "default" : "secondary"}>
@@ -320,11 +320,11 @@ export default function DataInsights() {
               <TabsContent value="territory">
                 <Card className="bg-white dark:bg-gray-900 shadow-xl border border-gray-200 dark:border-gray-700">
                   <CardHeader>
-                    <CardTitle className="text-xl text-gray-900 dark:text-white flex items-center">
-                      <MapPin className="h-5 w-5 mr-3 text-purple-600" />
+                    <CardTitle className="text-2xl text-gray-900 dark:text-white flex items-center">
+                      <MapPin className="h-7 w-7 mr-3 text-purple-600" />
                       Territory Effectiveness
                     </CardTitle>
-                    <CardDescription>
+                    <CardDescription className="text-lg">
                       Performance analysis by territory and region
                     </CardDescription>
                   </CardHeader>
@@ -333,7 +333,7 @@ export default function DataInsights() {
                       {analyticsData.territoryEffectiveness.map((territory, index) => (
                         <div key={territory.territory} className="p-4 border rounded-lg border-gray-200 dark:border-gray-700">
                           <div className="flex items-center justify-between mb-2">
-                            <div className="font-semibold text-gray-900 dark:text-white">
+                            <div className="font-semibold text-lg text-gray-900 dark:text-white">
                               {territory.territory}
                             </div>
                             <Badge variant="outline">
@@ -342,18 +342,18 @@ export default function DataInsights() {
                           </div>
                           <div className="grid grid-cols-2 gap-4">
                             <div>
-                              <div className="text-sm text-gray-600 dark:text-gray-400">
+                              <div className="text-base text-gray-600 dark:text-gray-400">
                                 Average Attainment
                               </div>
-                              <div className="font-bold text-blue-600">
+                              <div className="font-bold text-xl text-blue-600">
                                 {territory.avgQuotaAttainment.toFixed(1)}%
                               </div>
                             </div>
                             <div>
-                              <div className="text-sm text-gray-600 dark:text-gray-400">
+                              <div className="text-base text-gray-600 dark:text-gray-400">
                                 Total Payout
                               </div>
-                              <div className="font-bold text-green-600">
+                              <div className="font-bold text-xl text-green-600">
                                 ${territory.totalPayout.toLocaleString()}
                               </div>
                             </div>
@@ -374,7 +374,7 @@ export default function DataInsights() {
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                   <Card className="bg-white dark:bg-gray-900 shadow-xl border border-gray-200 dark:border-gray-700">
                     <CardHeader>
-                      <CardTitle className="text-lg text-gray-900 dark:text-white">
+                      <CardTitle className="text-2xl text-gray-900 dark:text-white">
                         Payout Range Analysis
                       </CardTitle>
                     </CardHeader>
@@ -382,7 +382,7 @@ export default function DataInsights() {
                       <div className="space-y-3">
                         {analyticsData.payoutDistribution.map((item, index) => (
                           <div key={index} className="flex items-center justify-between">
-                            <span className="text-sm font-medium text-gray-900 dark:text-white">
+                            <span className="text-lg font-medium text-gray-900 dark:text-white">
                               {item.range}
                             </span>
                             <div className="flex items-center space-x-2">
@@ -392,7 +392,7 @@ export default function DataInsights() {
                                   style={{ width: `${item.percentage}%` }}
                                 />
                               </div>
-                              <span className="text-sm text-gray-600 dark:text-gray-400 min-w-[60px]">
+                              <span className="text-lg text-gray-600 dark:text-gray-400 min-w-[60px]">
                                 {item.count} ({item.percentage}%)
                               </span>
                             </div>

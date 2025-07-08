@@ -184,6 +184,8 @@ Changelog:
 - July 08, 2025. Enhanced module cards with professional icons: Cog for IC Plan Configuration, Zap for IC Processing, PieChart for Payout Insights
 - July 08, 2025. Added smooth scrolling navigation to modules section when clicking "Modules" in navigation menu
 - July 08, 2025. Implemented smooth scrolling for both desktop and mobile navigation menus
+- July 08, 2025. Enhanced Data Insights page typography with larger font sizes across all sections for improved readability
+- July 08, 2025. Updated summary cards, section headers, data values, and content text with increased font sizes (text-lg to text-3xl range)
 ```
 
 ## User Preferences
