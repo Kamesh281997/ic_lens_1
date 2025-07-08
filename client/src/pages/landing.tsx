@@ -100,7 +100,7 @@ export default function Landing() {
                   </div>
                 ) : (
                   <Link href="/auth">
-                    <button className="gp-btn-primary pl-[32px] pr-[32px] pt-[7px] pb-[7px]">
+                    <button className="gp-btn-primary pl-[32px] pr-[32px] pt-[5px] pb-[5px]">
                       Login
                     </button>
                   </Link>
