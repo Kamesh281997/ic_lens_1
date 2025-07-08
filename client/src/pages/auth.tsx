@@ -150,7 +150,7 @@ export default function Auth() {
 
           <Button
             type="submit"
-            className="w-full bg-ilens-blue hover:bg-blue-700 text-white py-3 font-medium transform hover:scale-[1.02] transition-all duration-200"
+            className="w-full bg-[#ff4f59] hover:bg-blue-700 text-white py-3 font-medium transform hover:scale-[1.02] transition-all duration-200"
             disabled={login.isPending}
           >
             {login.isPending ? "Signing in..." : "Sign In"}
