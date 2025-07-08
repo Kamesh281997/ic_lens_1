@@ -26,6 +26,7 @@ import {
 import { Link } from "wouter";
 import { useAuth } from "@/hooks/use-auth";
 import genpactLogo from "@assets/image_1751975273545.png";
+import heroImage from "@assets/image_1751977117038.png";
 
 export default function Landing() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -167,55 +168,66 @@ export default function Landing() {
           }}
         ></div>
         
-        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <div className="flex items-center justify-center space-x-8 mb-8">
-            {/* Genpact Logo */}
-            <div className="flex items-center space-x-3">
-              <div style={{ backgroundColor: 'var(--gp-surface-raised)' }} className="rounded-xl p-4 shadow-lg">
-                <img 
-                  src={genpactLogo} 
-                  alt="Genpact" 
-                  className="h-12 w-auto"
-                />
+        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+            {/* Left Content */}
+            <div className="text-center lg:text-left">
+              <div className="flex items-center justify-center lg:justify-start space-x-8 mb-8">
+                {/* Genpact Logo */}
+                <div className="flex items-center space-x-3">
+                  <div style={{ backgroundColor: 'var(--gp-surface-raised)' }} className="rounded-xl p-4 shadow-lg">
+                    <img 
+                      src={genpactLogo} 
+                      alt="Genpact" 
+                      className="h-12 w-auto"
+                    />
+                  </div>
+                </div>
+                
+                <div className="h-12 w-px" style={{ backgroundColor: 'var(--gp-border-subtle)' }}></div>
+                
+                {/* ICLens Logo */}
+                <div className="flex items-center space-x-3">
+                  <div className="w-16 h-16 rounded-xl flex items-center justify-center shadow-lg" style={{ backgroundColor: 'var(--gp-surface-raised)' }}>
+                    <span style={{ color: 'var(--gp-brand-accent)' }} className="font-bold text-2xl">IC</span>
+                  </div>
+                  <span className="text-3xl font-bold" style={{ color: 'var(--gp-content-primary)' }}>ICLens</span>
+                </div>
               </div>
+
+              <h1 className="gp-display-l mb-6">
+                AI-Powered Incentive Compensation Platform
+              </h1>
+              <p className="gp-body-l mb-12 max-w-2xl mx-auto lg:mx-0">
+                Drive excellence in incentive compensation through intelligent automation, advanced analytics, and seamless processing.
+              </p>
+              
+              {isAuthenticated ? (
+                <Link href="/ic-processing">
+                  <button className="gp-btn-primary inline-flex items-center">
+                    START WORKFLOW
+                    <ChevronRight className="ml-2 h-6 w-6" />
+                  </button>
+                </Link>
+              ) : (
+                <Link href="/auth">
+                  <button className="gp-btn-primary inline-flex items-center">
+                    GET STARTED
+                    <ChevronRight className="ml-2 h-6 w-6" />
+                  </button>
+                </Link>
+              )}
             </div>
-            
-            <div className="h-12 w-px" style={{ backgroundColor: 'var(--gp-border-subtle)' }}></div>
-            
-            {/* ICLens Logo */}
-            <div className="flex items-center space-x-3">
-              <div className="w-16 h-16 rounded-xl flex items-center justify-center shadow-lg" style={{ backgroundColor: 'var(--gp-surface-raised)' }}>
-                <span style={{ color: 'var(--gp-brand-accent)' }} className="font-bold text-2xl">IC</span>
-              </div>
-              <span className="text-3xl font-bold" style={{ color: 'var(--gp-content-primary)' }}>ICLens</span>
+
+            {/* Right Image */}
+            <div className="flex justify-center lg:justify-end">
+              <img 
+                src={heroImage} 
+                alt="Incentive Compensation Analytics" 
+                className="max-w-full h-auto rounded-2xl shadow-2xl"
+              />
             </div>
           </div>
-
-          <h1 className="gp-display-xl mb-6 text-center max-w-10">
-            Calculate IC Plans
-          </h1>
-          <h2 className="gp-display-l mb-6 text-center">
-            AI-Powered Incentive Compensation Platform
-          </h2>
-          <p className="gp-body-l mb-12 max-w-3xl mx-auto text-center">
-            Drive excellence in incentive compensation through intelligent automation, advanced analytics, and seamless processing.
-          </p>
-          
-          {isAuthenticated ? (
-            <Link href="/ic-processing">
-              <button className="gp-btn-primary inline-flex items-center">
-                START WORKFLOW
-                <ChevronRight className="ml-2 h-6 w-6" />
-              </button>
-            </Link>
-          ) : (
-            <Link href="/auth">
-              <button className="gp-btn-primary inline-flex items-center">
-                GET STARTED
-                <ChevronRight className="ml-2 h-6 w-6" />
-              </button>
-            </Link>
-          )}
         </div>
       </section>
 

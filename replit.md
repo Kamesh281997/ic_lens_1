@@ -179,6 +179,8 @@ Changelog:
 - July 08, 2025. Applied Genpact button system (primary, secondary, ghost) with proper motion and accessibility
 - July 08, 2025. Redesigned module cards using Genpact card system with surface-raised background and brand accent colors
 - July 08, 2025. Updated footer with Genpact surface-sunken background and proper content hierarchy
+- July 08, 2025. Updated hero section layout with image on right side and removed "Calculate IC Plans" text
+- July 08, 2025. Implemented two-column hero layout with content on left and incentive compensation analytics image on right
 ```
 
 ## User Preferences
