@@ -264,7 +264,7 @@ export default function Landing() {
                   IC Plan Configuration
                 </h3>
                 <p className="gp-body-l mb-6">
-                  Configure and customize incentive compensation plans with advanced parameters and rules
+                  Configure and customize incentive compensation plans with automated workflows
                 </p>
                 <div className="flex items-center justify-center font-semibold" style={{ color: 'var(--gp-brand-accent)' }}>
                   <span>Configure Plans</span>
