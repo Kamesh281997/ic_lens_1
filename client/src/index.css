@@ -312,3 +312,23 @@ body {
     color: var(--ilens-sky);
   }
 }
+
+/* Genpact Input Component */
+.gp-input {
+  background-color: var(--gp-surface-raised);
+  border: 1px solid var(--gp-border-primary);
+  border-radius: 8px;
+  color: var(--gp-content-primary);
+  transition: border-color 0.2s var(--gp-motion-ease-standard), 
+              box-shadow 0.2s var(--gp-motion-ease-standard);
+}
+
+.gp-input:focus {
+  border-color: var(--gp-brand-accent);
+  box-shadow: 0 0 0 2px var(--gp-brand-accent-20);
+  outline: none;
+}
+
+.gp-input::placeholder {
+  color: var(--gp-content-tertiary);
+}
