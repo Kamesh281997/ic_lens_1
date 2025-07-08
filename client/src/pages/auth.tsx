@@ -13,7 +13,6 @@ import { ThemeToggle } from "@/components/theme-toggle";
 import { loginSchema, signupSchema, forgotPasswordSchema } from "@shared/schema";
 import type { LoginData, SignupData, ForgotPasswordData } from "@shared/schema";
 import { useLocation } from "wouter";
-import genpactLogo from "@assets/image_1751975273545.png";
 
 type AuthView = "login" | "signup" | "forgot";
 
@@ -76,8 +75,8 @@ export default function Auth() {
   const renderLoginForm = () => (
     <div className="space-y-6">
       <div className="text-center">
-        <h2 className="gp-h2 mb-2">Welcome back</h2>
-        <p className="gp-body-l">Sign in to your account</p>
+        <h2 className="text-2xl font-semibold text-gray-900 dark:text-white mb-2">Welcome back</h2>
+        <p className="text-ilens-slate dark:text-slate-300">Sign in to your account</p>
       </div>
 
       <Form {...loginForm}>
@@ -87,14 +86,14 @@ export default function Auth() {
             name="username"
             render={({ field }) => (
               <FormItem>
-                <FormLabel className="gp-body-s font-medium">Username</FormLabel>
+                <FormLabel>Username</FormLabel>
                 <FormControl>
                   <div className="relative">
-                    <User className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4" style={{ color: 'var(--gp-content-tertiary)' }} />
+                    <User className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
                     <Input
                       {...field}
                       placeholder="Enter your username"
-                      className="pl-10 py-3 gp-input"
+                      className="pl-10 py-3 bg-gray-50 dark:bg-gray-800 focus:bg-white dark:focus:bg-gray-700 border-gray-300 dark:border-gray-600 focus:border-ilens-blue focus:ring-2 focus:ring-ilens-blue dark:text-white"
                     />
                   </div>
                 </FormControl>
@@ -108,21 +107,20 @@ export default function Auth() {
             name="password"
             render={({ field }) => (
               <FormItem>
-                <FormLabel className="gp-body-s font-medium">Password</FormLabel>
+                <FormLabel>Password</FormLabel>
                 <FormControl>
                   <div className="relative">
-                    <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4" style={{ color: 'var(--gp-content-tertiary)' }} />
+                    <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
                     <Input
                       {...field}
                       type={showPassword ? "text" : "password"}
                       placeholder="Enter your password"
-                      className="pl-10 pr-12 py-3 gp-input"
+                      className="pl-10 pr-12 py-3 bg-gray-50 dark:bg-gray-800 focus:bg-white dark:focus:bg-gray-700 border-gray-300 dark:border-gray-600 focus:border-ilens-blue focus:ring-2 focus:ring-ilens-blue dark:text-white"
                     />
                     <button
                       type="button"
                       onClick={() => setShowPassword(!showPassword)}
-                      className="absolute right-3 top-1/2 transform -translate-y-1/2 transition-colors"
-                      style={{ color: 'var(--gp-content-tertiary)' }}
+                      className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
                     >
                       {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                     </button>
@@ -136,38 +134,46 @@ export default function Auth() {
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-2">
               <Checkbox id="remember" />
-              <Label htmlFor="remember" className="gp-body-s">
+              <Label htmlFor="remember" className="text-sm text-gray-700 dark:text-gray-300">
                 Remember me
               </Label>
             </div>
-            <button
+            <Button
               type="button"
-              className="gp-btn-ghost gp-body-s p-0"
+              variant="ghost"
+              className="text-sm text-ilens-blue hover:text-ilens-sky p-0"
               onClick={() => setCurrentView("forgot")}
             >
               Forgot password?
-            </button>
+            </Button>
           </div>
 
-          <button
+          <Button
             type="submit"
-            className="gp-btn-primary w-full py-3 font-medium"
+            className="w-full bg-ilens-blue hover:bg-blue-700 text-white py-3 font-medium transform hover:scale-[1.02] transition-all duration-200"
             disabled={login.isPending}
           >
             {login.isPending ? "Signing in..." : "Sign In"}
-          </button>
+          </Button>
         </form>
       </Form>
 
+      <div className="flex items-center">
+        <div className="flex-1 border-t border-gray-300"></div>
+        <span className="px-4 text-sm text-gray-500">or</span>
+        <div className="flex-1 border-t border-gray-300"></div>
+      </div>
+
       <div className="text-center">
-        <p className="gp-body-s">
+        <p className="text-gray-600 dark:text-gray-300">
           Don't have an account?{" "}
-          <button
-            className="gp-btn-ghost font-medium p-0"
+          <Button
+            variant="ghost"
+            className="text-ilens-blue hover:text-ilens-sky font-medium p-0"
             onClick={() => setCurrentView("signup")}
           >
             Sign up
-          </button>
+          </Button>
         </p>
       </div>
     </div>
@@ -377,60 +383,34 @@ export default function Auth() {
   );
 
   return (
-    <div className="min-h-screen flex items-center justify-center p-4" style={{ backgroundColor: 'var(--gp-surface-base)' }}>
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50 dark:from-gray-900 dark:to-gray-800 flex items-center justify-center p-4">
       <div className="w-full max-w-md">
         {/* Theme Toggle */}
-        <div className="flex justify-between items-center mb-8">
-          <button 
-            onClick={() => navigate("/")}
-            className="gp-btn-ghost inline-flex items-center"
-          >
-            <ArrowLeft className="h-6 w-6" />
-          </button>
+        <div className="flex justify-end mb-4">
           <ThemeToggle />
         </div>
         
         {/* Logo and Brand */}
         <div className="text-center mb-8">
-          <div className="flex items-center justify-center space-x-8 mb-6">
-            {/* Genpact Logo */}
-            <div className="flex items-center space-x-3">
-              <div style={{ backgroundColor: 'var(--gp-surface-raised)' }} className="rounded-xl p-3 shadow-lg">
-                <img 
-                  src={genpactLogo} 
-                  alt="Genpact" 
-                  className="h-8 w-auto"
-                />
-              </div>
-            </div>
-            
-            <div className="h-8 w-px" style={{ backgroundColor: 'var(--gp-border-subtle)' }}></div>
-            
-            {/* ICLens Logo */}
-            <div className="flex items-center space-x-3">
-              <div className="w-12 h-12 rounded-xl flex items-center justify-center shadow-lg" style={{ backgroundColor: 'var(--gp-surface-raised)' }}>
-                <span style={{ color: 'var(--gp-brand-accent)' }} className="font-bold text-xl">IC</span>
-              </div>
-              <span className="text-2xl font-bold" style={{ color: 'var(--gp-content-primary)' }}>ICLens</span>
-            </div>
+          <div className="inline-flex items-center justify-center w-16 h-16 bg-ilens-blue rounded-xl mb-4 shadow-lg">
+            <Eye className="text-white h-8 w-8" />
           </div>
-          <p className="gp-body-l">AI-Powered Incentive Compensation Platform</p>
+          <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">ICLens</h1>
+          <p className="text-ilens-slate dark:text-slate-300">Vision Intelligence Platform</p>
         </div>
 
         {/* Main Auth Card */}
-        <div className="gp-card">
-          <div className="p-8">
+        <Card className="bg-white dark:bg-gray-900 shadow-xl border border-gray-100 dark:border-gray-700">
+          <CardContent className="p-8">
             {currentView === "login" && renderLoginForm()}
             {currentView === "signup" && renderSignupForm()}
             {currentView === "forgot" && renderForgotForm()}
-          </div>
-        </div>
+          </CardContent>
+        </Card>
 
         {/* Footer */}
-        <div className="text-center mt-8">
-          <p className="gp-body-s" style={{ color: 'var(--gp-content-tertiary)' }}>
-            &copy; 2025 Genpact. All rights reserved.
-          </p>
+        <div className="text-center mt-8 text-sm text-gray-500 dark:text-gray-400">
+          <p>&copy; 2024 ICLens. All rights reserved.</p>
         </div>
       </div>
     </div>
