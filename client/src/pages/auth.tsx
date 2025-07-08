@@ -392,7 +392,7 @@ export default function Auth() {
         
         {/* Logo and Brand */}
         <div className="text-center mb-8">
-          <div className="inline-flex items-center justify-center w-16 h-16 bg-ilens-blue rounded-xl mb-4 shadow-lg">
+          <div className="inline-flex items-center justify-center w-16 h-16 rounded-xl mb-4 shadow-lg bg-[#ff4f59]">
             <Eye className="text-white h-8 w-8" />
           </div>
           <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">ICLens</h1>
