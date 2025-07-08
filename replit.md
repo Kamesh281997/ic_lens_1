@@ -186,6 +186,9 @@ Changelog:
 - July 08, 2025. Implemented smooth scrolling for both desktop and mobile navigation menus
 - July 08, 2025. Enhanced Data Insights page typography with larger font sizes across all sections for improved readability
 - July 08, 2025. Updated summary cards, section headers, data values, and content text with increased font sizes (text-lg to text-3xl range)
+- July 08, 2025. Applied comprehensive Genpact design system theme to About and Contact pages with CSS variables, proper typography scale, and brand colors
+- July 08, 2025. Updated About page with gp-card, gp-h1, gp-body-l classes and Genpact brand accent colors for icons
+- July 08, 2025. Redesigned Contact page with Genpact button system (gp-btn-primary, gp-btn-secondary, gp-btn-ghost) and matching color scheme
 ```
 
 ## User Preferences
