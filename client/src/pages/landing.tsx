@@ -21,7 +21,10 @@ import {
   BookOpen,
   Users,
   Activity,
-  Award
+  Award,
+  Cog,
+  Zap,
+  PieChart
 } from "lucide-react";
 import { Link } from "wouter";
 import { useAuth } from "@/hooks/use-auth";
@@ -68,9 +71,12 @@ export default function Landing() {
               <Link href="/about" className="gp-nav-link text-lg font-medium">
                 About
               </Link>
-              <Link href="#modules" className="gp-nav-link text-lg font-medium">
+              <a href="#modules" className="gp-nav-link text-lg font-medium cursor-pointer" onClick={(e) => {
+                e.preventDefault();
+                document.getElementById('modules')?.scrollIntoView({ behavior: 'smooth' });
+              }}>
                 Modules
-              </Link>
+              </a>
               <Link href="/contact" className="gp-nav-link text-lg font-medium">
                 Contact
               </Link>
@@ -124,9 +130,13 @@ export default function Landing() {
                 <Link href="/about" className="text-lg font-medium text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400">
                   About
                 </Link>
-                <Link href="#modules" className="text-lg font-medium text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400">
+                <a href="#modules" className="text-lg font-medium text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 cursor-pointer" onClick={(e) => {
+                  e.preventDefault();
+                  setIsMobileMenuOpen(false);
+                  document.getElementById('modules')?.scrollIntoView({ behavior: 'smooth' });
+                }}>
                   Modules
-                </Link>
+                </a>
                 <Link href="/contact" className="text-lg font-medium text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400">
                   Contact
                 </Link>
@@ -248,7 +258,7 @@ export default function Landing() {
             <Link href={isAuthenticated ? "/ic-plan-configuration" : "/auth?redirect=/ic-plan-configuration"}>
               <div className="gp-card text-center cursor-pointer group transition-all duration-300 hover:shadow-xl transform hover:scale-105">
                 <div className="w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6 transition-colors" style={{ backgroundColor: 'var(--gp-brand-accent)' }}>
-                  <Settings className="h-10 w-10" style={{ color: 'var(--gp-surface-base)' }} />
+                  <Cog className="h-10 w-10" style={{ color: 'var(--gp-surface-base)' }} />
                 </div>
                 <h3 className="gp-h2 mb-4">
                   IC Plan Configuration
@@ -267,7 +277,7 @@ export default function Landing() {
             <Link href={isAuthenticated ? "/ic-processing" : "/auth?redirect=/ic-processing"}>
               <div className="gp-card text-center cursor-pointer group transition-all duration-300 hover:shadow-xl transform hover:scale-105">
                 <div className="w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6 transition-colors" style={{ backgroundColor: 'var(--gp-state-success)' }}>
-                  <RefreshCw className="h-10 w-10" style={{ color: 'var(--gp-surface-base)' }} />
+                  <Zap className="h-10 w-10" style={{ color: 'var(--gp-surface-base)' }} />
                 </div>
                 <h3 className="gp-h2 mb-4">
                   IC Processing
@@ -286,7 +296,7 @@ export default function Landing() {
             <Link href={isAuthenticated ? "/data-insights" : "/auth?redirect=/data-insights"}>
               <div className="gp-card text-center cursor-pointer group transition-all duration-300 hover:shadow-xl transform hover:scale-105">
                 <div className="w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6 transition-colors" style={{ backgroundColor: 'var(--gp-state-warning)' }}>
-                  <BarChart3 className="h-10 w-10" style={{ color: 'var(--gp-surface-base)' }} />
+                  <PieChart className="h-10 w-10" style={{ color: 'var(--gp-surface-base)' }} />
                 </div>
                 <h3 className="gp-h2 mb-4">
                   Payout Insights

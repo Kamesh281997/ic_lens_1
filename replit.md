@@ -181,6 +181,9 @@ Changelog:
 - July 08, 2025. Updated footer with Genpact surface-sunken background and proper content hierarchy
 - July 08, 2025. Updated hero section layout with image on right side and removed "Calculate IC Plans" text
 - July 08, 2025. Implemented two-column hero layout with content on left and incentive compensation analytics image on right
+- July 08, 2025. Enhanced module cards with professional icons: Cog for IC Plan Configuration, Zap for IC Processing, PieChart for Payout Insights
+- July 08, 2025. Added smooth scrolling navigation to modules section when clicking "Modules" in navigation menu
+- July 08, 2025. Implemented smooth scrolling for both desktop and mobile navigation menus
 ```
 
 ## User Preferences
