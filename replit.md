@@ -165,6 +165,13 @@ Changelog:
 - July 07, 2025. Updated API endpoints to store and retrieve payout data from PostgreSQL database instead of using static sample data
 - July 07, 2025. Implemented user-specific payout data storage with authentication and session management
 - July 07, 2025. Added database schema types and validation for final payout results with proper decimal precision for financial data
+- July 07, 2025. Completely redesigned landing page with Genpact branding and professional layout
+- July 07, 2025. Updated navigation bar with right-aligned menu items (Home, About, Modules, Contact) and increased font sizes
+- July 07, 2025. Added Genpact logo to left corner alongside ICLens logo with proper brand hierarchy
+- July 07, 2025. Replaced hero section heading with "Calculate IC Plans" and enhanced with Genpact partnership branding
+- July 07, 2025. Updated modules section with three modules: IC Plan Configuration, IC Processing, and Payout Insights (renamed from Data Insights)
+- July 07, 2025. Added comprehensive footer with three columns: Company Info (Genpact branding and social media), Product links, and Support resources
+- July 07, 2025. Implemented responsive design with mobile navigation and professional gradient backgrounds
 ```
 
 ## User Preferences
