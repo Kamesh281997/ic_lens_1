@@ -167,7 +167,6 @@ export default function Landing() {
           )}
         </div>
       </header>
-
       {/* Hero Section */}
       <section className="relative py-20 lg:py-32 overflow-hidden" style={{ backgroundColor: 'var(--gp-surface-base)' }}>
         {/* Background Gradient Overlay */}
@@ -240,7 +239,6 @@ export default function Landing() {
           </div>
         </div>
       </section>
-
       {/* Modules Section */}
       <section id="modules" className="py-20" style={{ backgroundColor: 'var(--gp-surface-raised)' }}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -260,9 +258,7 @@ export default function Landing() {
                 <div className="w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6 transition-colors" style={{ backgroundColor: 'var(--gp-brand-accent)' }}>
                   <Cog className="h-10 w-10" style={{ color: 'var(--gp-surface-base)' }} />
                 </div>
-                <h3 className="gp-h2 mb-4">
-                  IC Plan Configuration
-                </h3>
+                <h3 className="gp-h2 mb-4">IC Configuration</h3>
                 <p className="gp-body-l mb-6">
                   Configure and customize incentive compensation plans with automated workflows
                 </p>
@@ -313,7 +309,6 @@ export default function Landing() {
           </div>
         </div>
       </section>
-
       {/* Footer Section */}
       <footer style={{ backgroundColor: 'var(--gp-surface-sunken)' }}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
