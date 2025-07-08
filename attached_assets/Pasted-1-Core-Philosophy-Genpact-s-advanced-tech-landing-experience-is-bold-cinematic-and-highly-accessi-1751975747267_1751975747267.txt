@@ -1,0 +1,97 @@
+1. Core Philosophy
+Genpact’s advanced‑tech landing experience is bold, cinematic, and highly accessible. The design system translates that spirit into reusable tokens and rules that enable consistent, performant, and WCAG‑AA–compliant digital products.
+Distinct — striking contrast, dramatic typography, and a vibrant accent red drive instant brand recognition.
+Accessible — color pairings meet 4.5:1 contrast; focus states and motion settings respect user preferences.
+Consistent — every visual decision maps back to a single‑source token library so teams ship faster and at scale.
+2. Design Tokens
+Token	HEX	Usage
+brand‑accent	#FF4F59	Primary CTAs, interactive hovers (≤10 % of page)
+surface‑base	#0E0F0C	Page background
+surface‑raised	#161617	Cards, modals
+surface‑sunken	#0A0B09	Nav rail, footer
+content‑primary	#FFFFFF	Headlines, large numbers
+content‑secondary	#C8C8C8	Body copy
+content‑tertiary	#8F8F8F	Meta, timestamps
+border‑subtle	#454745	Hairlines, dividers
+state‑success	#9FE870	Positive badges
+state‑warning	#FFEB69	Caution / alerts
+state‑error	#FF424D	Negative / destructive
+overlay‑scrim	rgba(14,15,12,.64)	Dialog, drop‑shadow
+All tokens are exported as CSS custom properties (e.g. --gp-brand-accent). A JSON file for design tools is auto‑generated from the same source.
+3. Typography
+Level	Sample	Size	Weight	Line‑height	Tracking
+Display‑XL	Advanced tech – it’s on	64 px	700	90 %	-1 %
+Display‑L	Genpact Intelligence	48 px	700	100 %	-0.5 %
+H1	Section heading	36 px	700	110 %	0 %
+H2	Card / module title	28 px	600	120 %	0 %
+H3	Overline	18 px	600	120 %	5 %
+Body‑L	Paragraph	16 px	400	150 %	0 %
+Body‑S	Caption	14 px	400	150 %	0 %
+Typeface: Inter for UI; fallback to system-ui stack. All sizes follow a 1.333 type‑scale.
+Accessibility note: never rely on font weight alone; pair with color or iconography.
+4. Spacing & Layout
+Base unit: 4 px. Spacing scale multiplies the base: 0, 2, 4, 8, 12, 16, 24, 32, 48, 64, 96.
+Grid: 12‑column responsive grid
+• ≤600 px: 4 col, 16 px gutters
+• 601–1024 px: 8 col, 24 px gutters
+• ≥1025 px: 12 col, 24 px gutters
+Elevation:
+Level	Y‑offset	Blur	Color
+1 (card)	0 px	4 px	rgba(0,0,0,.3)
+2 (modal)	2 px	16 px	rgba(0,0,0,.4)
+5. Iconography
+Stroke‑only, 2 px weight, rounded joins.
+Primary icons use content‑secondary; hover swaps to brand‑accent.
+Library: Lucide (open‑source) customised with 20 % corner rounding.
+6. Components
+6.1 Buttons
+Variant	Background	Text	Border	Hover
+Primary	brand‑accent	surface‑base	none	box‑shadow level 1
+Secondary	transparent	brand‑accent	1 px brand‑accent	background rgba(255,79,89,.12)
+Ghost	transparent	content‑secondary	none	text → brand‑accent
+Buttons use 14 px text, 24 px vertical padding, and 32 px border‑radius (pill shape in hero CTAs).
+6.2 Navigation Bar
+Height: 72 px, surface‑base background.
+Sticky with backdrop‑blur 8 px on scroll.
+Active link underline brand‑accent 3 px.
+6.3 Card
+Padding: 24 px.
+Default width: 320 px.
+Preview media 16:9 ratio, radius 12 px.
+Title H3, body Body‑S.
+6.4 Hero “Control Tower”
+Full‑bleed video/3D canvas.
+Overlay gradient: linear 180° surface‑base 0% → transparent 40%.
+Max headline width: 10 ch.
+6.5 Dialogue / Modal
+Max‐width: 640 px.
+Roundness: 24 px.
+Opens with scale(0.96) / opacity 0 → scale(1) 200 ms ease‑out.
+7. Motion
+Token	Duration	Easing
+motion‑fast	150 ms	cubic-bezier(0.4,0,1,1)
+motion‑standard	300 ms	cubic-bezier(0.4,0,0.2,1)
+motion‑enter‑hero	600 ms	cubic-bezier(0.2,0.8,0.2,1)
+Reduced‑motion preference: disable non‑essential transforms, keep opacity fades.
+8. Accessibility Guidelines
+Contrast: All text ≥4.5:1; icon + text combos ≥3:1.
+Focus Ring: 2 px brand‑accent outset; never suppressed.
+Keyboard Nav: Top‑bar order: logo → primary links → search → locale → CTA.
+Language: Declared as lang="en".
+9. Implementation: CSS Variable Map
+:root {
+  --gp-brand-accent: #FF4F59;
+  --gp-surface-base: #0E0F0C;
+  --gp-surface-raised: #161617;
+  --gp-surface-sunken: #0A0B09;
+  --gp-content-primary: #FFFFFF;
+  --gp-content-secondary: #C8C8C8;
+  --gp-content-tertiary: #8F8F8F;
+  --gp-border-subtle: #454745;
+  --gp-state-success: #9FE870;
+  --gp-state-warning: #FFEB69;
+  --gp-state-error: #FF424D;
+  --gp-overlay-scrim: rgba(14,15,12,.64);
+  --gp-motion-fast: 150ms cubic-bezier(0.4,0,1,1);
+  --gp-motion-standard: 300ms cubic-bezier(0.4,0,0.2,1);
+}
