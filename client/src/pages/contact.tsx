@@ -4,6 +4,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { ThemeToggle } from "@/components/theme-toggle";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Link } from "wouter";
 import { ArrowLeft, Mail, Phone, MapPin, Clock, Send } from "lucide-react";
 
@@ -39,24 +40,21 @@ export default function Contact() {
   };
 
   return (
-    <div className="min-h-screen" style={{ backgroundColor: 'var(--gp-surface-base)' }}>
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50 dark:from-gray-900 dark:to-gray-800">
       {/* Header */}
-      <header className="flex items-center justify-between px-6 lg:px-12 py-6" style={{ backgroundColor: 'var(--gp-surface-base)', borderBottom: '1px solid var(--gp-border-subtle)' }}>
+      <header className="flex items-center justify-between px-6 lg:px-12 py-6">
         <Link href="/">
-          <div className="flex items-center space-x-3 cursor-pointer">
-            <div className="w-12 h-12 rounded-xl flex items-center justify-center shadow-lg" style={{ backgroundColor: 'var(--gp-surface-raised)' }}>
-              <span style={{ color: 'var(--gp-brand-accent)' }} className="font-bold text-xl">IC</span>
-            </div>
-            <span className="text-2xl font-bold" style={{ color: 'var(--gp-content-primary)' }}>ICLens</span>
+          <div className="text-3xl font-bold text-gray-900 dark:text-white hover:text-blue-600 dark:hover:text-blue-400 transition-colors cursor-pointer">
+            ICLens
           </div>
         </Link>
         <div className="flex items-center space-x-4">
           <ThemeToggle />
           <Link href="/">
-            <button className="gp-btn-ghost inline-flex items-center">
+            <Button variant="ghost" className="text-gray-600 dark:text-gray-300">
               <ArrowLeft className="h-4 w-4 mr-2" />
               Back to Home
-            </button>
+            </Button>
           </Link>
         </div>
       </header>
@@ -66,55 +64,60 @@ export default function Contact() {
         <div className="max-w-6xl mx-auto">
           {/* Hero Section */}
           <div className="text-center mb-16">
-            <h1 className="gp-display-l mb-6">
+            <h1 className="text-5xl md:text-6xl font-bold text-gray-900 dark:text-white mb-6">
               Contact Us
             </h1>
-            <p className="gp-body-l">
-              Get in touch with our team - we're here to help you succeed
+            <p className="text-xl md:text-2xl text-gray-600 dark:text-gray-300 leading-relaxed">
+              Ready to revolutionize your incentive compensation? Let's talk.
             </p>
           </div>
 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
             {/* Contact Form */}
-            <div className="gp-card">
-              <div className="p-8">
-                <h2 className="gp-h1 mb-6">Send us a Message</h2>
+            <Card className="bg-white dark:bg-gray-900 shadow-xl border border-gray-100 dark:border-gray-700">
+              <CardHeader>
+                <CardTitle className="text-2xl font-bold text-gray-900 dark:text-white flex items-center">
+                  <Send className="h-6 w-6 mr-2 text-blue-600" />
+                  Send us a Message
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
                 <form onSubmit={handleSubmit} className="space-y-6">
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
-                      <Label htmlFor="name" className="gp-body-m" style={{ color: 'var(--gp-content-primary)' }}>
+                      <Label htmlFor="name" className="text-gray-700 dark:text-gray-300">
                         Full Name *
                       </Label>
                       <Input
                         id="name"
                         name="name"
                         type="text"
+                        required
                         value={formData.name}
                         onChange={handleInputChange}
-                        required
-                        className="mt-2"
-                        style={{ borderColor: 'var(--gp-border-subtle)' }}
+                        className="mt-1 bg-gray-50 dark:bg-gray-800 border-gray-300 dark:border-gray-600 focus:border-blue-500 dark:text-white"
+                        placeholder="John Doe"
                       />
                     </div>
                     <div>
-                      <Label htmlFor="email" className="gp-body-m" style={{ color: 'var(--gp-content-primary)' }}>
+                      <Label htmlFor="email" className="text-gray-700 dark:text-gray-300">
                         Email Address *
                       </Label>
                       <Input
                         id="email"
                         name="email"
                         type="email"
+                        required
                         value={formData.email}
                         onChange={handleInputChange}
-                        required
-                        className="mt-2"
-                        style={{ borderColor: 'var(--gp-border-subtle)' }}
+                        className="mt-1 bg-gray-50 dark:bg-gray-800 border-gray-300 dark:border-gray-600 focus:border-blue-500 dark:text-white"
+                        placeholder="john@company.com"
                       />
                     </div>
                   </div>
-                  
+
                   <div>
-                    <Label htmlFor="company" className="gp-body-m" style={{ color: 'var(--gp-content-primary)' }}>
+                    <Label htmlFor="company" className="text-gray-700 dark:text-gray-300">
                       Company
                     </Label>
                     <Input
@@ -123,140 +126,132 @@ export default function Contact() {
                       type="text"
                       value={formData.company}
                       onChange={handleInputChange}
-                      className="mt-2"
-                      style={{ borderColor: 'var(--gp-border-subtle)' }}
+                      className="mt-1 bg-gray-50 dark:bg-gray-800 border-gray-300 dark:border-gray-600 focus:border-blue-500 dark:text-white"
+                      placeholder="Your Company Name"
                     />
                   </div>
 
                   <div>
-                    <Label htmlFor="subject" className="gp-body-m" style={{ color: 'var(--gp-content-primary)' }}>
+                    <Label htmlFor="subject" className="text-gray-700 dark:text-gray-300">
                       Subject *
                     </Label>
                     <Input
                       id="subject"
                       name="subject"
                       type="text"
+                      required
                       value={formData.subject}
                       onChange={handleInputChange}
-                      required
-                      className="mt-2"
-                      style={{ borderColor: 'var(--gp-border-subtle)' }}
+                      className="mt-1 bg-gray-50 dark:bg-gray-800 border-gray-300 dark:border-gray-600 focus:border-blue-500 dark:text-white"
+                      placeholder="How can we help you?"
                     />
                   </div>
 
                   <div>
-                    <Label htmlFor="message" className="gp-body-m" style={{ color: 'var(--gp-content-primary)' }}>
+                    <Label htmlFor="message" className="text-gray-700 dark:text-gray-300">
                       Message *
                     </Label>
                     <Textarea
                       id="message"
                       name="message"
+                      required
+                      rows={6}
                       value={formData.message}
                       onChange={handleInputChange}
-                      required
-                      rows={5}
-                      className="mt-2"
-                      style={{ borderColor: 'var(--gp-border-subtle)' }}
+                      className="mt-1 bg-gray-50 dark:bg-gray-800 border-gray-300 dark:border-gray-600 focus:border-blue-500 dark:text-white"
+                      placeholder="Tell us about your incentive compensation challenges..."
                     />
                   </div>
 
-                  <button
+                  <Button
                     type="submit"
-                    className="gp-btn-primary w-full inline-flex items-center justify-center"
+                    className="w-full bg-blue-600 hover:bg-blue-700 text-white py-3 font-semibold transform hover:scale-105 transition-all duration-200"
                   >
-                    <Send className="h-4 w-4 mr-2" />
                     Send Message
-                  </button>
+                  </Button>
                 </form>
-              </div>
-            </div>
+              </CardContent>
+            </Card>
 
             {/* Contact Information */}
             <div className="space-y-8">
               {/* Contact Details */}
-              <div className="gp-card">
-                <div className="p-8">
-                  <h2 className="gp-h1 mb-6">Get in Touch</h2>
-                  <div className="space-y-6">
-                    <div className="flex items-start space-x-4">
-                      <Mail className="h-6 w-6 mt-1" style={{ color: 'var(--gp-brand-accent)' }} />
-                      <div>
-                        <h3 className="gp-h3 mb-1">Email</h3>
-                        <p className="gp-body-l" style={{ color: 'var(--gp-content-secondary)' }}>
-                          contact@iclens.com
-                        </p>
-                        <p className="gp-body-l" style={{ color: 'var(--gp-content-secondary)' }}>
-                          support@iclens.com
-                        </p>
-                      </div>
-                    </div>
-
-                    <div className="flex items-start space-x-4">
-                      <Phone className="h-6 w-6 mt-1" style={{ color: 'var(--gp-brand-accent)' }} />
-                      <div>
-                        <h3 className="gp-h3 mb-1">Phone</h3>
-                        <p className="gp-body-l" style={{ color: 'var(--gp-content-secondary)' }}>
-                          +1 (555) 123-4567
-                        </p>
-                        <p className="gp-body-l" style={{ color: 'var(--gp-content-secondary)' }}>
-                          +1 (555) 123-4568 (Support)
-                        </p>
-                      </div>
-                    </div>
-
-                    <div className="flex items-start space-x-4">
-                      <MapPin className="h-6 w-6 mt-1" style={{ color: 'var(--gp-brand-accent)' }} />
-                      <div>
-                        <h3 className="gp-h3 mb-1">Address</h3>
-                        <p className="gp-body-l" style={{ color: 'var(--gp-content-secondary)' }}>
-                          123 Business District
-                        </p>
-                        <p className="gp-body-l" style={{ color: 'var(--gp-content-secondary)' }}>
-                          San Francisco, CA 94105
-                        </p>
-                        <p className="gp-body-l" style={{ color: 'var(--gp-content-secondary)' }}>
-                          United States
-                        </p>
-                      </div>
-                    </div>
-
-                    <div className="flex items-start space-x-4">
-                      <Clock className="h-6 w-6 mt-1" style={{ color: 'var(--gp-brand-accent)' }} />
-                      <div>
-                        <h3 className="gp-h3 mb-1">Business Hours</h3>
-                        <p className="gp-body-l" style={{ color: 'var(--gp-content-secondary)' }}>
-                          Monday - Friday: 9:00 AM - 6:00 PM PST
-                        </p>
-                        <p className="gp-body-l" style={{ color: 'var(--gp-content-secondary)' }}>
-                          Saturday: 10:00 AM - 2:00 PM PST
-                        </p>
-                        <p className="gp-body-l" style={{ color: 'var(--gp-content-secondary)' }}>
-                          Sunday: Closed
-                        </p>
-                      </div>
+              <Card className="bg-white dark:bg-gray-900 shadow-xl border border-gray-100 dark:border-gray-700">
+                <CardHeader>
+                  <CardTitle className="text-2xl font-bold text-gray-900 dark:text-white">
+                    Get in Touch
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-6">
+                  <div className="flex items-start space-x-4">
+                    <Mail className="h-6 w-6 text-blue-600 mt-1" />
+                    <div>
+                      <h3 className="font-semibold text-gray-900 dark:text-white">Email</h3>
+                      <p className="text-gray-600 dark:text-gray-300">contact@iclens.com</p>
+                      <p className="text-gray-600 dark:text-gray-300">support@iclens.com</p>
                     </div>
                   </div>
-                </div>
-              </div>
 
-              {/* Quick Actions */}
-              <div className="gp-card">
-                <div className="p-8">
-                  <h2 className="gp-h2 mb-6">Quick Actions</h2>
-                  <div className="space-y-4">
-                    <Link href="/auth">
-                      <button className="gp-btn-secondary w-full inline-flex items-center justify-center">
-                        Start Free Trial
-                      </button>
-                    </Link>
-                    <Link href="/about">
-                      <button className="gp-btn-ghost w-full inline-flex items-center justify-center">
-                        Learn More About ICLens
-                      </button>
-                    </Link>
+                  <div className="flex items-start space-x-4">
+                    <Phone className="h-6 w-6 text-blue-600 mt-1" />
+                    <div>
+                      <h3 className="font-semibold text-gray-900 dark:text-white">Phone</h3>
+                      <p className="text-gray-600 dark:text-gray-300">+1 (555) 123-4567</p>
+                      <p className="text-gray-600 dark:text-gray-300">+1 (555) 987-6543</p>
+                    </div>
                   </div>
-                </div>
-              </div>
+
+                  <div className="flex items-start space-x-4">
+                    <MapPin className="h-6 w-6 text-blue-600 mt-1" />
+                    <div>
+                      <h3 className="font-semibold text-gray-900 dark:text-white">Address</h3>
+                      <p className="text-gray-600 dark:text-gray-300">
+                        123 Innovation Drive<br />
+                        Tech Valley, CA 94105<br />
+                        United States
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="flex items-start space-x-4">
+                    <Clock className="h-6 w-6 text-blue-600 mt-1" />
+                    <div>
+                      <h3 className="font-semibold text-gray-900 dark:text-white">Business Hours</h3>
+                      <p className="text-gray-600 dark:text-gray-300">
+                        Monday - Friday: 9:00 AM - 6:00 PM PST<br />
+                        Saturday: 10:00 AM - 2:00 PM PST<br />
+                        Sunday: Closed
+                      </p>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* Quick Links */}
+              <Card className="bg-white dark:bg-gray-900 shadow-xl border border-gray-100 dark:border-gray-700">
+                <CardHeader>
+                  <CardTitle className="text-2xl font-bold text-gray-900 dark:text-white">
+                    Quick Actions
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <Link href="/auth">
+                    <Button className="w-full bg-green-600 hover:bg-green-700 text-white py-3 font-semibold">
+                      Start Free Trial
+                    </Button>
+                  </Link>
+                  <Link href="/auth">
+                    <Button variant="outline" className="w-full border-blue-600 text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-900 py-3 font-semibold">
+                      Schedule Demo
+                    </Button>
+                  </Link>
+                  <Link href="/about">
+                    <Button variant="ghost" className="w-full text-gray-600 dark:text-gray-300 py-3">
+                      Learn More About Us
+                    </Button>
+                  </Link>
+                </CardContent>
+              </Card>
             </div>
           </div>
         </div>
