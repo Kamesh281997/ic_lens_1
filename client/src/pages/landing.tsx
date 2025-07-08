@@ -25,6 +25,7 @@ import {
 } from "lucide-react";
 import { Link } from "wouter";
 import { useAuth } from "@/hooks/use-auth";
+import genpactLogo from "@assets/image_1751975273545.png";
 
 export default function Landing() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -38,12 +39,13 @@ export default function Landing() {
           <div className="flex items-center justify-between h-20">
             {/* Left: Genpact + ICLens Logos */}
             <div className="flex items-center space-x-6">
-              {/* Genpact Logo Placeholder */}
-              <div className="flex items-center space-x-2">
-                <div className="w-10 h-10 bg-blue-600 rounded-lg flex items-center justify-center">
-                  <span className="text-white font-bold text-lg">G</span>
-                </div>
-                <span className="text-xl font-bold text-gray-900 dark:text-white">Genpact</span>
+              {/* Genpact Logo */}
+              <div className="flex items-center space-x-3">
+                <img 
+                  src={genpactLogo} 
+                  alt="Genpact" 
+                  className="h-10 w-auto"
+                />
               </div>
               
               <div className="h-8 w-px bg-gray-300 dark:bg-gray-600"></div>
@@ -170,10 +172,13 @@ export default function Landing() {
           <div className="flex items-center justify-center space-x-8 mb-8">
             {/* Genpact Logo */}
             <div className="flex items-center space-x-3">
-              <div className="w-16 h-16 bg-white rounded-xl flex items-center justify-center shadow-lg">
-                <span className="text-blue-600 font-bold text-2xl">G</span>
+              <div className="bg-white rounded-xl p-4 shadow-lg">
+                <img 
+                  src={genpactLogo} 
+                  alt="Genpact" 
+                  className="h-12 w-auto"
+                />
               </div>
-              <span className="text-2xl font-bold text-white">Genpact</span>
             </div>
             
             <div className="h-12 w-px bg-white/30"></div>
@@ -295,10 +300,11 @@ export default function Landing() {
             {/* Company Info */}
             <div className="space-y-6">
               <div className="flex items-center space-x-3">
-                <div className="w-12 h-12 bg-blue-600 rounded-lg flex items-center justify-center">
-                  <span className="text-white font-bold text-xl">G</span>
-                </div>
-                <span className="text-2xl font-bold">Genpact</span>
+                <img 
+                  src={genpactLogo} 
+                  alt="Genpact" 
+                  className="h-10 w-auto"
+                />
               </div>
               <p className="text-gray-300 text-lg leading-relaxed">
                 Driving excellence in incentive compensation through intelligent automation
