@@ -56,28 +56,28 @@ export default function Landing() {
               
               {/* ICLens Logo */}
               <div className="flex items-center space-x-2">
-                <div className="w-10 h-10 bg-red-600 rounded-lg flex items-center justify-center">
+                <div className="w-10 h-10 rounded-lg flex items-center justify-center" style={{ backgroundColor: '#ff4f59' }}>
                   <span className="text-white font-bold text-lg">IC</span>
                 </div>
-                <span className="text-2xl font-bold dark:text-white text-[white] ml-[-1px] mr-[-1px]">Lens</span>
+                <span className="text-2xl font-bold ml-[-1px] mr-[-1px]" style={{ color: '#ff4f59' }}>Lens</span>
               </div>
             </div>
 
             {/* Right: Navigation Menu */}
             <nav className="hidden md:flex items-center space-x-8">
-              <Link href="/" className="gp-nav-link text-lg font-medium">
+              <Link href="/" className="gp-nav-link text-lg font-medium" style={{ color: '#ff4f59' }}>
                 Home
               </Link>
-              <Link href="/about" className="gp-nav-link text-lg font-medium">
+              <Link href="/about" className="gp-nav-link text-lg font-medium" style={{ color: '#ff4f59' }}>
                 About
               </Link>
-              <a href="#modules" className="gp-nav-link text-lg font-medium cursor-pointer" onClick={(e) => {
+              <a href="#modules" className="gp-nav-link text-lg font-medium cursor-pointer" style={{ color: '#ff4f59' }} onClick={(e) => {
                 e.preventDefault();
                 document.getElementById('modules')?.scrollIntoView({ behavior: 'smooth' });
               }}>
                 Modules
               </a>
-              <Link href="/contact" className="gp-nav-link text-lg font-medium">
+              <Link href="/contact" className="gp-nav-link text-lg font-medium" style={{ color: '#ff4f59' }}>
                 Contact
               </Link>
 
@@ -124,20 +124,20 @@ export default function Landing() {
           {isMobileMenuOpen && (
             <div className="md:hidden border-t border-gray-200 dark:border-gray-700 py-4">
               <nav className="flex flex-col space-y-4">
-                <Link href="/" className="text-lg font-medium text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400">
+                <Link href="/" className="text-lg font-medium hover:text-blue-600 dark:hover:text-blue-400" style={{ color: '#ff4f59' }}>
                   Home
                 </Link>
-                <Link href="/about" className="text-lg font-medium text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400">
+                <Link href="/about" className="text-lg font-medium hover:text-blue-600 dark:hover:text-blue-400" style={{ color: '#ff4f59' }}>
                   About
                 </Link>
-                <a href="#modules" className="text-lg font-medium text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 cursor-pointer" onClick={(e) => {
+                <a href="#modules" className="text-lg font-medium hover:text-blue-600 dark:hover:text-blue-400 cursor-pointer" style={{ color: '#ff4f59' }} onClick={(e) => {
                   e.preventDefault();
                   setIsMobileMenuOpen(false);
                   document.getElementById('modules')?.scrollIntoView({ behavior: 'smooth' });
                 }}>
                   Modules
                 </a>
-                <Link href="/contact" className="text-lg font-medium text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400">
+                <Link href="/contact" className="text-lg font-medium hover:text-blue-600 dark:hover:text-blue-400" style={{ color: '#ff4f59' }}>
                   Contact
                 </Link>
                 {isAuthenticated ? (

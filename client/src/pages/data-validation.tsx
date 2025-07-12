@@ -224,7 +224,7 @@ export default function DataValidation() {
 
   if (!isAuthenticated) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-gray-900 dark:to-gray-800 flex items-center justify-center">
+      <div className="min-h-screen bg-black text-white flex items-center justify-center">
         <Card className="w-96">
           <CardHeader>
             <CardTitle className="text-center">Authentication Required</CardTitle>
@@ -243,12 +243,15 @@ export default function DataValidation() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-gray-900 dark:to-gray-800">
+    <div className="min-h-screen bg-black text-white">
       {/* Header */}
       <header className="flex items-center justify-between px-6 lg:px-12 py-6">
         <Link href="/">
-          <div className="text-3xl font-bold text-gray-900 dark:text-white hover:text-blue-600 dark:hover:text-blue-400 transition-colors cursor-pointer">
-            ICLens
+          <div className="flex items-center space-x-2 cursor-pointer">
+            <div className="w-8 h-8 rounded-lg flex items-center justify-center" style={{ backgroundColor: '#ff4f59' }}>
+              <span className="text-white font-bold text-sm">IC</span>
+            </div>
+            <span className="text-3xl font-bold transition-colors" style={{ color: '#ff4f59' }}>Lens</span>
           </div>
         </Link>
         <div className="flex items-center space-x-4">

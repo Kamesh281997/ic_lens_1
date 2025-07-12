@@ -383,7 +383,7 @@ export default function Auth() {
   );
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50 dark:from-gray-900 dark:to-gray-800 flex items-center justify-center p-4">
+    <div className="min-h-screen bg-black text-white flex items-center justify-center p-4">
       <div className="w-full max-w-md">
         {/* Theme Toggle */}
         <div className="flex justify-end mb-4">
@@ -392,10 +392,12 @@ export default function Auth() {
         
         {/* Logo and Brand */}
         <div className="text-center mb-8">
-          <div className="inline-flex items-center justify-center w-16 h-16 rounded-xl mb-4 shadow-lg bg-[#ff4f59]">
-            <Eye className="text-white h-8 w-8" />
+          <div className="inline-flex items-center justify-center space-x-2 mb-4">
+            <div className="w-12 h-12 rounded-xl flex items-center justify-center shadow-lg" style={{ backgroundColor: '#ff4f59' }}>
+              <span className="text-white font-bold text-lg">IC</span>
+            </div>
+            <span className="text-4xl font-bold" style={{ color: '#ff4f59' }}>Lens</span>
           </div>
-          <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">ICLens</h1>
           <p className="text-ilens-slate dark:text-slate-300">Vision Intelligence Platform</p>
         </div>
 
