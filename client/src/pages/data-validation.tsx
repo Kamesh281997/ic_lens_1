@@ -555,24 +555,7 @@ export default function DataValidation() {
               {/* Validation Actions */}
               {allValidationComplete && (
                 <div className="flex justify-center space-x-4">
-                  <Button
-                    variant="outline"
-                    onClick={() => validateMutation.mutate()}
-                    disabled={validateMutation.isPending}
-                    className="px-6 py-3"
-                  >
-                    {validateMutation.isPending ? (
-                      <>
-                        <RefreshCw className="h-4 w-4 mr-2 animate-spin" />
-                        Re-validating...
-                      </>
-                    ) : (
-                      <>
-                        <RefreshCw className="h-4 w-4 mr-2" />
-                        Re-validate
-                      </>
-                    )}
-                  </Button>
+                  
 
                   <Button
                     onClick={() => proceedMutation.mutate()}
