@@ -38,7 +38,7 @@ function Router() {
 
 function App() {
   return (
-    <ThemeProvider defaultTheme="light" storageKey="iclens-ui-theme">
+    <ThemeProvider defaultTheme="dark" storageKey="iclens-ui-theme">
       <QueryClientProvider client={queryClient}>
         <TooltipProvider>
           <Toaster />
