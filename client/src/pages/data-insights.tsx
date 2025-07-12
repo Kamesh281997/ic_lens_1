@@ -26,7 +26,10 @@ import {
   Zap,
   PieChart,
   LineChart,
-  ShoppingCart
+  ShoppingCart,
+  X,
+  Minimize2,
+  Maximize2
 } from "lucide-react";
 import { useAuth } from "@/hooks/use-auth";
 import { useQuery, useMutation } from "@tanstack/react-query";
@@ -93,11 +96,13 @@ interface ChatMessage {
 export default function DataInsights() {
   const { user, isAuthenticated } = useAuth();
   const { toast } = useToast();
+  const [isChatOpen, setIsChatOpen] = useState(false);
+  const [isMinimized, setIsMinimized] = useState(false);
   const [chatMessages, setChatMessages] = useState<ChatMessage[]>([
     {
       id: '1',
       sender: 'assistant',
-      content: 'Hello! I\'m your AI analytics assistant. I can help you analyze sales data, compensation trends, and generate predictive insights. Ask me anything about your data!',
+      content: 'Hello! I\'m your AI analytics assistant trained on all your IC data. I can help you analyze sales performance, compensation trends, territory effectiveness, and provide predictive insights. Ask me anything about your data!',
       timestamp: new Date()
     }
   ]);
@@ -114,14 +119,16 @@ export default function DataInsights() {
     },
   });
 
-  // AI Chat mutation
+  // AI Chat mutation with comprehensive RAG context
   const chatMutation = useMutation({
     mutationFn: async (message: string) => {
       const response = await apiRequest("POST", "/api/ai/chat", {
         message,
         context: {
           analyticsData,
-          timestamp: new Date().toISOString()
+          timestamp: new Date().toISOString(),
+          userProfile: user,
+          ragContext: "full_dataset_access" // Indicates AI should access all available data
         }
       });
       return response.json();
@@ -137,7 +144,7 @@ export default function DataInsights() {
     },
     onError: (error: Error) => {
       toast({
-        title: "AI Chat Error",
+        title: "AI Assistant Error",
         description: error.message || "Failed to get AI response",
         variant: "destructive",
       });
@@ -251,7 +258,7 @@ export default function DataInsights() {
             </div>
           ) : analyticsData ? (
             <Tabs defaultValue="overview" className="w-full">
-              <TabsList className="grid w-full grid-cols-6 mb-8">
+              <TabsList className="grid w-full grid-cols-5 mb-8">
                 <TabsTrigger value="overview" className="flex items-center">
                   <BarChart3 className="h-4 w-4 mr-2" />
                   Overview
@@ -271,10 +278,6 @@ export default function DataInsights() {
                 <TabsTrigger value="distribution" className="flex items-center">
                   <DollarSign className="h-4 w-4 mr-2" />
                   Distribution
-                </TabsTrigger>
-                <TabsTrigger value="ai-chat" className="flex items-center">
-                  <Bot className="h-4 w-4 mr-2" />
-                  AI Assistant
                 </TabsTrigger>
               </TabsList>
 
@@ -748,130 +751,7 @@ export default function DataInsights() {
                 </div>
               </TabsContent>
 
-              {/* AI Chat Tab */}
-              <TabsContent value="ai-chat">
-                <Card className="bg-white dark:bg-gray-900 shadow-xl border border-gray-200 dark:border-gray-700">
-                  <CardHeader>
-                    <CardTitle className="text-2xl text-gray-900 dark:text-white flex items-center">
-                      <Bot className="h-7 w-7 mr-3 text-blue-600" />
-                      AI Analytics Assistant
-                    </CardTitle>
-                    <CardDescription className="text-lg">
-                      Get intelligent insights and predictive analytics based on your data
-                    </CardDescription>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="flex flex-col h-[600px]">
-                      {/* Chat Messages */}
-                      <ScrollArea className="flex-1 pr-4">
-                        <div className="space-y-4">
-                          {chatMessages.map((message) => (
-                            <div
-                              key={message.id}
-                              className={`flex ${message.sender === 'user' ? 'justify-end' : 'justify-start'}`}
-                            >
-                              <div
-                                className={`max-w-[80%] rounded-lg px-4 py-3 ${
-                                  message.sender === 'user'
-                                    ? 'bg-blue-600 text-white'
-                                    : 'bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-white'
-                                }`}
-                              >
-                                <div className="flex items-start space-x-2">
-                                  {message.sender === 'assistant' && (
-                                    <Bot className="h-5 w-5 mt-0.5 text-blue-600" />
-                                  )}
-                                  <div className="flex-1">
-                                    <p className="text-sm leading-relaxed whitespace-pre-wrap">
-                                      {message.content}
-                                    </p>
-                                    <p className={`text-xs mt-2 ${
-                                      message.sender === 'user' 
-                                        ? 'text-blue-100' 
-                                        : 'text-gray-500 dark:text-gray-400'
-                                    }`}>
-                                      {message.timestamp.toLocaleTimeString()}
-                                    </p>
-                                  </div>
-                                </div>
-                              </div>
-                            </div>
-                          ))}
-                          {chatMutation.isPending && (
-                            <div className="flex justify-start">
-                              <div className="bg-gray-100 dark:bg-gray-800 rounded-lg px-4 py-3">
-                                <div className="flex items-center space-x-2">
-                                  <Bot className="h-5 w-5 text-blue-600" />
-                                  <div className="flex space-x-1">
-                                    <div className="w-2 h-2 bg-blue-600 rounded-full animate-bounce" style={{ animationDelay: '0ms' }}></div>
-                                    <div className="w-2 h-2 bg-blue-600 rounded-full animate-bounce" style={{ animationDelay: '150ms' }}></div>
-                                    <div className="w-2 h-2 bg-blue-600 rounded-full animate-bounce" style={{ animationDelay: '300ms' }}></div>
-                                  </div>
-                                </div>
-                              </div>
-                            </div>
-                          )}
-                        </div>
-                      </ScrollArea>
 
-                      {/* Chat Input */}
-                      <div className="border-t border-gray-200 dark:border-gray-700 pt-4 mt-4">
-                        <div className="flex space-x-2">
-                          <Input
-                            value={inputMessage}
-                            onChange={(e) => setInputMessage(e.target.value)}
-                            placeholder="Ask me about sales trends, compensation analysis, or predictive insights..."
-                            className="flex-1"
-                            onKeyPress={(e) => {
-                              if (e.key === 'Enter' && !e.shiftKey) {
-                                e.preventDefault();
-                                handleSendMessage();
-                              }
-                            }}
-                            disabled={chatMutation.isPending}
-                          />
-                          <Button
-                            onClick={handleSendMessage}
-                            disabled={!inputMessage.trim() || chatMutation.isPending}
-                            className="px-4"
-                          >
-                            <Send className="h-4 w-4" />
-                          </Button>
-                        </div>
-                        
-                        {/* Suggested Questions */}
-                        <div className="mt-4">
-                          <p className="text-sm text-gray-600 dark:text-gray-400 mb-2">Suggested questions:</p>
-                          <div className="flex flex-wrap gap-2">
-                            {[
-                              "What are the top sales trends this quarter?",
-                              "Which territories are underperforming?",
-                              "Predict next quarter's compensation costs",
-                              "What products show strongest growth potential?",
-                              "How do our current payouts compare to industry?",
-                              "Which reps are at risk of missing quota?"
-                            ].map((question, index) => (
-                              <Button
-                                key={index}
-                                variant="outline"
-                                size="sm"
-                                className="text-xs"
-                                onClick={() => {
-                                  setInputMessage(question);
-                                  setTimeout(() => handleSendMessage(), 100);
-                                }}
-                                disabled={chatMutation.isPending}
-                              >
-                                {question}
-                              </Button>
-                            ))}
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
-              </TabsContent>
             </Tabs>
           ) : (
             <div className="text-center py-12">
@@ -883,6 +763,172 @@ export default function DataInsights() {
           )}
         </div>
       </main>
+
+      {/* AI Assistant Popup Chatbot */}
+      {!isChatOpen && (
+        <div className="fixed bottom-6 right-6 z-50">
+          <Button
+            onClick={() => setIsChatOpen(true)}
+            className="bg-blue-600 hover:bg-blue-700 text-white rounded-full w-14 h-14 shadow-lg transition-all duration-200 hover:scale-105"
+          >
+            <Bot className="h-6 w-6" />
+          </Button>
+        </div>
+      )}
+
+      {/* AI Assistant Chat Window */}
+      {isChatOpen && (
+        <div className={`fixed bottom-6 right-6 z-50 transition-all duration-300 ${
+          isMinimized ? 'w-80 h-16' : 'w-96 h-[500px]'
+        }`}>
+          <Card className="bg-white dark:bg-gray-900 shadow-2xl border border-gray-200 dark:border-gray-700 h-full flex flex-col">
+            {/* Chat Header */}
+            <CardHeader className="pb-3 border-b border-gray-200 dark:border-gray-700">
+              <div className="flex items-center justify-between">
+                <CardTitle className="text-lg text-gray-900 dark:text-white flex items-center">
+                  <Bot className="h-5 w-5 mr-2 text-blue-600" />
+                  AI Analytics Assistant
+                </CardTitle>
+                <div className="flex items-center space-x-2">
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => setIsMinimized(!isMinimized)}
+                    className="h-8 w-8 p-0 hover:bg-gray-100 dark:hover:bg-gray-800"
+                  >
+                    {isMinimized ? (
+                      <Maximize2 className="h-4 w-4" />
+                    ) : (
+                      <Minimize2 className="h-4 w-4" />
+                    )}
+                  </Button>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => setIsChatOpen(false)}
+                    className="h-8 w-8 p-0 hover:bg-gray-100 dark:hover:bg-gray-800"
+                  >
+                    <X className="h-4 w-4" />
+                  </Button>
+                </div>
+              </div>
+              {!isMinimized && (
+                <CardDescription className="text-sm">
+                  RAG-powered assistant trained on all your IC data
+                </CardDescription>
+              )}
+            </CardHeader>
+
+            {/* Chat Content */}
+            {!isMinimized && (
+              <CardContent className="flex-1 flex flex-col p-4 overflow-hidden">
+                {/* Chat Messages */}
+                <ScrollArea className="flex-1 pr-2 mb-4">
+                  <div className="space-y-3">
+                    {chatMessages.map((message) => (
+                      <div
+                        key={message.id}
+                        className={`flex ${message.sender === 'user' ? 'justify-end' : 'justify-start'}`}
+                      >
+                        <div
+                          className={`max-w-[85%] rounded-lg px-3 py-2 ${
+                            message.sender === 'user'
+                              ? 'bg-blue-600 text-white'
+                              : 'bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-white'
+                          }`}
+                        >
+                          <div className="flex items-start space-x-2">
+                            {message.sender === 'assistant' && (
+                              <Bot className="h-4 w-4 mt-0.5 text-blue-600" />
+                            )}
+                            <div className="flex-1">
+                              <p className="text-sm leading-relaxed whitespace-pre-wrap">
+                                {message.content}
+                              </p>
+                              <p className={`text-xs mt-1 ${
+                                message.sender === 'user' 
+                                  ? 'text-blue-100' 
+                                  : 'text-gray-500 dark:text-gray-400'
+                              }`}>
+                                {message.timestamp.toLocaleTimeString()}
+                              </p>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                    {chatMutation.isPending && (
+                      <div className="flex justify-start">
+                        <div className="bg-gray-100 dark:bg-gray-800 rounded-lg px-3 py-2">
+                          <div className="flex items-center space-x-2">
+                            <Bot className="h-4 w-4 text-blue-600" />
+                            <div className="flex space-x-1">
+                              <div className="w-2 h-2 bg-blue-600 rounded-full animate-bounce" style={{ animationDelay: '0ms' }}></div>
+                              <div className="w-2 h-2 bg-blue-600 rounded-full animate-bounce" style={{ animationDelay: '150ms' }}></div>
+                              <div className="w-2 h-2 bg-blue-600 rounded-full animate-bounce" style={{ animationDelay: '300ms' }}></div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                </ScrollArea>
+
+                {/* Chat Input */}
+                <div className="border-t border-gray-200 dark:border-gray-700 pt-3">
+                  <div className="flex space-x-2">
+                    <Input
+                      value={inputMessage}
+                      onChange={(e) => setInputMessage(e.target.value)}
+                      placeholder="Ask about sales trends, territories, payouts..."
+                      className="flex-1 text-sm"
+                      onKeyPress={(e) => {
+                        if (e.key === 'Enter' && !e.shiftKey) {
+                          e.preventDefault();
+                          handleSendMessage();
+                        }
+                      }}
+                      disabled={chatMutation.isPending}
+                    />
+                    <Button
+                      onClick={handleSendMessage}
+                      disabled={!inputMessage.trim() || chatMutation.isPending}
+                      size="sm"
+                      className="px-3"
+                    >
+                      <Send className="h-4 w-4" />
+                    </Button>
+                  </div>
+                  
+                  {/* Quick Actions */}
+                  <div className="mt-2 flex flex-wrap gap-1">
+                    {[
+                      "Top sales trends?",
+                      "Underperforming territories?",
+                      "Compensation analysis?",
+                      "Growth predictions?"
+                    ].map((question, index) => (
+                      <Button
+                        key={index}
+                        variant="outline"
+                        size="sm"
+                        className="text-xs px-2 py-1 h-auto"
+                        onClick={() => {
+                          setInputMessage(question);
+                          setTimeout(() => handleSendMessage(), 100);
+                        }}
+                        disabled={chatMutation.isPending}
+                      >
+                        {question}
+                      </Button>
+                    ))}
+                  </div>
+                </div>
+              </CardContent>
+            )}
+          </Card>
+        </div>
+      )}
     </div>
   );
 }

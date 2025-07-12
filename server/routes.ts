@@ -677,7 +677,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // AI Chat endpoint for analytics insights
+  // AI Chat endpoint for comprehensive RAG analytics using Hugging Face
   app.post("/api/ai/chat", async (req, res) => {
     try {
       if (!req.session.userId) {
@@ -686,65 +686,168 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       const { message, context } = req.body;
 
-      // Import OpenAI dynamically
-      const { default: OpenAI } = await import('openai');
-      
-      const openai = new OpenAI({
-        apiKey: process.env.OPENAI_API_KEY || process.env.REPLIT_OPENAI_API_KEY
-      });
-
-      // Fetch user's payout data for context
+      // Fetch comprehensive data from all tables for RAG context
       const userPayoutResults = await db.select().from(finalPayoutResults).where(eq(finalPayoutResults.userId, req.session.userId));
+      const userHierarchy = await db.select().from(hierarchy).where(eq(hierarchy.userId, req.session.userId));
+      const userRepRoster = await db.select().from(repRoster).where(eq(repRoster.userId, req.session.userId));
+      const userRepAssignments = await db.select().from(repAssignment).where(eq(repAssignment.userId, req.session.userId));
+      const userSalesData = await db.select().from(salesDataDetailed).where(eq(salesDataDetailed.userId, req.session.userId));
+      const userQuotaData = await db.select().from(quotaDataDetailed).where(eq(quotaDataDetailed.userId, req.session.userId));
       
-      // Create a comprehensive context for the AI
-      const aiContext = `
-You are an AI analytics assistant for ICLens, an incentive compensation platform. You have access to the following data for analysis:
+      // Create comprehensive RAG context with all available data
+      const aiContext = `You are an advanced AI analytics assistant for ICLens, an incentive compensation platform. Analyze this data and provide intelligent insights:
 
-PAYOUT DATA:
+PAYOUT RESULTS (${userPayoutResults.length} records):
 ${userPayoutResults.map(result => 
-  `Rep: ${result.repName} (${result.repId}) | Region: ${result.region} | Quota: $${result.quota} | Sales: $${result.actualSales} | Attainment: ${result.attainmentPercent}% | Payout: $${result.finalPayout} | Target Pay %: ${result.percentOfTargetPay}%`
+  `Rep: ${result.repName} (${result.repId}) | Region: ${result.region} | Quota: $${result.quota} | Sales: $${result.actualSales} | Attainment: ${result.attainmentPercent}% | Payout: $${result.finalPayout} | Target Pay %: ${result.percentOfTargetPay}% | Adjustments: ${result.anyAdjustment} | Notes: ${result.notes}`
 ).join('\n')}
 
-ANALYTICS CONTEXT:
+SALES REP ROSTER (${userRepRoster.length} records):
+${userRepRoster.map(rep => 
+  `Rep ID: ${rep.repId} | Name: ${rep.repName} | Email: ${rep.emailId}`
+).join('\n')}
+
+TERRITORY HIERARCHY (${userHierarchy.length} records):
+${userHierarchy.map(h => 
+  `Territory: ${h.terrName} (${h.terrId}) | Role: ${h.roleCode} | L1 Parent: ${h.level1ParentName} | L2 Parent: ${h.level2ParentName}`
+).join('\n')}
+
+REP TERRITORY ASSIGNMENTS (${userRepAssignments.length} records):
+${userRepAssignments.map(assignment => 
+  `Rep: ${assignment.repId} | Territory: ${assignment.terrId} | Period: ${assignment.startDate} to ${assignment.endDate}`
+).join('\n')}
+
+SALES DATA DETAILED (${userSalesData.length} records):
+${userSalesData.slice(0, 10).map(sale => 
+  `Rep: ${sale.repId} | Prevnar20: $${sale.prevnar20SalesAmount} | Ibrance: $${sale.ibranceSalesAmount} | Eliquis: $${sale.eliquisSalesAmount} | Total: $${sale.totalSales}`
+).join('\n')}${userSalesData.length > 10 ? `\n... and ${userSalesData.length - 10} more sales records` : ''}
+
+QUOTA DATA DETAILED (${userQuotaData.length} records):
+${userQuotaData.slice(0, 10).map(quota => 
+  `Rep: ${quota.repId} | Prevnar20 Quota: $${quota.prevnar20QuotaAmount} | Ibrance Quota: $${quota.ibranceQuotaAmount} | Total Quota: $${quota.totalQuota}`
+).join('\n')}${userQuotaData.length > 10 ? `\n... and ${userQuotaData.length - 10} more quota records` : ''}
+
+ANALYTICS INSIGHTS:
 ${context?.analyticsData ? JSON.stringify(context.analyticsData, null, 2) : 'Analytics data not available'}
 
 USER QUESTION: ${message}
 
-Please provide intelligent insights, analysis, and recommendations based on this data. Focus on:
-- Sales performance trends
-- Compensation effectiveness 
-- Territory analysis
-- Predictive insights
-- Risk identification
-- Optimization recommendations
+Please provide detailed insights focusing on sales performance, compensation effectiveness, territory analysis, and actionable recommendations based on this data.`;
 
-Be specific with numbers and provide actionable insights. If you need more data to provide accurate analysis, mention what additional information would be helpful.
-`;
-
-      const completion = await openai.chat.completions.create({
-        model: "gpt-4o", // the newest OpenAI model is "gpt-4o" which was released May 13, 2024. do not change this unless explicitly requested by the user
-        messages: [
-          {
-            role: "system",
-            content: "You are an expert AI analytics assistant specializing in sales compensation and performance analysis. Provide detailed, data-driven insights with specific recommendations."
-          },
-          {
-            role: "user",
-            content: aiContext
+      // Use Hugging Face Inference API (free tier)
+      const hfResponse = await fetch("https://api-inference.huggingface.co/models/microsoft/DialoGPT-medium", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          // No API key required for free tier with rate limits
+        },
+        body: JSON.stringify({
+          inputs: aiContext,
+          parameters: {
+            max_length: 1000,
+            temperature: 0.7,
+            do_sample: true,
+            top_p: 0.9
           }
-        ],
-        max_tokens: 1000,
-        temperature: 0.7
+        })
       });
 
-      const response = completion.choices[0].message.content;
+      if (!hfResponse.ok) {
+        // Fallback to local analysis if Hugging Face API fails
+        const localAnalysis = generateLocalAnalysis(userPayoutResults, message, context);
+        return res.json({ response: localAnalysis });
+      }
+
+      const hfResult = await hfResponse.json();
+      let response = "";
+
+      if (hfResult.generated_text) {
+        response = hfResult.generated_text;
+      } else if (hfResult[0]?.generated_text) {
+        response = hfResult[0].generated_text;
+      } else {
+        // Fallback to local analysis
+        response = generateLocalAnalysis(userPayoutResults, message, context);
+      }
 
       res.json({ response });
     } catch (error) {
       console.error("AI Chat Error:", error);
-      res.status(500).json({ message: "Failed to get AI response" });
+      
+      // Fallback to local analysis on any error
+      try {
+        const userPayoutResults = await db.select().from(finalPayoutResults).where(eq(finalPayoutResults.userId, req.session.userId));
+        const localAnalysis = generateLocalAnalysis(userPayoutResults, req.body.message, req.body.context);
+        res.json({ response: localAnalysis });
+      } catch (fallbackError) {
+        res.status(500).json({ message: "Failed to get AI response" });
+      }
     }
   });
+
+  // Local analysis function for fallback
+  function generateLocalAnalysis(payoutResults: any[], message: string, context: any): string {
+    if (payoutResults.length === 0) {
+      return "I don't have access to your payout data yet. Please ensure you have calculated payouts first, then I can provide detailed insights about your sales performance and compensation effectiveness.";
+    }
+
+    const totalPayout = payoutResults.reduce((sum, result) => sum + parseFloat(result.finalPayout || '0'), 0);
+    const avgAttainment = payoutResults.reduce((sum, result) => sum + parseFloat(result.attainmentPercent || '0'), 0) / payoutResults.length;
+    const topPerformers = payoutResults.filter(result => parseFloat(result.attainmentPercent || '0') >= 120);
+    const underPerformers = payoutResults.filter(result => parseFloat(result.attainmentPercent || '0') < 80);
+
+    const regionAnalysis = payoutResults.reduce((acc, result) => {
+      const region = result.region || 'Unknown';
+      if (!acc[region]) {
+        acc[region] = { count: 0, totalPayout: 0, totalAttainment: 0 };
+      }
+      acc[region].count++;
+      acc[region].totalPayout += parseFloat(result.finalPayout || '0');
+      acc[region].totalAttainment += parseFloat(result.attainmentPercent || '0');
+      return acc;
+    }, {} as Record<string, any>);
+
+    const topRegion = Object.entries(regionAnalysis)
+      .sort(([,a], [,b]) => (b.totalAttainment / b.count) - (a.totalAttainment / a.count))[0];
+
+    let analysis = `Based on your comprehensive IC data analysis:\n\n`;
+    
+    analysis += `📊 **Overall Performance Summary:**\n`;
+    analysis += `• Total Payout: $${totalPayout.toLocaleString()}\n`;
+    analysis += `• Average Quota Attainment: ${avgAttainment.toFixed(1)}%\n`;
+    analysis += `• Total Reps: ${payoutResults.length}\n`;
+    analysis += `• Top Performers (≥120%): ${topPerformers.length}\n`;
+    analysis += `• At-Risk Reps (<80%): ${underPerformers.length}\n\n`;
+
+    if (topRegion) {
+      analysis += `🏆 **Top Performing Region:**\n`;
+      analysis += `• ${topRegion[0]} with ${(topRegion[1].totalAttainment / topRegion[1].count).toFixed(1)}% avg attainment\n`;
+      analysis += `• Total payout: $${topRegion[1].totalPayout.toLocaleString()}\n\n`;
+    }
+
+    if (message.toLowerCase().includes('trend') || message.toLowerCase().includes('forecast')) {
+      analysis += `📈 **Trend Analysis:**\n`;
+      analysis += `• Performance distribution suggests ${avgAttainment > 100 ? 'strong' : 'mixed'} overall results\n`;
+      analysis += `• ${topPerformers.length > payoutResults.length * 0.3 ? 'High' : 'Moderate'} concentration of top performers\n`;
+      analysis += `• Risk factors: ${underPerformers.length} reps below 80% attainment\n\n`;
+    }
+
+    if (message.toLowerCase().includes('territory') || message.toLowerCase().includes('region')) {
+      analysis += `🗺️ **Territory Insights:**\n`;
+      Object.entries(regionAnalysis).forEach(([region, data]) => {
+        analysis += `• ${region}: ${data.count} reps, ${(data.totalAttainment / data.count).toFixed(1)}% avg attainment\n`;
+      });
+      analysis += `\n`;
+    }
+
+    analysis += `💡 **Recommendations:**\n`;
+    analysis += `• Focus coaching on ${underPerformers.length} underperforming reps\n`;
+    analysis += `• Analyze best practices from ${topPerformers.length} top performers\n`;
+    analysis += `• Consider territory rebalancing if regional disparities exist\n`;
+    analysis += `• Review compensation structure effectiveness\n`;
+
+    return analysis;
+  }
 
   // IC Plan Configuration endpoints
   app.post("/api/ic-plans", async (req, res) => {

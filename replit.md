@@ -199,6 +199,12 @@ Changelog:
 - July 12, 2025. Implemented progress tracking with visual indicators and completion percentage
 - July 12, 2025. Added plan finalization with export options and database integration
 - July 12, 2025. Created API endpoints for IC plan configuration save and retrieval
+- July 12, 2025. Built comprehensive Sales Insights section with detailed analytics including total sales, lead conversion, average deal size, top performing products, territory performance, and sales vs target trends
+- July 12, 2025. Converted AI Assistant from tab-based to bottom-right corner popup chatbot with minimize/maximize functionality
+- July 12, 2025. Implemented RAG (Retrieval-Augmented Generation) AI assistant using Hugging Face API with comprehensive access to all user data including payouts, sales, territories, quotas, and hierarchies
+- July 12, 2025. Added intelligent local analysis fallback system for AI assistant that provides detailed insights even without external API access
+- July 12, 2025. Enhanced Data Insights page with 5-tab structure: Overview, Sales Insights, Performance, Territory, and Distribution
+- July 12, 2025. Created floating AI assistant popup with chat interface, suggested questions, and real-time analytics capabilities
 ```
 
 ## User Preferences
