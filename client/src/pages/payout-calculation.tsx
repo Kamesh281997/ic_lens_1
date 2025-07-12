@@ -298,24 +298,6 @@ export default function PayoutCalculation() {
           {/* Action Buttons */}
           <div className="flex justify-center space-x-4 mb-8">
             <Button
-              onClick={() => calculateMutation.mutate()}
-              disabled={calculationInProgress}
-              className="px-6 py-3 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white font-semibold shadow-lg"
-            >
-              {calculationInProgress ? (
-                <>
-                  <RefreshCw className="h-4 w-4 mr-2 animate-spin" />
-                  Calculating...
-                </>
-              ) : (
-                <>
-                  <Calculator className="h-4 w-4 mr-2" />
-                  Calculate Payouts
-                </>
-              )}
-            </Button>
-
-            <Button
               variant="outline"
               onClick={() => exportMutation.mutate()}
               disabled={!payoutResults?.length || exportMutation.isPending}
