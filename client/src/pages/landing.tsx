@@ -200,7 +200,7 @@ export default function Landing() {
                   <div className="w-16 h-16 rounded-xl flex items-center justify-center shadow-lg" style={{ backgroundColor: 'var(--gp-surface-raised)' }}>
                     <span style={{ color: 'var(--gp-brand-accent)' }} className="font-bold text-2xl">IC</span>
                   </div>
-                  <span className="text-3xl font-bold" style={{ color: 'var(--gp-content-primary)' }}>Lens</span>
+                  <span className="text-3xl font-bold ml-[-12px] mr-[-12px]" style={{ color: 'var(--gp-content-primary)' }}>Lens</span>
                 </div>
               </div>
 
