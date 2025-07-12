@@ -2,6 +2,21 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Global black background for all pages */
+body {
+  background-color: #000000 !important;
+  color: white;
+}
+
+html {
+  background-color: #000000 !important;
+}
+
+/* Ensure all main containers have black background */
+.min-h-screen {
+  background-color: #000000 !important;
+}
+
 /* Genpact Design System CSS Variables */
 :root {
   /* Brand Colors */
