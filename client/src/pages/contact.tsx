@@ -40,7 +40,7 @@ export default function Contact() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50 dark:from-gray-900 dark:to-gray-800">
+    <div className="min-h-screen bg-black text-white">
       {/* Header */}
       <header className="flex items-center justify-between px-6 lg:px-12 py-6">
         <Link href="/">
