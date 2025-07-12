@@ -1,8 +1,8 @@
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { Link } from "wouter";
@@ -13,7 +13,9 @@ import {
   ArrowLeft, 
   Download, 
   RefreshCw,
-  DollarSign
+  DollarSign,
+  Filter,
+  X
 } from "lucide-react";
 import { useAuth } from "@/hooks/use-auth";
 import { useQuery, useMutation } from "@tanstack/react-query";
@@ -60,10 +62,35 @@ interface AnalyticsData {
   };
 }
 
+interface FilterState {
+  repId: string;
+  repName: string;
+  region: string;
+  quota: string;
+  actualSales: string;
+  attainmentPercent: string;
+  payoutCurveType: string;
+  finalPayout: string;
+  percentOfTargetPay: string;
+  anyAdjustment: string;
+}
+
 export default function PayoutCalculation() {
   const { user, isAuthenticated } = useAuth();
   const { toast } = useToast();
   const [calculationInProgress, setCalculationInProgress] = useState(false);
+  const [filters, setFilters] = useState<FilterState>({
+    repId: 'all',
+    repName: 'all',
+    region: 'all',
+    quota: 'all',
+    actualSales: 'all',
+    attainmentPercent: 'all',
+    payoutCurveType: 'all',
+    finalPayout: 'all',
+    percentOfTargetPay: 'all',
+    anyAdjustment: 'all'
+  });
 
   // Fetch payout results
   const { data: payoutResults, isLoading: payoutLoading, refetch: refetchPayouts } = useQuery({
@@ -86,6 +113,63 @@ export default function PayoutCalculation() {
       return data as AnalyticsData;
     },
   });
+
+  // Extract unique values for filters
+  const filterOptions = useMemo(() => {
+    if (!payoutResults?.length) return {};
+    
+    return {
+      repId: [...new Set(payoutResults.map(r => r.repId))].sort(),
+      repName: [...new Set(payoutResults.map(r => r.repName))].sort(),
+      region: [...new Set(payoutResults.map(r => r.region))].sort(),
+      quota: [...new Set(payoutResults.map(r => r.quota.toString()))].sort((a, b) => parseFloat(a) - parseFloat(b)),
+      actualSales: [...new Set(payoutResults.map(r => r.actualSales.toString()))].sort((a, b) => parseFloat(a) - parseFloat(b)),
+      attainmentPercent: [...new Set(payoutResults.map(r => r.attainmentPercent.toString()))].sort((a, b) => parseFloat(a) - parseFloat(b)),
+      payoutCurveType: [...new Set(payoutResults.map(r => r.payoutCurveType))].sort(),
+      finalPayout: [...new Set(payoutResults.map(r => r.finalPayout.toString()))].sort((a, b) => parseFloat(a) - parseFloat(b)),
+      percentOfTargetPay: [...new Set(payoutResults.map(r => r.percentOfTargetPay.toString()))].sort((a, b) => parseFloat(a) - parseFloat(b)),
+      anyAdjustment: [...new Set(payoutResults.map(r => r.anyAdjustment))].sort()
+    };
+  }, [payoutResults]);
+
+  // Filter results based on selected filters
+  const filteredResults = useMemo(() => {
+    if (!payoutResults?.length) return [];
+    
+    return payoutResults.filter(result => {
+      return (
+        (filters.repId === 'all' || result.repId === filters.repId) &&
+        (filters.repName === 'all' || result.repName === filters.repName) &&
+        (filters.region === 'all' || result.region === filters.region) &&
+        (filters.quota === 'all' || result.quota.toString() === filters.quota) &&
+        (filters.actualSales === 'all' || result.actualSales.toString() === filters.actualSales) &&
+        (filters.attainmentPercent === 'all' || result.attainmentPercent.toString() === filters.attainmentPercent) &&
+        (filters.payoutCurveType === 'all' || result.payoutCurveType === filters.payoutCurveType) &&
+        (filters.finalPayout === 'all' || result.finalPayout.toString() === filters.finalPayout) &&
+        (filters.percentOfTargetPay === 'all' || result.percentOfTargetPay.toString() === filters.percentOfTargetPay) &&
+        (filters.anyAdjustment === 'all' || result.anyAdjustment === filters.anyAdjustment)
+      );
+    });
+  }, [payoutResults, filters]);
+
+  // Clear all filters
+  const clearFilters = () => {
+    setFilters({
+      repId: 'all',
+      repName: 'all',
+      region: 'all',
+      quota: 'all',
+      actualSales: 'all',
+      attainmentPercent: 'all',
+      payoutCurveType: 'all',
+      finalPayout: 'all',
+      percentOfTargetPay: 'all',
+      anyAdjustment: 'all'
+    });
+  };
+
+  // Check if any filters are active
+  const hasActiveFilters = Object.values(filters).some(filter => filter !== 'all');
 
   const calculateMutation = useMutation({
     mutationFn: async () => {
@@ -241,6 +325,174 @@ export default function PayoutCalculation() {
             </Button>
           </div>
 
+          {/* Filter Controls */}
+          {payoutResults?.length > 0 && (
+            <Card className="bg-white dark:bg-gray-900 shadow-lg border border-gray-200 dark:border-gray-700 mb-6">
+              <CardHeader className="pb-4">
+                <CardTitle className="text-xl text-gray-900 dark:text-white flex items-center justify-between">
+                  <div className="flex items-center">
+                    <Filter className="h-5 w-5 mr-2 text-blue-600" />
+                    Filter Results
+                  </div>
+                  {hasActiveFilters && (
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={clearFilters}
+                      className="flex items-center"
+                    >
+                      <X className="h-4 w-4 mr-1" />
+                      Clear All
+                    </Button>
+                  )}
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+                  {/* Rep ID Filter */}
+                  <div className="space-y-2">
+                    <label className="text-sm font-medium text-gray-700 dark:text-gray-300">Rep ID</label>
+                    <Select value={filters.repId} onValueChange={(value) => setFilters(prev => ({ ...prev, repId: value }))}>
+                      <SelectTrigger>
+                        <SelectValue placeholder="All Rep IDs" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="all">All Rep IDs</SelectItem>
+                        {filterOptions.repId?.map(id => (
+                          <SelectItem key={id} value={id}>{id}</SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+
+                  {/* Rep Name Filter */}
+                  <div className="space-y-2">
+                    <label className="text-sm font-medium text-gray-700 dark:text-gray-300">Rep Name</label>
+                    <Select value={filters.repName} onValueChange={(value) => setFilters(prev => ({ ...prev, repName: value }))}>
+                      <SelectTrigger>
+                        <SelectValue placeholder="All Rep Names" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="all">All Rep Names</SelectItem>
+                        {filterOptions.repName?.map(name => (
+                          <SelectItem key={name} value={name}>{name}</SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+
+                  {/* Region Filter */}
+                  <div className="space-y-2">
+                    <label className="text-sm font-medium text-gray-700 dark:text-gray-300">Region</label>
+                    <Select value={filters.region} onValueChange={(value) => setFilters(prev => ({ ...prev, region: value }))}>
+                      <SelectTrigger>
+                        <SelectValue placeholder="All Regions" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="all">All Regions</SelectItem>
+                        {filterOptions.region?.map(region => (
+                          <SelectItem key={region} value={region}>{region}</SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+
+                  {/* Quota Filter */}
+                  <div className="space-y-2">
+                    <label className="text-sm font-medium text-gray-700 dark:text-gray-300">Quota</label>
+                    <Select value={filters.quota} onValueChange={(value) => setFilters(prev => ({ ...prev, quota: value }))}>
+                      <SelectTrigger>
+                        <SelectValue placeholder="All Quotas" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="all">All Quotas</SelectItem>
+                        {filterOptions.quota?.map(quota => (
+                          <SelectItem key={quota} value={quota}>${parseFloat(quota).toLocaleString()}</SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+
+                  {/* Actual Sales Filter */}
+                  <div className="space-y-2">
+                    <label className="text-sm font-medium text-gray-700 dark:text-gray-300">Actual Sales</label>
+                    <Select value={filters.actualSales} onValueChange={(value) => setFilters(prev => ({ ...prev, actualSales: value }))}>
+                      <SelectTrigger>
+                        <SelectValue placeholder="All Sales" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="all">All Sales</SelectItem>
+                        {filterOptions.actualSales?.map(sales => (
+                          <SelectItem key={sales} value={sales}>${parseFloat(sales).toLocaleString()}</SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+
+                  {/* Attainment % Filter */}
+                  <div className="space-y-2">
+                    <label className="text-sm font-medium text-gray-700 dark:text-gray-300">Attainment %</label>
+                    <Select value={filters.attainmentPercent} onValueChange={(value) => setFilters(prev => ({ ...prev, attainmentPercent: value }))}>
+                      <SelectTrigger>
+                        <SelectValue placeholder="All Attainment %" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="all">All Attainment %</SelectItem>
+                        {filterOptions.attainmentPercent?.map(percent => (
+                          <SelectItem key={percent} value={percent}>{parseFloat(percent).toFixed(1)}%</SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+
+                  {/* Payout Curve Type Filter */}
+                  <div className="space-y-2">
+                    <label className="text-sm font-medium text-gray-700 dark:text-gray-300">Payout Curve Type</label>
+                    <Select value={filters.payoutCurveType} onValueChange={(value) => setFilters(prev => ({ ...prev, payoutCurveType: value }))}>
+                      <SelectTrigger>
+                        <SelectValue placeholder="All Curve Types" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="all">All Curve Types</SelectItem>
+                        {filterOptions.payoutCurveType?.map(type => (
+                          <SelectItem key={type} value={type}>{type}</SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+
+                  {/* Any Adjustment Filter */}
+                  <div className="space-y-2">
+                    <label className="text-sm font-medium text-gray-700 dark:text-gray-300">Any Adjustment</label>
+                    <Select value={filters.anyAdjustment} onValueChange={(value) => setFilters(prev => ({ ...prev, anyAdjustment: value }))}>
+                      <SelectTrigger>
+                        <SelectValue placeholder="All Adjustments" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="all">All Adjustments</SelectItem>
+                        {filterOptions.anyAdjustment?.map(adjustment => (
+                          <SelectItem key={adjustment} value={adjustment}>{adjustment}</SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                </div>
+                
+                {/* Filter Results Summary */}
+                <div className="mt-4 pt-4 border-t dark:border-gray-700">
+                  <p className="text-sm text-gray-600 dark:text-gray-400">
+                    Showing {filteredResults.length} of {payoutResults.length} results
+                    {hasActiveFilters && (
+                      <span className="ml-2 text-blue-600 dark:text-blue-400">
+                        (filtered)
+                      </span>
+                    )}
+                  </p>
+                </div>
+              </CardContent>
+            </Card>
+          )}
+
           {/* Payout Results */}
           <Card className="bg-white dark:bg-gray-900 shadow-xl border border-gray-200 dark:border-gray-700">
             <CardHeader>
@@ -279,27 +531,35 @@ export default function PayoutCalculation() {
                       </TableRow>
                     </TableHeader>
                     <TableBody>
-                      {payoutResults.map((result) => (
-                        <TableRow key={result.repId}>
-                          <TableCell className="font-medium">{result.repId}</TableCell>
-                          <TableCell>{result.repName}</TableCell>
-                          <TableCell>{result.region}</TableCell>
-                          <TableCell className="text-right">${result.quota.toLocaleString()}</TableCell>
-                          <TableCell className="text-right">${result.actualSales.toLocaleString()}</TableCell>
-                          <TableCell className="text-right">
-                            <Badge variant={result.attainmentPercent >= 100 ? "default" : "secondary"}>
-                              {result.attainmentPercent.toFixed(1)}%
-                            </Badge>
+                      {filteredResults.length > 0 ? (
+                        filteredResults.map((result) => (
+                          <TableRow key={result.repId}>
+                            <TableCell className="font-medium">{result.repId}</TableCell>
+                            <TableCell>{result.repName}</TableCell>
+                            <TableCell>{result.region}</TableCell>
+                            <TableCell className="text-right">${result.quota.toLocaleString()}</TableCell>
+                            <TableCell className="text-right">${result.actualSales.toLocaleString()}</TableCell>
+                            <TableCell className="text-right">
+                              <Badge variant={result.attainmentPercent >= 100 ? "default" : "secondary"}>
+                                {result.attainmentPercent.toFixed(1)}%
+                              </Badge>
+                            </TableCell>
+                            <TableCell>{result.payoutCurveType}</TableCell>
+                            <TableCell className="text-right font-semibold text-green-600">
+                              ${result.finalPayout.toLocaleString()}
+                            </TableCell>
+                            <TableCell className="text-right">{result.percentOfTargetPay.toFixed(1)}%</TableCell>
+                            <TableCell>{result.anyAdjustment}</TableCell>
+                            <TableCell className="text-sm text-gray-600 dark:text-gray-400">{result.notes}</TableCell>
+                          </TableRow>
+                        ))
+                      ) : (
+                        <TableRow>
+                          <TableCell colSpan={11} className="text-center py-8 text-gray-500 dark:text-gray-400">
+                            No results match the selected filters
                           </TableCell>
-                          <TableCell>{result.payoutCurveType}</TableCell>
-                          <TableCell className="text-right font-semibold text-green-600">
-                            ${result.finalPayout.toLocaleString()}
-                          </TableCell>
-                          <TableCell className="text-right">{result.percentOfTargetPay.toFixed(1)}%</TableCell>
-                          <TableCell>{result.anyAdjustment}</TableCell>
-                          <TableCell className="text-sm text-gray-600 dark:text-gray-400">{result.notes}</TableCell>
                         </TableRow>
-                      ))}
+                      )}
                     </TableBody>
                   </Table>
                 </div>
