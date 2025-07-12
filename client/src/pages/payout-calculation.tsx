@@ -350,7 +350,7 @@ export default function PayoutCalculation() {
                     )}
                   </CardTitle>
                 </CardHeader>
-                <CardContent className="px-8 py-6">
+                <CardContent className="px-8 py-6 pl-[20px] pr-[20px] text-center">
                   <div className="grid grid-cols-2 md:grid-cols-4 xl:grid-cols-8 gap-6 text-center">
                     {/* Rep ID Filter */}
                     <div className="space-y-3">
