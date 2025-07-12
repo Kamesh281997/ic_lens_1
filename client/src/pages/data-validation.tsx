@@ -554,9 +554,7 @@ export default function DataValidation() {
           <div className="space-y-6 mt-12">
               {/* Validation Actions */}
               {allValidationComplete && (
-                <div className="flex justify-center space-x-4">
-                  
-
+                <div className="flex justify-center">
                   <Button
                     onClick={() => proceedMutation.mutate()}
                     disabled={hasErrors || proceedMutation.isPending}
