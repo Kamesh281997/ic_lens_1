@@ -552,29 +552,6 @@ export default function DataValidation() {
 
           {/* Action Buttons */}
           <div className="space-y-6 mt-12">
-              {/* Validation Actions */}
-              {allValidationComplete && (
-                <div className="flex justify-center">
-                  <Button
-                    onClick={() => proceedMutation.mutate()}
-                    disabled={hasErrors || proceedMutation.isPending}
-                    className="px-8 py-3 bg-blue-600 hover:bg-blue-700 text-white font-semibold"
-                  >
-                    {proceedMutation.isPending ? (
-                      <>
-                        <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2" />
-                        Processing...
-                      </>
-                    ) : (
-                      <>
-                        Proceed to Calculation
-                        <ArrowRight className="h-4 w-4 ml-2" />
-                      </>
-                    )}
-                  </Button>
-                </div>
-              )}
-
               {/* Navigation Options after Validation */}
               <div className="border-t dark:border-gray-700 pt-6">
                 <h3 className="text-lg font-semibold text-gray-900 dark:text-white text-center mb-4">
