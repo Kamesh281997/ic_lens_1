@@ -117,10 +117,14 @@ export default function PayoutCalculation() {
 
   const exportMutation = useMutation({
     mutationFn: async () => {
-      const response = await apiRequest("GET", "/api/payout/export", {});
-      return response.blob();
+      const response = await fetch("/api/payout/export");
+      if (!response.ok) {
+        throw new Error("Failed to export results");
+      }
+      return response.text();
     },
-    onSuccess: (blob) => {
+    onSuccess: (csvData) => {
+      const blob = new Blob([csvData], { type: 'text/csv' });
       const url = window.URL.createObjectURL(blob);
       const a = document.createElement('a');
       a.href = url;

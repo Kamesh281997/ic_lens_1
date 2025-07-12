@@ -594,19 +594,28 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.get("/api/payout/export", async (req, res) => {
     try {
-      // Create CSV export
+      if (!req.session.userId) {
+        return res.status(401).json({ message: "Not authenticated" });
+      }
+
+      // Fetch payout results from database
+      const results = await db.select().from(finalPayoutResults).where(eq(finalPayoutResults.userId, req.session.userId));
+      
+      if (results.length === 0) {
+        return res.status(404).json({ message: "No payout results found. Please calculate payouts first." });
+      }
+
+      // Create CSV export with real data
       const csvHeaders = "Rep ID,Rep Name,Region,Quota,Actual Sales,Attainment %,Payout Curve Type,Final Payout ($),% of Target Pay,Any Adjustment,Notes\n";
-      const csvData = [
-        "10000000,Michael Garcia,North America,500000,625000,125.0,Goal Attainment,75000,150.0,None,Exceeded quota by 25%",
-        "10000001,Sarah Johnson,Europe,400000,380000,95.0,Goal Attainment with Relative Rank,38000,95.0,Q4 Adjustment +$2k,Strong performance in challenging market",
-        "10000002,David Chen,Asia Pacific,600000,720000,120.0,Goal Attainment,84000,140.0,None,Top performer in region",
-        "10000003,Emily Rodriguez,South America,350000,425000,121.4,Goal Attainment with Relative Rank,51000,145.7,Territory Expansion Bonus +$3k,Excellent growth in new territory"
-      ].join("\n");
+      const csvData = results.map(result => {
+        return `${result.repId},"${result.repName}","${result.region}",${result.quota},${result.actualSales},${result.attainmentPercent},"${result.payoutCurveType}",${result.finalPayout},${result.percentOfTargetPay},"${result.anyAdjustment}","${result.notes}"`;
+      }).join("\n");
 
       res.setHeader('Content-Type', 'text/csv');
       res.setHeader('Content-Disposition', 'attachment; filename="payout_results.csv"');
       res.send(csvHeaders + csvData);
     } catch (error) {
+      console.error("Error exporting payout results:", error);
       res.status(500).json({ message: "Export failed" });
     }
   });
