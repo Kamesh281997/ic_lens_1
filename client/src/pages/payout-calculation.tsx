@@ -265,6 +265,7 @@ export default function PayoutCalculation() {
       <div className="absolute inset-0 opacity-10 dark:opacity-5">
         <div className="absolute inset-0 bg-gradient-to-br from-blue-100/20 to-indigo-100/20 dark:from-blue-900/10 dark:to-indigo-900/10"></div>
       </div>
+      
       {/* Header */}
       <header className="relative bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm shadow-lg border-b border-gray-200 dark:border-gray-700 flex items-center justify-between px-6 lg:px-12 py-6">
         <Link href="/">
@@ -282,8 +283,9 @@ export default function PayoutCalculation() {
           </Link>
         </div>
       </header>
+
       {/* Main Content */}
-      <main className="relative px-6 lg:px-12 py-8 ml-[-60px] mr-[-60px]">
+      <main className="relative px-6 lg:px-12 py-8">
         <div className="max-w-7xl mx-auto">
           {/* Page Title */}
           <div className="text-center mb-12">
@@ -341,7 +343,7 @@ export default function PayoutCalculation() {
               {/* Payout Results Table - Left Side */}
               <div className="xl:col-span-4">
                 <Card className="bg-white/90 dark:bg-gray-900/90 backdrop-blur-sm shadow-2xl border border-gray-200 dark:border-gray-700">
-                  <CardHeader className="flex flex-col space-y-1.5 p-6 ml-[-60px] mr-[-60px]">
+                  <CardHeader>
                     <CardTitle className="text-2xl text-gray-900 dark:text-white flex items-center">
                       <DollarSign className="h-6 w-6 mr-3 text-green-600" />
                       IC Payout Results
@@ -350,7 +352,7 @@ export default function PayoutCalculation() {
                       Detailed payout calculations for all sales representatives
                     </CardDescription>
                   </CardHeader>
-                  <CardContent className="p-6 pl-[2px] pr-[2px] pt-[12px] pb-[12px] ml-[-60px] mr-[-60px]">
+                  <CardContent>
                     {payoutLoading ? (
                       <div className="flex items-center justify-center py-12">
                         <RefreshCw className="h-8 w-8 text-blue-600 animate-spin" />
