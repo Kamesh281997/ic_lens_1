@@ -197,7 +197,7 @@ export default function Landing() {
                 
                 {/* ICLens Logo */}
                 <div className="flex items-center space-x-3">
-                  <div className="w-16 h-16 rounded-xl flex items-center justify-center shadow-lg" style={{ backgroundColor: 'var(--gp-surface-raised)' }}>
+                  <div className="w-16 h-16 rounded-xl flex items-center justify-center shadow-lg ml-[-10px] mr-[-10px] pl-[0px] pr-[0px]" style={{ backgroundColor: 'var(--gp-surface-raised)' }}>
                     <span style={{ color: 'var(--gp-brand-accent)' }} className="font-bold text-2xl">IC</span>
                   </div>
                   <span className="font-bold text-[25px] ml-[-3px] mr-[-3px]" style={{ color: 'var(--gp-content-primary)' }}>Lens</span>
