@@ -11,6 +11,7 @@ import {
   AlertTriangle, 
   XCircle, 
   ArrowLeft, 
+  ArrowRight, 
   FileText, 
   Users,
   MapPin,
@@ -18,6 +19,7 @@ import {
   DollarSign,
   Target,
   RefreshCw,
+  Calculator,
   Database,
   AlertCircle,
   Info,
@@ -179,6 +181,27 @@ export default function DataValidation() {
       toast({
         title: "Validation Failed to Start",
         description: error.message || "Failed to start validation process",
+        variant: "destructive",
+      });
+    },
+  });
+
+  const proceedMutation = useMutation({
+    mutationFn: async () => {
+      const response = await apiRequest("POST", "/api/validation/proceed", {});
+      return response.json();
+    },
+    onSuccess: () => {
+      toast({
+        title: "Proceeding to Calculation",
+        description: "Moving to payout calculation phase",
+      });
+      navigate("/payout-calculation");
+    },
+    onError: (error: Error) => {
+      toast({
+        title: "Cannot Proceed",
+        description: error.message || "Validation errors must be resolved first",
         variant: "destructive",
       });
     },
@@ -527,7 +550,83 @@ export default function DataValidation() {
             </div>
           )}
 
-          {/* Validation Errors (moved above Validation Summary) */}
+          {/* Action Buttons */}
+          <div className="space-y-6 mt-12">
+              {/* Validation Actions */}
+              {allValidationComplete && (
+                <div className="flex justify-center space-x-4">
+                  <Button
+                    variant="outline"
+                    onClick={() => validateMutation.mutate()}
+                    disabled={validateMutation.isPending}
+                    className="px-6 py-3"
+                  >
+                    {validateMutation.isPending ? (
+                      <>
+                        <RefreshCw className="h-4 w-4 mr-2 animate-spin" />
+                        Re-validating...
+                      </>
+                    ) : (
+                      <>
+                        <RefreshCw className="h-4 w-4 mr-2" />
+                        Re-validate
+                      </>
+                    )}
+                  </Button>
+
+                  <Button
+                    onClick={() => proceedMutation.mutate()}
+                    disabled={hasErrors || proceedMutation.isPending}
+                    className="px-8 py-3 bg-blue-600 hover:bg-blue-700 text-white font-semibold"
+                  >
+                    {proceedMutation.isPending ? (
+                      <>
+                        <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2" />
+                        Processing...
+                      </>
+                    ) : (
+                      <>
+                        Proceed to Calculation
+                        <ArrowRight className="h-4 w-4 ml-2" />
+                      </>
+                    )}
+                  </Button>
+                </div>
+              )}
+
+              {/* Navigation Options after Validation */}
+              <div className="border-t dark:border-gray-700 pt-6">
+                <h3 className="text-lg font-semibold text-gray-900 dark:text-white text-center mb-4">
+                  Or Navigate Directly To:
+                </h3>
+                <div className="flex flex-col sm:flex-row gap-4 justify-center">
+                  <Link href="/payout-calculation">
+                    <Button
+                      variant="outline"
+                      size="lg"
+                      className="px-8 py-3 border-green-300 dark:border-green-600 hover:bg-green-50 dark:hover:bg-green-900/20 text-green-700 dark:text-green-300"
+                    >
+                      <Calculator className="h-5 w-5 mr-2" />
+                      Payout Calculation Table
+                      <ArrowRight className="h-4 w-4 ml-2" />
+                    </Button>
+                  </Link>
+
+                  <Link href="/data-insights">
+                    <Button
+                      variant="outline"
+                      size="lg"
+                      className="px-8 py-3 border-purple-300 dark:border-purple-600 hover:bg-purple-50 dark:hover:bg-purple-900/20 text-purple-700 dark:text-purple-300"
+                    >
+                      <BarChart3 className="h-5 w-5 mr-2" />
+                      Insights Page
+                      <ArrowRight className="h-4 w-4 ml-2" />
+                    </Button>
+                  </Link>
+                </div>
+              </div>
+            </div>
+
           {hasErrors && allValidationComplete && (
             <Card className="bg-red-50 dark:bg-red-900/20 border-red-200 dark:border-red-800 mt-8">
               <CardHeader>
