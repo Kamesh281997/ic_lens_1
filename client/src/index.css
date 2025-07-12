@@ -17,6 +17,60 @@ html {
   background-color: #000000 !important;
 }
 
+/* Global button styling with #ff4f59 color */
+button {
+  background-color: #ff4f59 !important;
+  color: white !important;
+  border-color: #ff4f59 !important;
+}
+
+button:hover {
+  background-color: #e63946 !important;
+  border-color: #e63946 !important;
+}
+
+button:focus {
+  box-shadow: 0 0 0 2px rgba(255, 79, 89, 0.5) !important;
+}
+
+/* Navigation bar links and buttons */
+nav a {
+  color: #ff4f59 !important;
+}
+
+nav a:hover {
+  color: #e63946 !important;
+}
+
+nav button {
+  background-color: #ff4f59 !important;
+  color: white !important;
+}
+
+nav button:hover {
+  background-color: #e63946 !important;
+}
+
+/* Specific button variants */
+.btn-primary, .bg-blue-600, .bg-green-600, .bg-purple-600, .bg-indigo-600, .bg-red-600, .bg-yellow-600 {
+  background-color: #ff4f59 !important;
+  border-color: #ff4f59 !important;
+}
+
+.btn-primary:hover, .bg-blue-600:hover, .bg-green-600:hover, .bg-purple-600:hover, .bg-indigo-600:hover, .bg-red-600:hover, .bg-yellow-600:hover {
+  background-color: #e63946 !important;
+  border-color: #e63946 !important;
+}
+
+/* Override gradient backgrounds for buttons */
+.bg-gradient-to-r {
+  background: #ff4f59 !important;
+}
+
+.bg-gradient-to-r:hover {
+  background: #e63946 !important;
+}
+
 /* Genpact Design System CSS Variables */
 :root {
   /* Brand Colors */
