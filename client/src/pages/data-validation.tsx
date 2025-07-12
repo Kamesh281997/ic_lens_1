@@ -554,9 +554,7 @@ export default function DataValidation() {
           <div className="space-y-6 mt-12">
               {/* Navigation Options after Validation */}
               <div className="border-t dark:border-gray-700 pt-6">
-                <h3 className="text-lg font-semibold text-gray-900 dark:text-white text-center mb-4">
-                  Or Navigate Directly To:
-                </h3>
+                
                 <div className="flex flex-col sm:flex-row gap-4 justify-center">
                   <Link href="/payout-calculation">
                     <Button
