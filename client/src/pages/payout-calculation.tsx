@@ -447,24 +447,7 @@ export default function PayoutCalculation() {
                       </Select>
                     </div>
 
-                    {/* Attainment % Filter */}
-                    <div className="space-y-3">
-                      <label className="text-lg font-medium text-gray-700 dark:text-gray-300 flex items-center">
-                        <Percent className="h-6 w-6 mr-2 text-orange-600" />
-                        Attainment %
-                      </label>
-                      <Select value={filters.attainmentPercent} onValueChange={(value) => setFilters(prev => ({ ...prev, attainmentPercent: value }))}>
-                        <SelectTrigger className="w-full text-lg h-12">
-                          <SelectValue placeholder="All Attainment %" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="all">All Attainment %</SelectItem>
-                          {filterOptions.attainmentPercent?.map(percent => (
-                            <SelectItem key={percent} value={percent}>{parseFloat(percent).toFixed(1)}%</SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                    </div>
+                    
 
                     {/* Payout Curve Type Filter */}
                     <div className="space-y-3">
