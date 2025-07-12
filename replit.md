@@ -213,6 +213,7 @@ Changelog:
 - July 12, 2025. Added backdrop blur effects, semi-transparent cards, and sticky positioning for filter panel
 - July 12, 2025. Improved button styling with gradients and enhanced shadows for premium appearance
 - July 12, 2025. Optimized payout calculation page layout: reduced margins (px-2 lg:px-4), increased table width to 75% (9/12 columns), fixed table layout with specific column widths to prevent horizontal scrolling, enhanced font sizes throughout table and filters for better readability
+- July 12, 2025. Restructured payout calculation page layout: moved filter controls to top position above table, centered the entire layout (max-w-6xl), created vertical stack layout with filters in horizontal grid (8 columns), moved table to center position with full width display
 ```
 
 ## User Preferences
