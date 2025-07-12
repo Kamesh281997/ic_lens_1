@@ -242,7 +242,7 @@ export default function PayoutCalculation() {
 
   if (!isAuthenticated) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-gray-900 dark:to-gray-800 flex items-center justify-center">
+      <div className="min-h-screen bg-black text-white flex items-center justify-center">
         <Card className="w-96">
           <CardHeader>
             <CardTitle className="text-center">Authentication Required</CardTitle>
@@ -261,13 +261,9 @@ export default function PayoutCalculation() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-indigo-50 dark:from-gray-900 dark:via-gray-800 dark:to-slate-900">
-      {/* Background Pattern */}
-      <div className="absolute inset-0 opacity-10 dark:opacity-5">
-        <div className="absolute inset-0 bg-gradient-to-br from-blue-100/20 to-indigo-100/20 dark:from-blue-900/10 dark:to-indigo-900/10"></div>
-      </div>
+    <div className="min-h-screen bg-black text-white">
       {/* Header */}
-      <header className="relative bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm shadow-lg border-b border-gray-200 dark:border-gray-700 flex items-center justify-between px-6 lg:px-12 py-6">
+      <header className="flex items-center justify-between px-6 lg:px-12 py-6">
         <Link href="/">
           <div className="flex items-center space-x-2 cursor-pointer">
             <div className="w-8 h-8 rounded-lg flex items-center justify-center" style={{ backgroundColor: '#ff4f59' }}>
