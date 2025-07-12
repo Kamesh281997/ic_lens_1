@@ -6,7 +6,7 @@ import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
 import { Textarea } from "@/components/ui/textarea";
 import { Progress } from "@/components/ui/progress";
-
+import { ThemeToggle } from "@/components/theme-toggle";
 import { Link, useLocation } from "wouter";
 import { 
   ArrowLeft, 
@@ -473,7 +473,7 @@ Configuration Progress: ${configurationProgress}%
 
   if (!isAuthenticated) {
     return (
-      <div className="min-h-screen bg-black text-white flex items-center justify-center">
+      <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100 dark:from-gray-900 dark:via-slate-900 dark:to-blue-900 flex items-center justify-center">
         <Card className="w-96">
           <CardHeader>
             <CardTitle className="text-center">Authentication Required</CardTitle>
@@ -492,7 +492,13 @@ Configuration Progress: ${configurationProgress}%
   }
 
   return (
-    <div className="min-h-screen bg-black text-white relative overflow-hidden">
+    <div className="min-h-screen relative overflow-hidden">
+      {/* Background with subtle pattern */}
+      <div className="absolute inset-0 bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100 dark:from-gray-900 dark:via-slate-900 dark:to-blue-900"></div>
+      <div className="absolute inset-0 opacity-50">
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_1px_1px,rgba(0,0,0,0.05)_1px,transparent_0)] dark:bg-[radial-gradient(circle_at_1px_1px,rgba(255,255,255,0.05)_1px,transparent_0)]" 
+             style={{ backgroundSize: '20px 20px' }}></div>
+      </div>
       
       {/* Header */}
       <header className="relative z-10 flex items-center justify-between px-6 lg:px-12 py-6 bg-white/80 dark:bg-gray-900/80 backdrop-blur-sm border-b border-gray-200 dark:border-gray-700">
@@ -509,7 +515,7 @@ Configuration Progress: ${configurationProgress}%
             IC Plan Configuration
           </div>
         </div>
-
+        <ThemeToggle />
       </header>
 
       {/* Main Content */}

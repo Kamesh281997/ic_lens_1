@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
-
+import { ThemeToggle } from "@/components/theme-toggle";
 import { 
   Settings, 
   RefreshCw, 
@@ -82,6 +82,7 @@ export default function Landing() {
               </Link>
 
               <div className="flex items-center space-x-4 ml-6">
+                <ThemeToggle />
                 {isAuthenticated ? (
                   <div className="flex items-center space-x-4">
                     <div className="flex items-center space-x-2 text-gray-700 dark:text-gray-300">

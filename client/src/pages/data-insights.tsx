@@ -6,7 +6,7 @@ import { Progress } from "@/components/ui/progress";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
-
+import { ThemeToggle } from "@/components/theme-toggle";
 import { Link } from "wouter";
 import { 
   ArrowLeft, 
@@ -215,7 +215,7 @@ export default function DataInsights() {
 
   if (!isAuthenticated) {
     return (
-      <div className="min-h-screen bg-black text-white flex items-center justify-center">
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-gray-900 dark:to-gray-800 flex items-center justify-center">
         <Card className="w-96">
           <CardHeader>
             <CardTitle className="text-center">Authentication Required</CardTitle>
@@ -234,7 +234,7 @@ export default function DataInsights() {
   }
 
   return (
-    <div className="min-h-screen bg-black text-white">
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-gray-900 dark:to-gray-800">
       {/* Header */}
       <header className="flex items-center justify-between px-6 lg:px-12 py-6">
         <Link href="/">
@@ -246,6 +246,7 @@ export default function DataInsights() {
           </div>
         </Link>
         <div className="flex items-center space-x-4">
+          <ThemeToggle />
           <Link href="/">
             <Button variant="ghost" className="text-gray-600 dark:text-gray-300">
               <ArrowLeft className="h-4 w-4 mr-2" />

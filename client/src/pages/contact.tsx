@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
-
+import { ThemeToggle } from "@/components/theme-toggle";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Link } from "wouter";
 import { ArrowLeft, Mail, Phone, MapPin, Clock, Send } from "lucide-react";
@@ -40,7 +40,7 @@ export default function Contact() {
   };
 
   return (
-    <div className="min-h-screen bg-black text-white">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50 dark:from-gray-900 dark:to-gray-800">
       {/* Header */}
       <header className="flex items-center justify-between px-6 lg:px-12 py-6">
         <Link href="/">
@@ -52,6 +52,7 @@ export default function Contact() {
           </div>
         </Link>
         <div className="flex items-center space-x-4">
+          <ThemeToggle />
           <Link href="/">
             <Button variant="ghost" className="text-gray-600 dark:text-gray-300">
               <ArrowLeft className="h-4 w-4 mr-2" />
