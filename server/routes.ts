@@ -613,7 +613,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.get("/api/analytics/insights", async (req, res) => {
     try {
-      // Sample analytics data
+      // Sample analytics data with sales insights
       const analyticsData = {
         topPerformingReps: [
           { repId: "10000002", repName: "David Chen", payoutAmount: 84000, quotaAttainment: 120.0 },
@@ -636,12 +636,113 @@ export async function registerRoutes(app: Express): Promise<Server> {
           avgQuotaAttainment: 115.4,
           totalReps: 4,
           topPerformerThreshold: 120.0
+        },
+        salesInsights: {
+          totalSales: 2450000,
+          salesGrowth: 12.5,
+          topProducts: [
+            { name: 'Prevnar-20', sales: 1250000, growth: 18.5 },
+            { name: 'Ibrance', sales: 980000, growth: 14.2 },
+            { name: 'Eliquis', sales: 875000, growth: 22.1 },
+            { name: 'Pfizer-BioNTech COVID-19', sales: 756000, growth: -8.3 },
+            { name: 'Abrysvo', sales: 432000, growth: 45.7 }
+          ],
+          salesByTerritory: [
+            { territory: 'North East', sales: 856000, growth: 15.3 },
+            { territory: 'South East', sales: 742000, growth: 12.8 },
+            { territory: 'West Coast', sales: 685000, growth: 19.2 },
+            { territory: 'Central', sales: 523000, growth: 8.7 },
+            { territory: 'Mid-Atlantic', sales: 487000, growth: 14.1 },
+            { territory: 'Southwest', sales: 432000, growth: 11.6 }
+          ],
+          salesTrends: [
+            { period: 'Jan 2024', sales: 2100000, target: 2000000 },
+            { period: 'Feb 2024', sales: 2250000, target: 2100000 },
+            { period: 'Mar 2024', sales: 2400000, target: 2200000 },
+            { period: 'Apr 2024', sales: 2350000, target: 2300000 },
+            { period: 'May 2024', sales: 2500000, target: 2400000 },
+            { period: 'Jun 2024', sales: 2450000, target: 2350000 }
+          ],
+          conversionMetrics: {
+            leadConversion: 24.3,
+            avgDealSize: 45200,
+            salesCycleLength: 67
+          }
         }
       };
 
       res.json(analyticsData);
     } catch (error) {
       res.status(500).json({ message: "Failed to fetch analytics data" });
+    }
+  });
+
+  // AI Chat endpoint for analytics insights
+  app.post("/api/ai/chat", async (req, res) => {
+    try {
+      if (!req.session.userId) {
+        return res.status(401).json({ message: "Not authenticated" });
+      }
+
+      const { message, context } = req.body;
+
+      // Import OpenAI dynamically
+      const { default: OpenAI } = await import('openai');
+      
+      const openai = new OpenAI({
+        apiKey: process.env.OPENAI_API_KEY || process.env.REPLIT_OPENAI_API_KEY
+      });
+
+      // Fetch user's payout data for context
+      const userPayoutResults = await db.select().from(finalPayoutResults).where(eq(finalPayoutResults.userId, req.session.userId));
+      
+      // Create a comprehensive context for the AI
+      const aiContext = `
+You are an AI analytics assistant for ICLens, an incentive compensation platform. You have access to the following data for analysis:
+
+PAYOUT DATA:
+${userPayoutResults.map(result => 
+  `Rep: ${result.repName} (${result.repId}) | Region: ${result.region} | Quota: $${result.quota} | Sales: $${result.actualSales} | Attainment: ${result.attainmentPercent}% | Payout: $${result.finalPayout} | Target Pay %: ${result.percentOfTargetPay}%`
+).join('\n')}
+
+ANALYTICS CONTEXT:
+${context?.analyticsData ? JSON.stringify(context.analyticsData, null, 2) : 'Analytics data not available'}
+
+USER QUESTION: ${message}
+
+Please provide intelligent insights, analysis, and recommendations based on this data. Focus on:
+- Sales performance trends
+- Compensation effectiveness 
+- Territory analysis
+- Predictive insights
+- Risk identification
+- Optimization recommendations
+
+Be specific with numbers and provide actionable insights. If you need more data to provide accurate analysis, mention what additional information would be helpful.
+`;
+
+      const completion = await openai.chat.completions.create({
+        model: "gpt-4o", // the newest OpenAI model is "gpt-4o" which was released May 13, 2024. do not change this unless explicitly requested by the user
+        messages: [
+          {
+            role: "system",
+            content: "You are an expert AI analytics assistant specializing in sales compensation and performance analysis. Provide detailed, data-driven insights with specific recommendations."
+          },
+          {
+            role: "user",
+            content: aiContext
+          }
+        ],
+        max_tokens: 1000,
+        temperature: 0.7
+      });
+
+      const response = completion.choices[0].message.content;
+
+      res.json({ response });
+    } catch (error) {
+      console.error("AI Chat Error:", error);
+      res.status(500).json({ message: "Failed to get AI response" });
     }
   });
 
