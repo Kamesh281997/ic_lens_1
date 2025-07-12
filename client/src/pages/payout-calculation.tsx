@@ -428,24 +428,7 @@ export default function PayoutCalculation() {
                       </Select>
                     </div>
 
-                    {/* Actual Sales Filter */}
-                    <div className="space-y-3">
-                      <label className="text-lg font-medium text-gray-700 dark:text-gray-300 flex items-center">
-                        <BarChart3 className="h-6 w-6 mr-2 text-yellow-600" />
-                        Actual Sales
-                      </label>
-                      <Select value={filters.actualSales} onValueChange={(value) => setFilters(prev => ({ ...prev, actualSales: value }))}>
-                        <SelectTrigger className="w-full text-lg h-12">
-                          <SelectValue placeholder="All Sales" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="all">All Sales</SelectItem>
-                          {filterOptions.actualSales?.map(sales => (
-                            <SelectItem key={sales} value={sales}>${parseFloat(sales).toLocaleString()}</SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                    </div>
+                    
 
                     
 
