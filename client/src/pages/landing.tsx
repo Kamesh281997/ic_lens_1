@@ -59,7 +59,7 @@ export default function Landing() {
                 <div className="w-10 h-10 bg-red-600 rounded-lg flex items-center justify-center">
                   <span className="text-white font-bold text-lg">IC</span>
                 </div>
-                <span className="text-2xl font-bold text-gray-900 dark:text-white">ICLens</span>
+                <span className="text-2xl font-bold dark:text-white text-[white]">Lens</span>
               </div>
             </div>
 
