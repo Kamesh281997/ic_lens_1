@@ -215,41 +215,49 @@ export default function DataInsights() {
 
   if (!isAuthenticated) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-gray-900 dark:to-gray-800 flex items-center justify-center">
-        <Card className="w-96">
-          <CardHeader>
-            <CardTitle className="text-center">Authentication Required</CardTitle>
-            <CardDescription className="text-center">
+      <div className="min-h-screen flex items-center justify-center" style={{ backgroundColor: 'var(--gp-surface-base)' }}>
+        <div className="gp-card">
+          <div className="text-center">
+            <h1 className="gp-h1 mb-4">Authentication Required</h1>
+            <p className="gp-body-l mb-6">
               Please log in to access data insights
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="text-center">
+            </p>
             <Link href="/auth?redirect=/data-insights">
-              <Button>Go to Login</Button>
+              <button className="gp-btn-primary">Go to Login</button>
             </Link>
-          </CardContent>
-        </Card>
+          </div>
+        </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-gray-900 dark:to-gray-800">
+    <div className="min-h-screen" style={{ backgroundColor: 'var(--gp-surface-base)' }}>
       {/* Header */}
-      <header className="flex items-center justify-between px-6 lg:px-12 py-6">
-        <Link href="/">
-          <div className="text-4xl font-bold text-gray-900 dark:text-white hover:text-blue-600 dark:hover:text-blue-400 transition-colors cursor-pointer">
-            ICLens
+      <header className="gp-nav">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex items-center justify-between h-20">
+            {/* Left: ICLens Logo */}
+            <Link href="/">
+              <div className="flex items-center space-x-2">
+                <div className="w-10 h-10 bg-red-600 rounded-lg flex items-center justify-center">
+                  <span className="text-white font-bold text-lg">IC</span>
+                </div>
+                <span className="text-2xl font-bold text-white">Lens</span>
+              </div>
+            </Link>
+            
+            {/* Right: Navigation */}
+            <div className="flex items-center space-x-4">
+              <ThemeToggle />
+              <Link href="/">
+                <span className="gp-nav-link text-lg font-medium cursor-pointer">
+                  <ArrowLeft className="h-4 w-4 mr-2 inline" />
+                  Back to Home
+                </span>
+              </Link>
+            </div>
           </div>
-        </Link>
-        <div className="flex items-center space-x-4">
-          <ThemeToggle />
-          <Link href="/">
-            <Button variant="ghost" className="text-gray-600 dark:text-gray-300">
-              <ArrowLeft className="h-4 w-4 mr-2" />
-              Back to Home
-            </Button>
-          </Link>
         </div>
       </header>
 
@@ -258,25 +266,24 @@ export default function DataInsights() {
         <div className="max-w-7xl mx-auto">
           {/* Page Title */}
           <div className="text-center mb-12">
-            <h1 className="text-5xl md:text-6xl font-bold text-gray-900 dark:text-white mb-4">
+            <h1 className="gp-display-l mb-4">
               Data Insights & Analytics
             </h1>
-            <p className="text-2xl text-gray-600 dark:text-gray-300">
+            <p className="gp-body-l">
               Comprehensive performance analytics and compensation insights
             </p>
           </div>
 
           {/* Action Buttons */}
           <div className="flex justify-center space-x-4 mb-8">
-            <Button
+            <button
               onClick={handleExportInsights}
               disabled={isLoading}
-              variant="outline"
-              className="px-6 py-3"
+              className="gp-btn-secondary"
             >
               <Download className="h-4 w-4 mr-2" />
               Export Insights
-            </Button>
+            </button>
           </div>
 
           {isLoading ? (
