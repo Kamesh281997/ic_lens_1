@@ -637,60 +637,66 @@ Configuration Progress: ${configurationProgress}%
                     </CardDescription>
                   </CardHeader>
                   <CardContent>
-                    <div className="space-y-3">
-                      <div className="p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg border border-blue-200 dark:border-blue-700">
-                        <div className="flex items-center space-x-2 mb-2">
-                          <Target className="h-4 w-4 text-blue-600" />
-                          <h4 className="font-semibold text-gray-900 dark:text-white">Plan Type</h4>
-                        </div>
-                        <p className="text-sm text-gray-600 dark:text-gray-400">
-                          {planConfig.planType || 'Not configured yet'}
-                        </p>
-                        {planConfig.planType && (
-                          <p className="text-xs text-blue-600 dark:text-blue-400 mt-1">
-                            Reason: Configured based on your motivation and performance goals
+                    <div className="space-y-4">
+                      {/* First Row - Plan Type and Payout Cap */}
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div className="p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg border border-blue-200 dark:border-blue-700">
+                          <div className="flex items-center space-x-2 mb-2">
+                            <Target className="h-4 w-4 text-blue-600" />
+                            <h4 className="font-semibold text-gray-900 dark:text-white">Plan Type</h4>
+                          </div>
+                          <p className="text-sm text-gray-600 dark:text-gray-400">
+                            {planConfig.planType || 'Not configured yet'}
                           </p>
-                        )}
+                          {planConfig.planType && (
+                            <p className="text-xs text-blue-600 dark:text-blue-400 mt-1">
+                              Reason: Configured based on your motivation and performance goals
+                            </p>
+                          )}
+                        </div>
+                        
+                        <div className="p-4 bg-green-50 dark:bg-green-900/20 rounded-lg border border-green-200 dark:border-green-700">
+                          <div className="flex items-center space-x-2 mb-2">
+                            <DollarSign className="h-4 w-4 text-green-600" />
+                            <h4 className="font-semibold text-gray-900 dark:text-white">Payout Cap</h4>
+                          </div>
+                          <p className="text-sm text-gray-600 dark:text-gray-400">
+                            {planConfig.payoutCap ? `Yes (${planConfig.capPercentage}%)` : 'No cap set'}
+                          </p>
+                          {planConfig.payoutCap !== undefined && (
+                            <p className="text-xs text-green-600 dark:text-green-400 mt-1">
+                              Reason: {planConfig.payoutCap ? 'Balances motivation with cost control' : 'Maximizes motivation for top performers'}
+                            </p>
+                          )}
+                        </div>
                       </div>
                       
-                      <div className="p-4 bg-green-50 dark:bg-green-900/20 rounded-lg border border-green-200 dark:border-green-700">
-                        <div className="flex items-center space-x-2 mb-2">
-                          <DollarSign className="h-4 w-4 text-green-600" />
-                          <h4 className="font-semibold text-gray-900 dark:text-white">Payout Cap</h4>
-                        </div>
-                        <p className="text-sm text-gray-600 dark:text-gray-400">
-                          {planConfig.payoutCap ? `Yes (${planConfig.capPercentage}%)` : 'No cap set'}
-                        </p>
-                        {planConfig.payoutCap !== undefined && (
-                          <p className="text-xs text-green-600 dark:text-green-400 mt-1">
-                            Reason: {planConfig.payoutCap ? 'Balances motivation with cost control' : 'Maximizes motivation for top performers'}
+                      {/* Second Row - Budget Constraints and Ethical Focus */}
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div className="p-4 bg-purple-50 dark:bg-purple-900/20 rounded-lg border border-purple-200 dark:border-purple-700">
+                          <div className="flex items-center space-x-2 mb-2">
+                            <BarChart3 className="h-4 w-4 text-purple-600" />
+                            <h4 className="font-semibold text-gray-900 dark:text-white">Budget Constraints</h4>
+                          </div>
+                          <p className="text-sm text-gray-600 dark:text-gray-400">
+                            {planConfig.budgetConstraints || 'Not specified'}
                           </p>
-                        )}
-                      </div>
-                      
-                      <div className="p-4 bg-purple-50 dark:bg-purple-900/20 rounded-lg border border-purple-200 dark:border-purple-700">
-                        <div className="flex items-center space-x-2 mb-2">
-                          <BarChart3 className="h-4 w-4 text-purple-600" />
-                          <h4 className="font-semibold text-gray-900 dark:text-white">Budget Constraints</h4>
                         </div>
-                        <p className="text-sm text-gray-600 dark:text-gray-400">
-                          {planConfig.budgetConstraints || 'Not specified'}
-                        </p>
-                      </div>
-                      
-                      <div className="p-4 bg-orange-50 dark:bg-orange-900/20 rounded-lg border border-orange-200 dark:border-orange-700">
-                        <div className="flex items-center space-x-2 mb-2">
-                          <CheckCircle className="h-4 w-4 text-orange-600" />
-                          <h4 className="font-semibold text-gray-900 dark:text-white">Ethical Focus</h4>
-                        </div>
-                        <p className="text-sm text-gray-600 dark:text-gray-400">
-                          {planConfig.ethicalPrioritization ? 'Yes' : 'Not configured'}
-                        </p>
-                        {planConfig.ethicalPrioritization && (
-                          <p className="text-xs text-orange-600 dark:text-orange-400 mt-1">
-                            Reason: Ensures fairness and balanced approach to compensation
+                        
+                        <div className="p-4 bg-orange-50 dark:bg-orange-900/20 rounded-lg border border-orange-200 dark:border-orange-700">
+                          <div className="flex items-center space-x-2 mb-2">
+                            <CheckCircle className="h-4 w-4 text-orange-600" />
+                            <h4 className="font-semibold text-gray-900 dark:text-white">Ethical Focus</h4>
+                          </div>
+                          <p className="text-sm text-gray-600 dark:text-gray-400">
+                            {planConfig.ethicalPrioritization ? 'Yes' : 'Not configured'}
                           </p>
-                        )}
+                          {planConfig.ethicalPrioritization && (
+                            <p className="text-xs text-orange-600 dark:text-orange-400 mt-1">
+                              Reason: Ensures fairness and balanced approach to compensation
+                            </p>
+                          )}
+                        </div>
                       </div>
                     </div>
                   </CardContent>
