@@ -339,9 +339,9 @@ export default function PayoutCalculation() {
 
           {/* Main Layout - Table on left, Filters on right */}
           {payoutResults?.length > 0 && (
-            <div className="grid grid-cols-1 xl:grid-cols-4 gap-6">
+            <div className="grid grid-cols-1 xl:grid-cols-5 gap-6">
               {/* Payout Results Table - Left Side */}
-              <div className="xl:col-span-3">
+              <div className="xl:col-span-4">
                 <Card className="bg-white/90 dark:bg-gray-900/90 backdrop-blur-sm shadow-2xl border border-gray-200 dark:border-gray-700">
                   <CardHeader>
                     <CardTitle className="text-2xl text-gray-900 dark:text-white flex items-center">
@@ -438,157 +438,163 @@ export default function PayoutCalculation() {
                     </CardTitle>
                   </CardHeader>
                   <CardContent>
-                    <div className="space-y-4">
-                      {/* Rep ID Filter */}
-                      <div className="space-y-2">
-                        <label className="text-sm font-medium text-gray-700 dark:text-gray-300 flex items-center">
-                          <User className="h-4 w-4 mr-2 text-blue-600" />
-                          Rep ID
-                        </label>
-                        <Select value={filters.repId} onValueChange={(value) => setFilters(prev => ({ ...prev, repId: value }))}>
-                          <SelectTrigger className="w-full">
-                            <SelectValue placeholder="All Rep IDs" />
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value="all">All Rep IDs</SelectItem>
-                            {filterOptions.repId?.map(id => (
-                              <SelectItem key={id} value={id}>{id}</SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
+                    <div className="grid grid-cols-2 gap-4">
+                      {/* Column 1 - First 4 Filters */}
+                      <div className="space-y-4">
+                        {/* Rep ID Filter */}
+                        <div className="space-y-2">
+                          <label className="text-sm font-medium text-gray-700 dark:text-gray-300 flex items-center">
+                            <User className="h-4 w-4 mr-2 text-blue-600" />
+                            Rep ID
+                          </label>
+                          <Select value={filters.repId} onValueChange={(value) => setFilters(prev => ({ ...prev, repId: value }))}>
+                            <SelectTrigger className="w-full">
+                              <SelectValue placeholder="All Rep IDs" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="all">All Rep IDs</SelectItem>
+                              {filterOptions.repId?.map(id => (
+                                <SelectItem key={id} value={id}>{id}</SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                        </div>
+
+                        {/* Rep Name Filter */}
+                        <div className="space-y-2">
+                          <label className="text-sm font-medium text-gray-700 dark:text-gray-300 flex items-center">
+                            <User className="h-4 w-4 mr-2 text-green-600" />
+                            Rep Name
+                          </label>
+                          <Select value={filters.repName} onValueChange={(value) => setFilters(prev => ({ ...prev, repName: value }))}>
+                            <SelectTrigger className="w-full">
+                              <SelectValue placeholder="All Rep Names" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="all">All Rep Names</SelectItem>
+                              {filterOptions.repName?.map(name => (
+                                <SelectItem key={name} value={name}>{name}</SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                        </div>
+
+                        {/* Region Filter */}
+                        <div className="space-y-2">
+                          <label className="text-sm font-medium text-gray-700 dark:text-gray-300 flex items-center">
+                            <MapPin className="h-4 w-4 mr-2 text-red-600" />
+                            Region
+                          </label>
+                          <Select value={filters.region} onValueChange={(value) => setFilters(prev => ({ ...prev, region: value }))}>
+                            <SelectTrigger className="w-full">
+                              <SelectValue placeholder="All Regions" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="all">All Regions</SelectItem>
+                              {filterOptions.region?.map(region => (
+                                <SelectItem key={region} value={region}>{region}</SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                        </div>
+
+                        {/* Quota Filter */}
+                        <div className="space-y-2">
+                          <label className="text-sm font-medium text-gray-700 dark:text-gray-300 flex items-center">
+                            <Target className="h-4 w-4 mr-2 text-purple-600" />
+                            Quota
+                          </label>
+                          <Select value={filters.quota} onValueChange={(value) => setFilters(prev => ({ ...prev, quota: value }))}>
+                            <SelectTrigger className="w-full">
+                              <SelectValue placeholder="All Quotas" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="all">All Quotas</SelectItem>
+                              {filterOptions.quota?.map(quota => (
+                                <SelectItem key={quota} value={quota}>${parseFloat(quota).toLocaleString()}</SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                        </div>
                       </div>
 
-                      {/* Rep Name Filter */}
-                      <div className="space-y-2">
-                        <label className="text-sm font-medium text-gray-700 dark:text-gray-300 flex items-center">
-                          <User className="h-4 w-4 mr-2 text-green-600" />
-                          Rep Name
-                        </label>
-                        <Select value={filters.repName} onValueChange={(value) => setFilters(prev => ({ ...prev, repName: value }))}>
-                          <SelectTrigger className="w-full">
-                            <SelectValue placeholder="All Rep Names" />
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value="all">All Rep Names</SelectItem>
-                            {filterOptions.repName?.map(name => (
-                              <SelectItem key={name} value={name}>{name}</SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
-                      </div>
+                      {/* Column 2 - Next 4 Filters */}
+                      <div className="space-y-4">
+                        {/* Actual Sales Filter */}
+                        <div className="space-y-2">
+                          <label className="text-sm font-medium text-gray-700 dark:text-gray-300 flex items-center">
+                            <BarChart3 className="h-4 w-4 mr-2 text-yellow-600" />
+                            Actual Sales
+                          </label>
+                          <Select value={filters.actualSales} onValueChange={(value) => setFilters(prev => ({ ...prev, actualSales: value }))}>
+                            <SelectTrigger className="w-full">
+                              <SelectValue placeholder="All Sales" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="all">All Sales</SelectItem>
+                              {filterOptions.actualSales?.map(sales => (
+                                <SelectItem key={sales} value={sales}>${parseFloat(sales).toLocaleString()}</SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                        </div>
 
-                      {/* Region Filter */}
-                      <div className="space-y-2">
-                        <label className="text-sm font-medium text-gray-700 dark:text-gray-300 flex items-center">
-                          <MapPin className="h-4 w-4 mr-2 text-red-600" />
-                          Region
-                        </label>
-                        <Select value={filters.region} onValueChange={(value) => setFilters(prev => ({ ...prev, region: value }))}>
-                          <SelectTrigger className="w-full">
-                            <SelectValue placeholder="All Regions" />
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value="all">All Regions</SelectItem>
-                            {filterOptions.region?.map(region => (
-                              <SelectItem key={region} value={region}>{region}</SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
-                      </div>
+                        {/* Attainment % Filter */}
+                        <div className="space-y-2">
+                          <label className="text-sm font-medium text-gray-700 dark:text-gray-300 flex items-center">
+                            <Percent className="h-4 w-4 mr-2 text-orange-600" />
+                            Attainment %
+                          </label>
+                          <Select value={filters.attainmentPercent} onValueChange={(value) => setFilters(prev => ({ ...prev, attainmentPercent: value }))}>
+                            <SelectTrigger className="w-full">
+                              <SelectValue placeholder="All Attainment %" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="all">All Attainment %</SelectItem>
+                              {filterOptions.attainmentPercent?.map(percent => (
+                                <SelectItem key={percent} value={percent}>{parseFloat(percent).toFixed(1)}%</SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                        </div>
 
-                      {/* Quota Filter */}
-                      <div className="space-y-2">
-                        <label className="text-sm font-medium text-gray-700 dark:text-gray-300 flex items-center">
-                          <Target className="h-4 w-4 mr-2 text-purple-600" />
-                          Quota
-                        </label>
-                        <Select value={filters.quota} onValueChange={(value) => setFilters(prev => ({ ...prev, quota: value }))}>
-                          <SelectTrigger className="w-full">
-                            <SelectValue placeholder="All Quotas" />
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value="all">All Quotas</SelectItem>
-                            {filterOptions.quota?.map(quota => (
-                              <SelectItem key={quota} value={quota}>${parseFloat(quota).toLocaleString()}</SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
-                      </div>
+                        {/* Payout Curve Type Filter */}
+                        <div className="space-y-2">
+                          <label className="text-sm font-medium text-gray-700 dark:text-gray-300 flex items-center">
+                            <TrendingUp className="h-4 w-4 mr-2 text-indigo-600" />
+                            Payout Curve Type
+                          </label>
+                          <Select value={filters.payoutCurveType} onValueChange={(value) => setFilters(prev => ({ ...prev, payoutCurveType: value }))}>
+                            <SelectTrigger className="w-full">
+                              <SelectValue placeholder="All Curve Types" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="all">All Curve Types</SelectItem>
+                              {filterOptions.payoutCurveType?.map(type => (
+                                <SelectItem key={type} value={type}>{type}</SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                        </div>
 
-                      {/* Actual Sales Filter */}
-                      <div className="space-y-2">
-                        <label className="text-sm font-medium text-gray-700 dark:text-gray-300 flex items-center">
-                          <BarChart3 className="h-4 w-4 mr-2 text-yellow-600" />
-                          Actual Sales
-                        </label>
-                        <Select value={filters.actualSales} onValueChange={(value) => setFilters(prev => ({ ...prev, actualSales: value }))}>
-                          <SelectTrigger className="w-full">
-                            <SelectValue placeholder="All Sales" />
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value="all">All Sales</SelectItem>
-                            {filterOptions.actualSales?.map(sales => (
-                              <SelectItem key={sales} value={sales}>${parseFloat(sales).toLocaleString()}</SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
-                      </div>
-
-                      {/* Attainment % Filter */}
-                      <div className="space-y-2">
-                        <label className="text-sm font-medium text-gray-700 dark:text-gray-300 flex items-center">
-                          <Percent className="h-4 w-4 mr-2 text-orange-600" />
-                          Attainment %
-                        </label>
-                        <Select value={filters.attainmentPercent} onValueChange={(value) => setFilters(prev => ({ ...prev, attainmentPercent: value }))}>
-                          <SelectTrigger className="w-full">
-                            <SelectValue placeholder="All Attainment %" />
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value="all">All Attainment %</SelectItem>
-                            {filterOptions.attainmentPercent?.map(percent => (
-                              <SelectItem key={percent} value={percent}>{parseFloat(percent).toFixed(1)}%</SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
-                      </div>
-
-                      {/* Payout Curve Type Filter */}
-                      <div className="space-y-2">
-                        <label className="text-sm font-medium text-gray-700 dark:text-gray-300 flex items-center">
-                          <TrendingUp className="h-4 w-4 mr-2 text-indigo-600" />
-                          Payout Curve Type
-                        </label>
-                        <Select value={filters.payoutCurveType} onValueChange={(value) => setFilters(prev => ({ ...prev, payoutCurveType: value }))}>
-                          <SelectTrigger className="w-full">
-                            <SelectValue placeholder="All Curve Types" />
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value="all">All Curve Types</SelectItem>
-                            {filterOptions.payoutCurveType?.map(type => (
-                              <SelectItem key={type} value={type}>{type}</SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
-                      </div>
-
-                      {/* Any Adjustment Filter */}
-                      <div className="space-y-2">
-                        <label className="text-sm font-medium text-gray-700 dark:text-gray-300 flex items-center">
-                          <Settings className="h-4 w-4 mr-2 text-gray-600" />
-                          Any Adjustment
-                        </label>
-                        <Select value={filters.anyAdjustment} onValueChange={(value) => setFilters(prev => ({ ...prev, anyAdjustment: value }))}>
-                          <SelectTrigger className="w-full">
-                            <SelectValue placeholder="All Adjustments" />
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value="all">All Adjustments</SelectItem>
-                            {filterOptions.anyAdjustment?.map(adjustment => (
-                              <SelectItem key={adjustment} value={adjustment}>{adjustment}</SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
+                        {/* Any Adjustment Filter */}
+                        <div className="space-y-2">
+                          <label className="text-sm font-medium text-gray-700 dark:text-gray-300 flex items-center">
+                            <Settings className="h-4 w-4 mr-2 text-gray-600" />
+                            Any Adjustment
+                          </label>
+                          <Select value={filters.anyAdjustment} onValueChange={(value) => setFilters(prev => ({ ...prev, anyAdjustment: value }))}>
+                            <SelectTrigger className="w-full">
+                              <SelectValue placeholder="All Adjustments" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="all">All Adjustments</SelectItem>
+                              {filterOptions.anyAdjustment?.map(adjustment => (
+                                <SelectItem key={adjustment} value={adjustment}>{adjustment}</SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                        </div>
                       </div>
                     </div>
                     
