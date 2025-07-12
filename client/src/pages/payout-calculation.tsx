@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { Link } from "wouter";
@@ -10,14 +10,10 @@ import {
   Calculator, 
   TrendingUp, 
   MapPin, 
-  PieChart, 
   ArrowLeft, 
   Download, 
   RefreshCw,
-  DollarSign,
-  Users,
-  Target,
-  BarChart3
+  DollarSign
 } from "lucide-react";
 import { useAuth } from "@/hooks/use-auth";
 import { useQuery, useMutation } from "@tanstack/react-query";
@@ -241,200 +237,78 @@ export default function PayoutCalculation() {
             </Button>
           </div>
 
-          {/* Content Tabs */}
-          <Tabs defaultValue="results" className="w-full">
-            <TabsList className="grid w-full grid-cols-2 mb-8">
-              <TabsTrigger value="results" className="flex items-center">
-                <DollarSign className="h-4 w-4 mr-2" />
-                Payout Results
-              </TabsTrigger>
-              
-              
-              <TabsTrigger value="distribution" className="flex items-center">
-                <PieChart className="h-4 w-4 mr-2" />
-                Distribution
-              </TabsTrigger>
-            </TabsList>
-
-            {/* Payout Results Tab */}
-            <TabsContent value="results">
-              <Card className="bg-white dark:bg-gray-900 shadow-xl border border-gray-200 dark:border-gray-700">
-                <CardHeader>
-                  <CardTitle className="text-2xl text-gray-900 dark:text-white flex items-center">
-                    <DollarSign className="h-6 w-6 mr-3 text-green-600" />
-                    IC Payout Results
-                  </CardTitle>
-                  <CardDescription>
-                    Detailed payout calculations for all sales representatives
-                  </CardDescription>
-                </CardHeader>
-                <CardContent>
-                  {payoutLoading ? (
-                    <div className="flex items-center justify-center py-12">
-                      <RefreshCw className="h-8 w-8 text-blue-600 animate-spin" />
-                      <span className="ml-3 text-lg text-gray-600 dark:text-gray-300">
-                        Loading payout data...
-                      </span>
-                    </div>
-                  ) : payoutResults?.length ? (
-                    <div className="overflow-x-auto">
-                      <Table>
-                        <TableHeader>
-                          <TableRow>
-                            <TableHead>Rep ID</TableHead>
-                            <TableHead>Rep Name</TableHead>
-                            <TableHead>Region</TableHead>
-                            <TableHead className="text-right">Quota</TableHead>
-                            <TableHead className="text-right">Actual Sales</TableHead>
-                            <TableHead className="text-right">Attainment %</TableHead>
-                            <TableHead>Payout Curve Type</TableHead>
-                            <TableHead className="text-right">Final Payout ($)</TableHead>
-                            <TableHead className="text-right">% of Target Pay</TableHead>
-                            <TableHead>Any Adjustment</TableHead>
-                            <TableHead>Notes</TableHead>
-                          </TableRow>
-                        </TableHeader>
-                        <TableBody>
-                          {payoutResults.map((result) => (
-                            <TableRow key={result.repId}>
-                              <TableCell className="font-medium">{result.repId}</TableCell>
-                              <TableCell>{result.repName}</TableCell>
-                              <TableCell>{result.region}</TableCell>
-                              <TableCell className="text-right">${result.quota.toLocaleString()}</TableCell>
-                              <TableCell className="text-right">${result.actualSales.toLocaleString()}</TableCell>
-                              <TableCell className="text-right">
-                                <Badge variant={result.attainmentPercent >= 100 ? "default" : "secondary"}>
-                                  {result.attainmentPercent.toFixed(1)}%
-                                </Badge>
-                              </TableCell>
-                              <TableCell>{result.payoutCurveType}</TableCell>
-                              <TableCell className="text-right font-semibold text-green-600">
-                                ${result.finalPayout.toLocaleString()}
-                              </TableCell>
-                              <TableCell className="text-right">{result.percentOfTargetPay.toFixed(1)}%</TableCell>
-                              <TableCell>{result.anyAdjustment}</TableCell>
-                              <TableCell className="text-sm text-gray-600 dark:text-gray-400">{result.notes}</TableCell>
-                            </TableRow>
-                          ))}
-                        </TableBody>
-                      </Table>
-                    </div>
-                  ) : (
-                    <div className="text-center py-12">
-                      <Calculator className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-                      <p className="text-lg text-gray-600 dark:text-gray-300">
-                        No payout results available. Click "Calculate Payouts" to begin.
-                      </p>
-                    </div>
-                  )}
-                </CardContent>
-              </Card>
-            </TabsContent>
-
-            
-
-            
-
-            {/* Distribution Tab */}
-            <TabsContent value="distribution">
-              <Card className="bg-white dark:bg-gray-900 shadow-xl border border-gray-200 dark:border-gray-700">
-                <CardHeader>
-                  <CardTitle className="text-2xl text-gray-900 dark:text-white flex items-center">
-                    <PieChart className="h-6 w-6 mr-3 text-orange-600" />
-                    Payout Distribution
-                  </CardTitle>
-                  <CardDescription>
-                    Distribution of IC payouts across different ranges
-                  </CardDescription>
-                </CardHeader>
-                <CardContent>
-                  {analyticsLoading ? (
-                    <div className="flex items-center justify-center py-12">
-                      <RefreshCw className="h-8 w-8 text-blue-600 animate-spin" />
-                      <span className="ml-3 text-lg text-gray-600 dark:text-gray-300">
-                        Loading distribution data...
-                      </span>
-                    </div>
-                  ) : analyticsData?.payoutDistribution?.length ? (
-                    <div className="space-y-6">
-                      {/* Summary Stats */}
-                      {analyticsData.summary && (
-                        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
-                          <Card className="bg-blue-50 dark:bg-blue-900/20 border-blue-200 dark:border-blue-800">
-                            <CardContent className="p-4 text-center">
-                              <DollarSign className="h-8 w-8 text-blue-600 mx-auto mb-2" />
-                              <div className="text-2xl font-bold text-blue-900 dark:text-blue-100">
-                                ${analyticsData.summary.totalPayout.toLocaleString()}
-                              </div>
-                              <div className="text-sm text-blue-700 dark:text-blue-200">Total Payout</div>
-                            </CardContent>
-                          </Card>
-                          <Card className="bg-green-50 dark:bg-green-900/20 border-green-200 dark:border-green-800">
-                            <CardContent className="p-4 text-center">
-                              <Target className="h-8 w-8 text-green-600 mx-auto mb-2" />
-                              <div className="text-2xl font-bold text-green-900 dark:text-green-100">
-                                {analyticsData.summary.avgQuotaAttainment.toFixed(1)}%
-                              </div>
-                              <div className="text-sm text-green-700 dark:text-green-200">Avg Attainment</div>
-                            </CardContent>
-                          </Card>
-                          <Card className="bg-purple-50 dark:bg-purple-900/20 border-purple-200 dark:border-purple-800">
-                            <CardContent className="p-4 text-center">
-                              <Users className="h-8 w-8 text-purple-600 mx-auto mb-2" />
-                              <div className="text-2xl font-bold text-purple-900 dark:text-purple-100">
-                                {analyticsData.summary.totalReps}
-                              </div>
-                              <div className="text-sm text-purple-700 dark:text-purple-200">Total Reps</div>
-                            </CardContent>
-                          </Card>
-                          <Card className="bg-orange-50 dark:bg-orange-900/20 border-orange-200 dark:border-orange-800">
-                            <CardContent className="p-4 text-center">
-                              <BarChart3 className="h-8 w-8 text-orange-600 mx-auto mb-2" />
-                              <div className="text-2xl font-bold text-orange-900 dark:text-orange-100">
-                                {analyticsData.summary.topPerformerThreshold.toFixed(1)}%
-                              </div>
-                              <div className="text-sm text-orange-700 dark:text-orange-200">Top Performer</div>
-                            </CardContent>
-                          </Card>
-                        </div>
-                      )}
-
-                      {/* Distribution Chart */}
-                      <div className="space-y-4">
-                        {analyticsData.payoutDistribution.map((range, index) => (
-                          <div key={range.range} className="flex items-center space-x-4">
-                            <div className="w-32 text-sm font-medium text-gray-900 dark:text-white">
-                              {range.range}
-                            </div>
-                            <div className="flex-1 bg-gray-200 dark:bg-gray-700 rounded-full h-6 relative">
-                              <div
-                                className="bg-blue-600 h-6 rounded-full flex items-center justify-end pr-2"
-                                style={{ width: `${range.percentage}%` }}
-                              >
-                                <span className="text-white text-xs font-medium">
-                                  {range.percentage.toFixed(1)}%
-                                </span>
-                              </div>
-                            </div>
-                            <div className="w-12 text-sm text-gray-600 dark:text-gray-400 text-right">
-                              {range.count}
-                            </div>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-                  ) : (
-                    <div className="text-center py-12">
-                      <PieChart className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-                      <p className="text-lg text-gray-600 dark:text-gray-300">
-                        No distribution data available.
-                      </p>
-                    </div>
-                  )}
-                </CardContent>
-              </Card>
-            </TabsContent>
-          </Tabs>
+          {/* Payout Results */}
+          <Card className="bg-white dark:bg-gray-900 shadow-xl border border-gray-200 dark:border-gray-700">
+            <CardHeader>
+              <CardTitle className="text-2xl text-gray-900 dark:text-white flex items-center">
+                <DollarSign className="h-6 w-6 mr-3 text-green-600" />
+                IC Payout Results
+              </CardTitle>
+              <CardDescription>
+                Detailed payout calculations for all sales representatives
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              {payoutLoading ? (
+                <div className="flex items-center justify-center py-12">
+                  <RefreshCw className="h-8 w-8 text-blue-600 animate-spin" />
+                  <span className="ml-3 text-lg text-gray-600 dark:text-gray-300">
+                    Loading payout data...
+                  </span>
+                </div>
+              ) : payoutResults?.length ? (
+                <div className="overflow-x-auto">
+                  <Table>
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead>Rep ID</TableHead>
+                        <TableHead>Rep Name</TableHead>
+                        <TableHead>Region</TableHead>
+                        <TableHead className="text-right">Quota</TableHead>
+                        <TableHead className="text-right">Actual Sales</TableHead>
+                        <TableHead className="text-right">Attainment %</TableHead>
+                        <TableHead>Payout Curve Type</TableHead>
+                        <TableHead className="text-right">Final Payout ($)</TableHead>
+                        <TableHead className="text-right">% of Target Pay</TableHead>
+                        <TableHead>Any Adjustment</TableHead>
+                        <TableHead>Notes</TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {payoutResults.map((result) => (
+                        <TableRow key={result.repId}>
+                          <TableCell className="font-medium">{result.repId}</TableCell>
+                          <TableCell>{result.repName}</TableCell>
+                          <TableCell>{result.region}</TableCell>
+                          <TableCell className="text-right">${result.quota.toLocaleString()}</TableCell>
+                          <TableCell className="text-right">${result.actualSales.toLocaleString()}</TableCell>
+                          <TableCell className="text-right">
+                            <Badge variant={result.attainmentPercent >= 100 ? "default" : "secondary"}>
+                              {result.attainmentPercent.toFixed(1)}%
+                            </Badge>
+                          </TableCell>
+                          <TableCell>{result.payoutCurveType}</TableCell>
+                          <TableCell className="text-right font-semibold text-green-600">
+                            ${result.finalPayout.toLocaleString()}
+                          </TableCell>
+                          <TableCell className="text-right">{result.percentOfTargetPay.toFixed(1)}%</TableCell>
+                          <TableCell>{result.anyAdjustment}</TableCell>
+                          <TableCell className="text-sm text-gray-600 dark:text-gray-400">{result.notes}</TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                </div>
+              ) : (
+                <div className="text-center py-12">
+                  <Calculator className="h-12 w-12 text-gray-400 mx-auto mb-4" />
+                  <p className="text-lg text-gray-600 dark:text-gray-300">
+                    No payout results available. Click "Calculate Payouts" to begin.
+                  </p>
+                </div>
+              )}
+            </CardContent>
+          </Card>
         </div>
       </main>
     </div>
