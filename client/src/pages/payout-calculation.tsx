@@ -265,7 +265,6 @@ export default function PayoutCalculation() {
       <div className="absolute inset-0 opacity-10 dark:opacity-5">
         <div className="absolute inset-0 bg-gradient-to-br from-blue-100/20 to-indigo-100/20 dark:from-blue-900/10 dark:to-indigo-900/10"></div>
       </div>
-      
       {/* Header */}
       <header className="relative bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm shadow-lg border-b border-gray-200 dark:border-gray-700 flex items-center justify-between px-6 lg:px-12 py-6">
         <Link href="/">
@@ -283,9 +282,8 @@ export default function PayoutCalculation() {
           </Link>
         </div>
       </header>
-
       {/* Main Content */}
-      <main className="relative px-6 lg:px-12 py-8">
+      <main className="relative px-6 lg:px-12 py-8 ml-[-60px] mr-[-60px]">
         <div className="max-w-7xl mx-auto">
           {/* Page Title */}
           <div className="text-center mb-12">
