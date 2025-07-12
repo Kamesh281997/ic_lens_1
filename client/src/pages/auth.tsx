@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Eye, EyeOff, User, Lock, Mail, ArrowLeft, Sun, Moon } from "lucide-react";
+import { Eye, EyeOff, User, Lock, Mail, ArrowLeft, Sun, Moon, Home, BarChart3, TrendingUp, Target } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -12,7 +12,7 @@ import { useAuth } from "@/hooks/use-auth";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { loginSchema, signupSchema, forgotPasswordSchema } from "@shared/schema";
 import type { LoginData, SignupData, ForgotPasswordData } from "@shared/schema";
-import { useLocation } from "wouter";
+import { useLocation, Link } from "wouter";
 
 type AuthView = "login" | "signup" | "forgot";
 
@@ -383,36 +383,95 @@ export default function Auth() {
   );
 
   return (
-    <div className="min-h-screen bg-black text-white flex items-center justify-center p-4">
-      <div className="w-full max-w-md">
-        {/* Theme Toggle */}
-        <div className="flex justify-end mb-4">
-          <ThemeToggle />
+    <div className="min-h-screen bg-black text-white relative overflow-hidden">
+      {/* Background Pattern */}
+      <div className="absolute inset-0 opacity-10">
+        <div className="absolute inset-0 bg-gradient-to-br from-red-900/20 via-purple-900/20 to-blue-900/20"></div>
+        <div className="absolute inset-0" style={{
+          backgroundImage: `radial-gradient(circle at 25px 25px, rgba(255,79,89,0.1) 2px, transparent 0),
+                           radial-gradient(circle at 75px 75px, rgba(255,79,89,0.05) 1px, transparent 0)`,
+          backgroundSize: '100px 100px'
+        }}></div>
+      </div>
+
+      {/* Floating Analytics Icons */}
+      <div className="absolute inset-0 pointer-events-none">
+        <div className="absolute top-20 left-10 animate-bounce" style={{ animationDelay: '0s', animationDuration: '3s' }}>
+          <BarChart3 className="h-8 w-8 text-red-500 opacity-20" />
         </div>
-        
-        {/* Logo and Brand */}
-        <div className="text-center mb-8">
-          <div className="inline-flex items-center justify-center space-x-2 mb-4">
-            <div className="w-12 h-12 rounded-xl flex items-center justify-center shadow-lg" style={{ backgroundColor: '#ff4f59' }}>
-              <span className="text-white font-bold text-lg">IC</span>
-            </div>
-            <span className="text-4xl font-bold" style={{ color: '#ff4f59' }}>Lens</span>
+        <div className="absolute top-40 right-20 animate-bounce" style={{ animationDelay: '1s', animationDuration: '4s' }}>
+          <TrendingUp className="h-6 w-6 text-blue-500 opacity-20" />
+        </div>
+        <div className="absolute bottom-40 left-20 animate-bounce" style={{ animationDelay: '2s', animationDuration: '5s' }}>
+          <Target className="h-7 w-7 text-purple-500 opacity-20" />
+        </div>
+        <div className="absolute bottom-20 right-10 animate-bounce" style={{ animationDelay: '0.5s', animationDuration: '3.5s' }}>
+          <BarChart3 className="h-5 w-5 text-green-500 opacity-20" />
+        </div>
+      </div>
+
+      <div className="relative z-10 flex items-center justify-center min-h-screen p-4">
+        <div className="w-full max-w-md">
+          {/* Header with Back to Home Button */}
+          <div className="flex items-center justify-between mb-6">
+            <Link href="/">
+              <Button 
+                variant="ghost" 
+                className="text-white hover:text-red-400 hover:bg-red-900/20 transition-colors"
+              >
+                <Home className="h-4 w-4 mr-2" />
+                Back to Home
+              </Button>
+            </Link>
+            <ThemeToggle />
           </div>
-          <p className="text-ilens-slate dark:text-slate-300">Vision Intelligence Platform</p>
-        </div>
+          
+          {/* Logo and Brand */}
+          <div className="text-center mb-8">
+            <div className="inline-flex items-center justify-center space-x-2 mb-4">
+              <div className="w-12 h-12 rounded-xl flex items-center justify-center shadow-lg" style={{ backgroundColor: '#ff4f59' }}>
+                <span className="text-white font-bold text-lg">IC</span>
+              </div>
+              <span className="text-4xl font-bold" style={{ color: '#ff4f59' }}>Lens</span>
+            </div>
+            <p className="text-gray-300">Incentive Compensation Intelligence Platform</p>
+          </div>
 
-        {/* Main Auth Card */}
-        <Card className="bg-white dark:bg-gray-900 shadow-xl border border-gray-100 dark:border-gray-700">
-          <CardContent className="p-8">
-            {currentView === "login" && renderLoginForm()}
-            {currentView === "signup" && renderSignupForm()}
-            {currentView === "forgot" && renderForgotForm()}
-          </CardContent>
-        </Card>
+          {/* Main Auth Card */}
+          <Card className="bg-gray-900/80 backdrop-blur-sm shadow-2xl border border-gray-700/50">
+            <CardContent className="p-8">
+              {currentView === "login" && renderLoginForm()}
+              {currentView === "signup" && renderSignupForm()}
+              {currentView === "forgot" && renderForgotForm()}
+            </CardContent>
+          </Card>
 
-        {/* Footer */}
-        <div className="text-center mt-8 text-sm text-gray-500 dark:text-gray-400">
-          <p>&copy; 2024 ICLens. All rights reserved.</p>
+          {/* Feature Highlights */}
+          <div className="mt-8 grid grid-cols-3 gap-4 text-center">
+            <div className="flex flex-col items-center">
+              <div className="w-10 h-10 rounded-full bg-red-500/20 flex items-center justify-center mb-2">
+                <BarChart3 className="h-5 w-5 text-red-400" />
+              </div>
+              <span className="text-xs text-gray-400">Analytics</span>
+            </div>
+            <div className="flex flex-col items-center">
+              <div className="w-10 h-10 rounded-full bg-blue-500/20 flex items-center justify-center mb-2">
+                <TrendingUp className="h-5 w-5 text-blue-400" />
+              </div>
+              <span className="text-xs text-gray-400">Insights</span>
+            </div>
+            <div className="flex flex-col items-center">
+              <div className="w-10 h-10 rounded-full bg-purple-500/20 flex items-center justify-center mb-2">
+                <Target className="h-5 w-5 text-purple-400" />
+              </div>
+              <span className="text-xs text-gray-400">Targets</span>
+            </div>
+          </div>
+
+          {/* Footer */}
+          <div className="text-center mt-8 text-sm text-gray-500">
+            <p>&copy; 2024 ICLens. All rights reserved.</p>
+          </div>
         </div>
       </div>
     </div>
