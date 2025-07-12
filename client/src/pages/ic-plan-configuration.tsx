@@ -68,7 +68,7 @@ export default function IcPlanConfiguration() {
     {
       id: '1',
       sender: 'assistant',
-      content: "👋 Hello! I'm your **Agentic IC Configuration Specialist**. I don't just answer questions - I actively build your compensation plan in real-time as we talk.\n\n**I can autonomously:**\n• Create and modify plan structures\n• Adjust payout curves dynamically\n• Run simulations and cost analyses\n• Configure role-based rules\n• Set up budget controls\n\n**Try saying:**\n• \"Create a tiered commission plan for 110%+ performance\"\n• \"Make the payout curve flatter\"\n• \"Add senior rep bonuses\"\n• \"Run a simulation with $2M budget\"\n\nWhat type of IC plan should I build for you?",
+      content: "👋 Hello! I'm your **Life Sciences IC Specialist**. I autonomously build compensation plans in real-time as we talk.\n\n**🧬 Life Sciences Expertise:**\n• **Goal Attainment Plans** - Standard quota-based structures\n• **Matrix-Based Plans** - Dual/multi-measure compensation\n• **Rank-Based Plans** - Peer comparison structures\n• **Volume Growth Plans** - Unit/prescription-based plans\n• **Tiered Commission Plans** - Progressive rate structures\n• **Territory-Based Plans** - Geographic compensation\n\n**🤖 I Autonomously:**\n• Configure plan structures in real-time\n• Adjust payout curves and thresholds\n• Run cost simulations\n• Set up compliance features\n• Add role-based multipliers\n\n**Try saying:**\n• \"Create a goal attainment plan\"\n• \"Build a matrix-based plan with revenue and volume\"\n• \"Design a rank-based plan for my team\"\n• \"Configure a volume growth plan\"\n\nWhat type of life sciences IC plan do you need?",
       timestamp: new Date()
     }
   ]);
@@ -112,7 +112,7 @@ export default function IcPlanConfiguration() {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages]);
 
-  // Enhanced agentic AI response function with real-time UI updates
+  // Enhanced agentic AI response function with life sciences IC plan expertise
   const generateAIResponse = async (userMessage: string): Promise<string> => {
     setIsUpdatingUI(true);
     setCurrentAction('Analyzing your request...');
@@ -122,12 +122,125 @@ export default function IcPlanConfiguration() {
     
     const lowerMessage = userMessage.toLowerCase();
     
-    // Handle tiered commission plans
-    if (lowerMessage.includes('tiered') || lowerMessage.includes('commission') || (lowerMessage.includes('110') && lowerMessage.includes('performance'))) {
-      setCurrentAction('Configuring tiered commission plan...');
+    // Handle Goal Attainment Plans
+    if (lowerMessage.includes('goal attainment') || lowerMessage.includes('quota') || lowerMessage.includes('target')) {
+      setCurrentAction('Configuring Goal Attainment Plan...');
       await new Promise(resolve => setTimeout(resolve, 600));
       
-      // AI autonomously updates configuration
+      setPlanConfig(prev => ({
+        ...prev,
+        planType: 'Goal Attainment Plan',
+        accelerators: true,
+        acceleratorThreshold: 100
+      }));
+      
+      setCurrentAction('Setting up performance thresholds...');
+      await new Promise(resolve => setTimeout(resolve, 400));
+      
+      setPayCurve([
+        { performance: 0, payout: 0 },
+        { performance: 80, payout: 50 },
+        { performance: 100, payout: 100 },
+        { performance: 120, payout: 150 },
+        { performance: 140, payout: 200 }
+      ]);
+      
+      setConfigurationProgress(60);
+      setIsUpdatingUI(false);
+      setCurrentAction('');
+      return "✅ **Goal Attainment Plan Created:** Standard life sciences plan with threshold-based payouts.\n\n**Configuration:**\n• Threshold: 80% of quota (50% payout)\n• Target: 100% of quota (100% payout)\n• Accelerator: 120% quota (150% payout)\n• Excellence: 140% quota (200% payout)\n\nThis is the most common life sciences IC structure. Should we add decelerators for underperformance or keep minimum thresholds?";
+    }
+    
+    // Handle Matrix-Based Plans
+    if (lowerMessage.includes('matrix') || lowerMessage.includes('dual') || lowerMessage.includes('multi-measure')) {
+      setCurrentAction('Building Matrix-Based Plan...');
+      await new Promise(resolve => setTimeout(resolve, 600));
+      
+      setPlanConfig(prev => ({
+        ...prev,
+        planType: 'Matrix-Based Plan',
+        roleFactors: ['Revenue Attainment', 'Volume Attainment', 'Strategic Objectives']
+      }));
+      
+      setCurrentAction('Configuring dual-axis matrix...');
+      await new Promise(resolve => setTimeout(resolve, 500));
+      
+      setPayCurve([
+        { performance: 0, payout: 0 },
+        { performance: 90, payout: 75 },
+        { performance: 100, payout: 100 },
+        { performance: 110, payout: 125 },
+        { performance: 120, payout: 150 }
+      ]);
+      
+      setConfigurationProgress(65);
+      setIsUpdatingUI(false);
+      setCurrentAction('');
+      return "✅ **Matrix-Based Plan Configured:** Dual-measure compensation structure common in pharma.\n\n**Matrix Structure:**\n• Revenue Attainment (60% weight)\n• Volume Attainment (30% weight)\n• Strategic Objectives (10% weight)\n\n**Multiplier Logic:**\n• Both measures at 100% = 100% payout\n• High revenue + low volume = Reduced payout\n• Balanced performance = Optimized payout\n\nShould we adjust the weighting or add additional measures like market share?";
+    }
+    
+    // Handle Rank Plans
+    if (lowerMessage.includes('rank') || lowerMessage.includes('ranking') || lowerMessage.includes('percentile')) {
+      setCurrentAction('Designing Rank-Based Plan...');
+      await new Promise(resolve => setTimeout(resolve, 600));
+      
+      setPlanConfig(prev => ({
+        ...prev,
+        planType: 'Rank-Based Plan',
+        ethicalPrioritization: true
+      }));
+      
+      setCurrentAction('Setting up peer ranking system...');
+      await new Promise(resolve => setTimeout(resolve, 500));
+      
+      setPayCurve([
+        { performance: 0, payout: 50 },
+        { performance: 25, payout: 75 },
+        { performance: 50, payout: 100 },
+        { performance: 75, payout: 125 },
+        { performance: 100, payout: 150 }
+      ]);
+      
+      setConfigurationProgress(70);
+      setIsUpdatingUI(false);
+      setCurrentAction('');
+      return "✅ **Rank-Based Plan Created:** Peer-comparison compensation structure.\n\n**Ranking Structure:**\n• Top 10% of reps: 150% payout\n• Top 25% of reps: 125% payout\n• Middle 50% of reps: 100% payout\n• Bottom 25% of reps: 75% payout\n• Bottom 10% of reps: 50% payout\n\n**Benefits:** Drives competitive performance, normalized for market conditions.\n**Considerations:** Can create internal competition. Should we add team collaboration bonuses?";
+    }
+    
+    // Handle Volume Growth Plans
+    if (lowerMessage.includes('volume') || lowerMessage.includes('growth') || lowerMessage.includes('unit')) {
+      setCurrentAction('Configuring Volume Growth Plan...');
+      await new Promise(resolve => setTimeout(resolve, 600));
+      
+      setPlanConfig(prev => ({
+        ...prev,
+        planType: 'Volume Growth Plan',
+        accelerators: true,
+        acceleratorThreshold: 105
+      }));
+      
+      setCurrentAction('Setting up volume-based incentives...');
+      await new Promise(resolve => setTimeout(resolve, 500));
+      
+      setPayCurve([
+        { performance: 0, payout: 0 },
+        { performance: 95, payout: 70 },
+        { performance: 100, payout: 100 },
+        { performance: 105, payout: 140 },
+        { performance: 110, payout: 180 }
+      ]);
+      
+      setConfigurationProgress(65);
+      setIsUpdatingUI(false);
+      setCurrentAction('');
+      return "✅ **Volume Growth Plan Established:** Unit-based compensation for life sciences.\n\n**Volume Structure:**\n• Based on prescription volume/units sold\n• Threshold: 95% of volume target (70% payout)\n• Target: 100% of volume target (100% payout)\n• Growth: 105% of volume target (140% payout)\n• Excellence: 110% of volume target (180% payout)\n\n**Ideal for:** New product launches, generic competition markets. Should we add market share protection bonuses?";
+    }
+    
+    // Handle Tiered Commission Plans
+    if (lowerMessage.includes('tiered') || lowerMessage.includes('commission') || lowerMessage.includes('tier')) {
+      setCurrentAction('Creating Tiered Commission Plan...');
+      await new Promise(resolve => setTimeout(resolve, 600));
+      
       setPlanConfig(prev => ({
         ...prev,
         planType: 'Tiered Commission Plan',
@@ -135,10 +248,9 @@ export default function IcPlanConfiguration() {
         acceleratorThreshold: 110
       }));
       
-      setCurrentAction('Updating payout curve...');
+      setCurrentAction('Configuring progressive tiers...');
       await new Promise(resolve => setTimeout(resolve, 400));
       
-      // Update pay curve for tiered structure
       setPayCurve([
         { performance: 0, payout: 0 },
         { performance: 80, payout: 60 },
@@ -148,100 +260,70 @@ export default function IcPlanConfiguration() {
         { performance: 150, payout: 200 }
       ]);
       
-      setConfigurationProgress(45);
+      setConfigurationProgress(55);
       setIsUpdatingUI(false);
       setCurrentAction('');
-      return "✅ **Plan Updated:** I've created a tiered commission plan with accelerators starting at 110% performance. \n\n**Changes Made:**\n• Set plan type to 'Tiered Commission Plan'\n• Added accelerator at 110% → 125% payout\n• Enhanced rewards at 120% → 160% payout\n• Peak performance at 150% → 200% payout\n\nShould we apply a cap at 150% or keep payouts uncapped for top performers?";
+      return "✅ **Tiered Commission Plan Built:** Progressive rate structure for life sciences.\n\n**Commission Tiers:**\n• 0-80%: 0.75% commission rate\n• 80-100%: 1.00% commission rate\n• 100-110%: 1.25% commission rate\n• 110-120%: 1.60% commission rate\n• 120%+: 2.00% commission rate\n\n**Benefits:** Rewards incremental performance gains. Should we cap at 150% or allow unlimited upside?";
     }
     
-    // Handle payout curve modifications
-    if (lowerMessage.includes('flatter') || lowerMessage.includes('flat')) {
-      setCurrentAction('Adjusting payout curve...');
-      await new Promise(resolve => setTimeout(resolve, 500));
+    // Handle Budget/Territory-Based Plans
+    if (lowerMessage.includes('territory') || lowerMessage.includes('geography') || lowerMessage.includes('region')) {
+      setCurrentAction('Designing Territory-Based Plan...');
+      await new Promise(resolve => setTimeout(resolve, 600));
       
-      // AI modifies the pay curve to be flatter
-      setPayCurve([
-        { performance: 0, payout: 0 },
-        { performance: 70, payout: 60 },
-        { performance: 100, payout: 100 },
-        { performance: 120, payout: 115 },
-        { performance: 150, payout: 130 }
-      ]);
-      
-      setIsUpdatingUI(false);
-      setCurrentAction('');
-      return "✅ **Pay Curve Flattened:** I've adjusted the payout curve to be more conservative. \n\n**Changes Made:**\n• Reduced acceleration rates\n• 120% performance now pays 115% (down from 160%)\n• 150% performance caps at 130% (down from 200%)\n\nThis provides more predictable costs while still rewarding performance. Is this the right balance?";
-    }
-    
-    // Handle role-based variations
-    if (lowerMessage.includes('role') || lowerMessage.includes('senior')) {
-      setCurrentAction('Adding role-based rules...');
-      await new Promise(resolve => setTimeout(resolve, 400));
-      
-      setPlanConfig(prev => ({ 
-        ...prev, 
-        roleFactors: ['Senior Rep Multiplier', 'Territory Complexity', 'Product Specialization'] 
+      setPlanConfig(prev => ({
+        ...prev,
+        planType: 'Territory-Based Plan',
+        roleFactors: ['Territory Complexity', 'Market Potential', 'Geographic Adjustments']
       }));
       
+      setConfigurationProgress(60);
       setIsUpdatingUI(false);
       setCurrentAction('');
-      return "✅ **Role-Based Rules Added:** I've configured role-specific variations for your plan.\n\n**Changes Made:**\n• Senior reps get 1.1x multiplier on base rates\n• Territory complexity adjustments (Urban +5%, Rural +10%)\n• Product specialization bonus for technical products\n\nThis ensures fair compensation across different rep levels and territories. Should we also add team lead bonuses?";
+      return "✅ **Territory-Based Plan Created:** Geographic compensation structure for life sciences.\n\n**Territory Features:**\n• Market potential adjustments\n• Geographic complexity multipliers\n• Physician density considerations\n• Competitive landscape factors\n\n**Multipliers:**\n• Urban territories: 1.0x baseline\n• Suburban territories: 1.1x baseline\n• Rural territories: 1.2x baseline\n• High-competition areas: 1.15x baseline\n\nShould we add travel expense reimbursement or mileage bonuses?";
     }
     
-    // Handle cap decisions
-    if (lowerMessage.includes('cap') && lowerMessage.includes('150')) {
-      setPlanConfig(prev => ({ ...prev, payoutCap: true, capPercentage: 150 }));
-      setConfigurationProgress(prev => Math.min(prev + 25, 100));
-      return "✅ **Payout Cap Applied:** I've set a 150% payout cap to balance motivation with cost control.\n\n**Rationale:** This protects against runaway costs while still providing strong incentives. Top performers can still earn 50% above target, which is competitive in the industry.\n\nNow, what's your annual budget constraint for total payouts?";
+    // Handle Plan Modifications
+    if (lowerMessage.includes('modify') || lowerMessage.includes('adjust') || lowerMessage.includes('change')) {
+      setCurrentAction('Modifying existing plan...');
+      await new Promise(resolve => setTimeout(resolve, 400));
+      
+      setIsUpdatingUI(false);
+      setCurrentAction('');
+      return "✅ **Plan Modification Ready:** I can adjust your current " + planConfig.planType + ".\n\n**Available Modifications:**\n• Adjust payout thresholds\n• Change acceleration rates\n• Add/remove caps\n• Modify weighting factors\n• Update territory multipliers\n\n**Tell me specifically:** What aspect would you like to modify? (e.g., \"Lower the threshold to 85%\" or \"Add a 200% cap\")";
     }
     
-    if (lowerMessage.includes('uncapped') || lowerMessage.includes('no cap')) {
-      setPlanConfig(prev => ({ ...prev, payoutCap: false }));
-      setConfigurationProgress(prev => Math.min(prev + 20, 100));
-      return "✅ **No Payout Cap:** I've removed payout limits to maximize motivation for top performers.\n\n**Rationale:** This approach rewards exceptional performance without limits, though it may increase cost variability. I recommend setting a budget alert at 120% of planned costs.\n\nShall I configure budget monitoring and alerts?";
-    }
-    
-    // Handle budget constraints
-    if (lowerMessage.includes('budget') || lowerMessage.includes('million') || lowerMessage.includes('$')) {
-      setPlanConfig(prev => ({ ...prev, budgetConstraints: userMessage }));
-      setConfigurationProgress(prev => Math.min(prev + 20, 100));
-      return "✅ **Budget Constraints Set:** I've recorded your budget parameters and will factor them into the plan.\n\n**Next:** Should this plan prioritize ethical considerations (fair distribution, anti-gaming measures) or pure revenue maximization?";
-    }
-    
-    // Handle simulation requests
-    if (lowerMessage.includes('simulat') || lowerMessage.includes('test') || lowerMessage.includes('run')) {
-      // Update simulator with realistic data
+    // Handle Simulation/Testing
+    if (lowerMessage.includes('simulat') || lowerMessage.includes('test') || lowerMessage.includes('model')) {
+      setCurrentAction('Running IC plan simulation...');
+      await new Promise(resolve => setTimeout(resolve, 800));
+      
       setSimulatorData({
         totalPayout: 2450000,
         avgIncentive: 49000,
         motivationScore: 87
       });
       
-      return "✅ **Simulation Complete:** I've run your plan against historical performance data.\n\n**Results:**\n• Total payout: $2,450,000 (within budget)\n• Average per rep: $49,000\n• Motivation score: 87/100 (excellent)\n• Cost vs. last year: +12% (due to improved performance)\n\nThe plan effectively balances cost control with motivation. Ready to finalize?";
+      setIsUpdatingUI(false);
+      setCurrentAction('');
+      return "✅ **Simulation Complete:** Tested your " + planConfig.planType + " against historical data.\n\n**Results:**\n• Total payout: $2,450,000\n• Average per rep: $49,000\n• Motivation score: 87/100\n• Cost predictability: High\n• Gaming risk: Low\n\n**Performance Distribution:**\n• 15% of reps exceed 120% quota\n• 35% of reps achieve 100-120% quota\n• 40% of reps achieve 80-100% quota\n• 10% of reps below 80% quota\n\nReady to finalize or need adjustments?";
     }
     
-    // Handle finalization
-    if (lowerMessage.includes('final') || lowerMessage.includes('complete') || lowerMessage.includes('done')) {
+    // Handle Finalization
+    if (lowerMessage.includes('final') || lowerMessage.includes('complete') || lowerMessage.includes('save')) {
+      setCurrentAction('Finalizing plan configuration...');
+      await new Promise(resolve => setTimeout(resolve, 600));
+      
       setConfigurationProgress(100);
-      return "✅ **Plan Ready for Finalization:** Your IC plan is complete and optimized.\n\n**Summary:**\n• Plan type: " + planConfig.planType + "\n• Accelerators: " + (planConfig.accelerators ? "Yes" : "No") + "\n• Payout cap: " + (planConfig.payoutCap ? planConfig.capPercentage + "%" : "None") + "\n• Budget: " + planConfig.budgetConstraints + "\n\nClick 'Finalize Plan' to save and deploy this configuration.";
+      setIsUpdatingUI(false);
+      setCurrentAction('');
+      return "✅ **Plan Finalized:** Your " + planConfig.planType + " is ready for deployment.\n\n**Summary:**\n• Plan type: " + planConfig.planType + "\n• Accelerators: " + (planConfig.accelerators ? "Yes" : "No") + "\n• Payout cap: " + (planConfig.payoutCap ? planConfig.capPercentage + "%" : "None") + "\n• Role factors: " + planConfig.roleFactors.length + " configured\n\n**Next Steps:**\n• Export to Excel for review\n• Generate compliance documentation\n• Schedule stakeholder approval\n• Deploy to payroll system\n\nClick 'Export Plan' to download configuration files.";
     }
     
-    // Handle general plan creation requests
-    if (lowerMessage.includes('create') || lowerMessage.includes('plan') || lowerMessage.includes('motivat')) {
-      setPlanConfig(prev => ({
-        ...prev,
-        planType: 'Goal Attainment with Accelerators',
-        accelerators: true,
-        acceleratorThreshold: 120
-      }));
-      setConfigurationProgress(25);
-      return "✅ **Plan Initiated:** I'm creating a motivational plan focused on overperformance.\n\n**Initial Configuration:**\n• Plan type: Goal Attainment with Accelerators\n• Accelerator threshold: 120%\n• Target: Reward high performers\n\nDo you want to set a payout cap to manage costs, or keep it uncapped for maximum motivation?";
-    }
-    
-    // Default agentic response
+    // Default intelligent response
     setIsUpdatingUI(false);
     setCurrentAction('');
-    return "I understand you want to configure an IC plan. I can help you with:\n\n• **Tiered commission plans** - \"Create a tiered plan for 110%+ performance\"\n• **Payout curve adjustments** - \"Make the curve flatter\" or \"steeper\"\n• **Role-based rules** - \"Add senior rep bonuses\"\n• **Budget controls** - \"Set a $2M budget limit\"\n• **Simulations** - \"Run a simulation with last year's data\"\n\nWhat type of plan would you like me to build for you?";
+    return "I'm your **Life Sciences IC Specialist**. I can configure any standard pharma/biotech compensation plan:\n\n**📊 Standard Plans:**\n• **Goal Attainment Plans** - \"Create a goal attainment plan\"\n• **Matrix-Based Plans** - \"Build a dual-measure matrix plan\"\n• **Rank-Based Plans** - \"Design a peer ranking plan\"\n• **Volume Growth Plans** - \"Configure a volume-based plan\"\n• **Tiered Commission Plans** - \"Create a tiered commission structure\"\n• **Territory-Based Plans** - \"Build a geographic territory plan\"\n\n**🔧 I can also:**\n• Modify existing plans\n• Run simulations\n• Add compliance features\n• Configure role-based rules\n\nWhat type of IC plan do you need?";
   };
 
   const sendMessage = async () => {
