@@ -6,7 +6,7 @@ import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
 import { Textarea } from "@/components/ui/textarea";
 import { Progress } from "@/components/ui/progress";
-import { ThemeToggle } from "@/components/theme-toggle";
+
 import { Link, useLocation } from "wouter";
 import { 
   ArrowLeft, 
@@ -509,7 +509,7 @@ Configuration Progress: ${configurationProgress}%
             IC Plan Configuration
           </div>
         </div>
-        <ThemeToggle />
+
       </header>
 
       {/* Main Content */}

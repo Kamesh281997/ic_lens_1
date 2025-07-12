@@ -4,7 +4,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Badge } from "@/components/ui/badge";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { ThemeToggle } from "@/components/theme-toggle";
+
 import { Link } from "wouter";
 import { 
   Calculator, 
@@ -273,7 +273,6 @@ export default function PayoutCalculation() {
           </div>
         </Link>
         <div className="flex items-center space-x-4">
-          <ThemeToggle />
           <Link href="/data-validation">
             <Button variant="ghost" className="text-gray-600 dark:text-gray-300">
               <ArrowLeft className="h-4 w-4 mr-2" />

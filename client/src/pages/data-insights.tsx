@@ -6,7 +6,7 @@ import { Progress } from "@/components/ui/progress";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { ThemeToggle } from "@/components/theme-toggle";
+
 import { Link } from "wouter";
 import { 
   ArrowLeft, 
@@ -246,7 +246,6 @@ export default function DataInsights() {
           </div>
         </Link>
         <div className="flex items-center space-x-4">
-          <ThemeToggle />
           <Link href="/">
             <Button variant="ghost" className="text-gray-600 dark:text-gray-300">
               <ArrowLeft className="h-4 w-4 mr-2" />

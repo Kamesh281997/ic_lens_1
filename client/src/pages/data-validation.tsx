@@ -4,7 +4,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Badge } from "@/components/ui/badge";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Progress } from "@/components/ui/progress";
-import { ThemeToggle } from "@/components/theme-toggle";
+
 import { Link, useLocation } from "wouter";
 import { 
   CheckCircle, 
@@ -255,7 +255,6 @@ export default function DataValidation() {
           </div>
         </Link>
         <div className="flex items-center space-x-4">
-          <ThemeToggle />
           <Link href="/ic-processing">
             <Button variant="ghost" className="text-gray-600 dark:text-gray-300">
               <ArrowLeft className="h-4 w-4 mr-2" />

@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
-import { ThemeToggle } from "@/components/theme-toggle";
+
 import { Link, useLocation } from "wouter";
 import { 
   Upload, 
@@ -205,7 +205,6 @@ export default function DataUpload() {
           </div>
         </Link>
         <div className="flex items-center space-x-4">
-          <ThemeToggle />
           <Link href="/ic-processing">
             <Button variant="ghost" className="text-gray-600 dark:text-gray-300">
               <ArrowLeft className="h-4 w-4 mr-2" />

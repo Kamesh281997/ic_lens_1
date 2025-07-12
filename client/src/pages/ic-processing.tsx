@@ -4,7 +4,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { ThemeToggle } from "@/components/theme-toggle";
+
 import { Link, useLocation } from "wouter";
 import { 
   Settings, 
@@ -99,7 +99,6 @@ export default function IcProcessing() {
           </div>
         </Link>
         <div className="flex items-center space-x-4">
-          <ThemeToggle />
           <Link href="/">
             <Button variant="ghost" className="text-gray-600 dark:text-gray-300">
               <ArrowLeft className="h-4 w-4 mr-2" />

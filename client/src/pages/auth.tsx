@@ -9,7 +9,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Card, CardContent } from "@/components/ui/card";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { useAuth } from "@/hooks/use-auth";
-import { ThemeToggle } from "@/components/theme-toggle";
+
 import { loginSchema, signupSchema, forgotPasswordSchema } from "@shared/schema";
 import type { LoginData, SignupData, ForgotPasswordData } from "@shared/schema";
 import { useLocation, Link } from "wouter";
@@ -423,7 +423,6 @@ export default function Auth() {
                 Back to Home
               </Button>
             </Link>
-            <ThemeToggle />
           </div>
           
           {/* Logo and Brand */}
