@@ -449,24 +449,7 @@ export default function PayoutCalculation() {
 
                     
 
-                    {/* Payout Curve Type Filter */}
-                    <div className="space-y-3">
-                      <label className="text-lg font-medium text-gray-700 dark:text-gray-300 flex items-center">
-                        <TrendingUp className="h-6 w-6 mr-2 text-indigo-600" />
-                        Payout Curve Type
-                      </label>
-                      <Select value={filters.payoutCurveType} onValueChange={(value) => setFilters(prev => ({ ...prev, payoutCurveType: value }))}>
-                        <SelectTrigger className="w-full text-lg h-12">
-                          <SelectValue placeholder="All Curve Types" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="all">All Curve Types</SelectItem>
-                          {filterOptions.payoutCurveType?.map(type => (
-                            <SelectItem key={type} value={type}>{type}</SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                    </div>
+                    
 
                     
                   </div>
