@@ -1,0 +1,122 @@
+I want to create a new page called "IC Plan Configuration" that opens when the user clicks on the "IC Configuration" card on the landing page of our Incentive Compensation tool.
+
+This module must include an agentic AI, not a passive assistant. It should behave like a human IC configuration specialist, who:
+
+Understands natural language instructions
+
+Autonomously executes changes to the screen/UI
+
+Builds the IC plan configuration in real-time
+
+Asks clarifying questions when needed
+
+Performs in-place modifications dynamically
+
+Provides explanations for every change made
+
+Continuously loops through interaction until plan is finalized
+
+🔧 Key Functional Requirements
+✅ Agentic AI Behavior
+Accept natural language instructions like:
+
+“Create a tiered commission plan that rewards reps for 110%+ performance.”
+
+AI acts immediately:
+
+Updates the configuration panel
+
+Edits the pay curve
+
+Adjusts thresholds
+
+Shows the resulting changes in real time
+
+Asks human-like questions if input is incomplete:
+
+“Should we apply a cap at 150% or keep payouts uncapped?”
+
+Can re-edit parts of the plan if user says:
+
+“Make the payout curve flatter”
+“Add role-based variation for senior reps”
+
+Justifies its decisions for transparency
+
+Behaves like a real co-worker — think “AI IC Analyst”
+
+🧠 Page Layout (Maintain Existing UI Design)
+Use the same base design and components already implemented in the tool.
+
+Split View Layout
+Left Panel: Agentic Chat Interface (40%)
+
+Chat log of user-AI conversation
+
+AI messages show intent and what it is changing
+
+Right Panel: Live Configuration Builder (60%)
+
+AI writes directly into UI components:
+
+Plan Type
+
+Thresholds
+
+Payout Curves
+
+Eligibility rules
+
+Approval routing
+
+Real-time updates appear here
+
+Editable pay curve with AI-generated points
+
+📊 What-If Simulator (Triggered by Agent)
+AI asks:
+
+“Shall I run a simulation with past performance data?”
+
+Executes simulation once confirmed
+
+Shows:
+
+Total incentive cost
+
+Per-rep payouts
+
+Cost vs historical plan
+
+Editable parameters for live simulation
+
+Optional: Motivation Score calculated by AI
+
+🧾 Summary + Finalization
+AI generates a summary card that:
+
+Lists all decisions taken
+
+Gives rationale behind each one
+
+Lets user ask: “Why was this rule added?”
+
+Button: Finalize Plan → stores config and passes it to IC Processing Module
+
+🎨 Design Notes
+Retain all visual components:
+
+Navbar, buttons, spacing, cards
+
+Stick to tool’s existing design system
+
+Agent actions should be visible with animation or notification:
+
+“Updating Payout Curve…” → UI updates
+
+🔁 Routing & State
+Route: /ic-plan-configuration
+
+Finalized plans get stored and show up in IC Processing module dropdown
+
+Maintain full state of chat, plan, and logs for auditability

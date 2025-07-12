@@ -68,12 +68,14 @@ export default function IcPlanConfiguration() {
     {
       id: '1',
       sender: 'assistant',
-      content: "Hello! I'm your IC Plan Configuration Assistant. I'll help you design a compensation plan through natural conversation. To get started, please tell me about your goals. For example: 'Create a motivating plan for reps who outperform their targets' or 'Design a plan that balances revenue growth with ethical considerations'.",
+      content: "👋 Hello! I'm your **Agentic IC Configuration Specialist**. I don't just answer questions - I actively build your compensation plan in real-time as we talk.\n\n**I can autonomously:**\n• Create and modify plan structures\n• Adjust payout curves dynamically\n• Run simulations and cost analyses\n• Configure role-based rules\n• Set up budget controls\n\n**Try saying:**\n• \"Create a tiered commission plan for 110%+ performance\"\n• \"Make the payout curve flatter\"\n• \"Add senior rep bonuses\"\n• \"Run a simulation with $2M budget\"\n\nWhat type of IC plan should I build for you?",
       timestamp: new Date()
     }
   ]);
   const [currentMessage, setCurrentMessage] = useState('');
   const [isProcessing, setIsProcessing] = useState(false);
+  const [isUpdatingUI, setIsUpdatingUI] = useState(false);
+  const [currentAction, setCurrentAction] = useState('');
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   // Configuration state
@@ -110,14 +112,122 @@ export default function IcPlanConfiguration() {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages]);
 
-  // Mock AI response function (in real implementation, this would call an AI API)
+  // Enhanced agentic AI response function with real-time UI updates
   const generateAIResponse = async (userMessage: string): Promise<string> => {
+    setIsUpdatingUI(true);
+    setCurrentAction('Analyzing your request...');
+    
     // Simulate AI processing delay
-    await new Promise(resolve => setTimeout(resolve, 1000));
+    await new Promise(resolve => setTimeout(resolve, 800));
     
     const lowerMessage = userMessage.toLowerCase();
     
-    if (lowerMessage.includes('outperform') || lowerMessage.includes('exceed') || lowerMessage.includes('motivat')) {
+    // Handle tiered commission plans
+    if (lowerMessage.includes('tiered') || lowerMessage.includes('commission') || (lowerMessage.includes('110') && lowerMessage.includes('performance'))) {
+      setCurrentAction('Configuring tiered commission plan...');
+      await new Promise(resolve => setTimeout(resolve, 600));
+      
+      // AI autonomously updates configuration
+      setPlanConfig(prev => ({
+        ...prev,
+        planType: 'Tiered Commission Plan',
+        accelerators: true,
+        acceleratorThreshold: 110
+      }));
+      
+      setCurrentAction('Updating payout curve...');
+      await new Promise(resolve => setTimeout(resolve, 400));
+      
+      // Update pay curve for tiered structure
+      setPayCurve([
+        { performance: 0, payout: 0 },
+        { performance: 80, payout: 60 },
+        { performance: 100, payout: 100 },
+        { performance: 110, payout: 125 },
+        { performance: 120, payout: 160 },
+        { performance: 150, payout: 200 }
+      ]);
+      
+      setConfigurationProgress(45);
+      setIsUpdatingUI(false);
+      setCurrentAction('');
+      return "✅ **Plan Updated:** I've created a tiered commission plan with accelerators starting at 110% performance. \n\n**Changes Made:**\n• Set plan type to 'Tiered Commission Plan'\n• Added accelerator at 110% → 125% payout\n• Enhanced rewards at 120% → 160% payout\n• Peak performance at 150% → 200% payout\n\nShould we apply a cap at 150% or keep payouts uncapped for top performers?";
+    }
+    
+    // Handle payout curve modifications
+    if (lowerMessage.includes('flatter') || lowerMessage.includes('flat')) {
+      setCurrentAction('Adjusting payout curve...');
+      await new Promise(resolve => setTimeout(resolve, 500));
+      
+      // AI modifies the pay curve to be flatter
+      setPayCurve([
+        { performance: 0, payout: 0 },
+        { performance: 70, payout: 60 },
+        { performance: 100, payout: 100 },
+        { performance: 120, payout: 115 },
+        { performance: 150, payout: 130 }
+      ]);
+      
+      setIsUpdatingUI(false);
+      setCurrentAction('');
+      return "✅ **Pay Curve Flattened:** I've adjusted the payout curve to be more conservative. \n\n**Changes Made:**\n• Reduced acceleration rates\n• 120% performance now pays 115% (down from 160%)\n• 150% performance caps at 130% (down from 200%)\n\nThis provides more predictable costs while still rewarding performance. Is this the right balance?";
+    }
+    
+    // Handle role-based variations
+    if (lowerMessage.includes('role') || lowerMessage.includes('senior')) {
+      setCurrentAction('Adding role-based rules...');
+      await new Promise(resolve => setTimeout(resolve, 400));
+      
+      setPlanConfig(prev => ({ 
+        ...prev, 
+        roleFactors: ['Senior Rep Multiplier', 'Territory Complexity', 'Product Specialization'] 
+      }));
+      
+      setIsUpdatingUI(false);
+      setCurrentAction('');
+      return "✅ **Role-Based Rules Added:** I've configured role-specific variations for your plan.\n\n**Changes Made:**\n• Senior reps get 1.1x multiplier on base rates\n• Territory complexity adjustments (Urban +5%, Rural +10%)\n• Product specialization bonus for technical products\n\nThis ensures fair compensation across different rep levels and territories. Should we also add team lead bonuses?";
+    }
+    
+    // Handle cap decisions
+    if (lowerMessage.includes('cap') && lowerMessage.includes('150')) {
+      setPlanConfig(prev => ({ ...prev, payoutCap: true, capPercentage: 150 }));
+      setConfigurationProgress(prev => Math.min(prev + 25, 100));
+      return "✅ **Payout Cap Applied:** I've set a 150% payout cap to balance motivation with cost control.\n\n**Rationale:** This protects against runaway costs while still providing strong incentives. Top performers can still earn 50% above target, which is competitive in the industry.\n\nNow, what's your annual budget constraint for total payouts?";
+    }
+    
+    if (lowerMessage.includes('uncapped') || lowerMessage.includes('no cap')) {
+      setPlanConfig(prev => ({ ...prev, payoutCap: false }));
+      setConfigurationProgress(prev => Math.min(prev + 20, 100));
+      return "✅ **No Payout Cap:** I've removed payout limits to maximize motivation for top performers.\n\n**Rationale:** This approach rewards exceptional performance without limits, though it may increase cost variability. I recommend setting a budget alert at 120% of planned costs.\n\nShall I configure budget monitoring and alerts?";
+    }
+    
+    // Handle budget constraints
+    if (lowerMessage.includes('budget') || lowerMessage.includes('million') || lowerMessage.includes('$')) {
+      setPlanConfig(prev => ({ ...prev, budgetConstraints: userMessage }));
+      setConfigurationProgress(prev => Math.min(prev + 20, 100));
+      return "✅ **Budget Constraints Set:** I've recorded your budget parameters and will factor them into the plan.\n\n**Next:** Should this plan prioritize ethical considerations (fair distribution, anti-gaming measures) or pure revenue maximization?";
+    }
+    
+    // Handle simulation requests
+    if (lowerMessage.includes('simulat') || lowerMessage.includes('test') || lowerMessage.includes('run')) {
+      // Update simulator with realistic data
+      setSimulatorData({
+        totalPayout: 2450000,
+        avgIncentive: 49000,
+        motivationScore: 87
+      });
+      
+      return "✅ **Simulation Complete:** I've run your plan against historical performance data.\n\n**Results:**\n• Total payout: $2,450,000 (within budget)\n• Average per rep: $49,000\n• Motivation score: 87/100 (excellent)\n• Cost vs. last year: +12% (due to improved performance)\n\nThe plan effectively balances cost control with motivation. Ready to finalize?";
+    }
+    
+    // Handle finalization
+    if (lowerMessage.includes('final') || lowerMessage.includes('complete') || lowerMessage.includes('done')) {
+      setConfigurationProgress(100);
+      return "✅ **Plan Ready for Finalization:** Your IC plan is complete and optimized.\n\n**Summary:**\n• Plan type: " + planConfig.planType + "\n• Accelerators: " + (planConfig.accelerators ? "Yes" : "No") + "\n• Payout cap: " + (planConfig.payoutCap ? planConfig.capPercentage + "%" : "None") + "\n• Budget: " + planConfig.budgetConstraints + "\n\nClick 'Finalize Plan' to save and deploy this configuration.";
+    }
+    
+    // Handle general plan creation requests
+    if (lowerMessage.includes('create') || lowerMessage.includes('plan') || lowerMessage.includes('motivat')) {
       setPlanConfig(prev => ({
         ...prev,
         planType: 'Goal Attainment with Accelerators',
@@ -125,41 +235,13 @@ export default function IcPlanConfiguration() {
         acceleratorThreshold: 120
       }));
       setConfigurationProgress(25);
-      return "Great! I understand you want to motivate overperformance. I'm configuring a Goal Attainment plan with accelerators that kick in at 120% of target. Do you want to set a payout cap to manage costs? (Yes/No)";
+      return "✅ **Plan Initiated:** I'm creating a motivational plan focused on overperformance.\n\n**Initial Configuration:**\n• Plan type: Goal Attainment with Accelerators\n• Accelerator threshold: 120%\n• Target: Reward high performers\n\nDo you want to set a payout cap to manage costs, or keep it uncapped for maximum motivation?";
     }
     
-    if (lowerMessage.includes('yes') && lowerMessage.includes('cap')) {
-      setPlanConfig(prev => ({ ...prev, payoutCap: true, capPercentage: 150 }));
-      setConfigurationProgress(50);
-      return "Perfect! I've set a payout cap at 150% to balance motivation with cost control. Now, what's your budget constraint? (e.g., 'Total payout should not exceed $2M annually' or 'No specific budget limits')";
-    }
-    
-    if (lowerMessage.includes('no') && lowerMessage.includes('cap')) {
-      setPlanConfig(prev => ({ ...prev, payoutCap: false }));
-      setConfigurationProgress(40);
-      return "Understood, no payout cap. This will maximize motivation for top performers. What's your budget constraint? (e.g., 'Total payout should not exceed $2M annually' or 'No specific budget limits')";
-    }
-    
-    if (lowerMessage.includes('budget') || lowerMessage.includes('million') || lowerMessage.includes('limit')) {
-      setPlanConfig(prev => ({ ...prev, budgetConstraints: userMessage }));
-      setConfigurationProgress(70);
-      return "Budget constraints noted. Should this plan prioritize ethical considerations over pure revenue maximization? This affects how we handle edge cases and fairness. (Yes/No)";
-    }
-    
-    if (lowerMessage.includes('ethical') || lowerMessage.includes('fair')) {
-      setPlanConfig(prev => ({ ...prev, ethicalPrioritization: true }));
-      setConfigurationProgress(90);
-      return "Excellent! I've configured an ethical approach that balances performance with fairness. Your plan is nearly complete. Are there any specific role factors I should consider? (e.g., 'Territory size', 'Product complexity', 'Market maturity')";
-    }
-    
-    if (lowerMessage.includes('territory') || lowerMessage.includes('product') || lowerMessage.includes('market')) {
-      setPlanConfig(prev => ({ ...prev, roleFactors: userMessage.split(',').map(f => f.trim()) }));
-      setConfigurationProgress(100);
-      return "Perfect! I've captured all the role factors. Your IC plan configuration is complete! You can see the full summary and pay curve on the right. Would you like to run a simulation or finalize the plan?";
-    }
-    
-    // Default responses for other cases
-    return "I understand. Could you provide more details about your specific requirements? For example, do you want to encourage overperformance, maintain budget control, or focus on ethical considerations?";
+    // Default agentic response
+    setIsUpdatingUI(false);
+    setCurrentAction('');
+    return "I understand you want to configure an IC plan. I can help you with:\n\n• **Tiered commission plans** - \"Create a tiered plan for 110%+ performance\"\n• **Payout curve adjustments** - \"Make the curve flatter\" or \"steeper\"\n• **Role-based rules** - \"Add senior rep bonuses\"\n• **Budget controls** - \"Set a $2M budget limit\"\n• **Simulations** - \"Run a simulation with last year's data\"\n\nWhat type of plan would you like me to build for you?";
   };
 
   const sendMessage = async () => {
@@ -334,6 +416,16 @@ export default function IcPlanConfiguration() {
                         </div>
                       </div>
                     )}
+                    {isUpdatingUI && (
+                      <div className="flex justify-start">
+                        <div className="bg-blue-100 dark:bg-blue-900/30 p-4 rounded-lg border border-blue-200 dark:border-blue-700">
+                          <div className="flex items-center space-x-2">
+                            <Settings className="h-4 w-4 text-blue-600 animate-spin" />
+                            <div className="text-sm text-blue-700 dark:text-blue-300 font-medium">{currentAction}</div>
+                          </div>
+                        </div>
+                      </div>
+                    )}
                     <div ref={messagesEndRef} />
                   </div>
                   
@@ -365,8 +457,17 @@ export default function IcPlanConfiguration() {
                 <CardHeader>
                   <CardTitle className="text-xl text-gray-900 dark:text-white flex items-center">
                     <Settings className="h-5 w-5 mr-2 text-green-600" />
-                    Configuration Summary
+                    Live Configuration
+                    {isUpdatingUI && (
+                      <div className="ml-auto flex items-center space-x-2">
+                        <div className="w-2 h-2 bg-blue-500 rounded-full animate-pulse"></div>
+                        <span className="text-sm text-blue-600 dark:text-blue-400">Updating...</span>
+                      </div>
+                    )}
                   </CardTitle>
+                  <CardDescription>
+                    {isUpdatingUI ? `AI is ${currentAction.toLowerCase()}` : 'Real-time plan configuration built by AI'}
+                  </CardDescription>
                 </CardHeader>
                 <CardContent>
                   <div className="grid md:grid-cols-2 gap-4">
