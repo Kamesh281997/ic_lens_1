@@ -72,10 +72,12 @@ export default function PayoutCalculation() {
     anyAdjustment: 'all'
   });
 
-  const { data: payoutResults, isLoading: payoutLoading } = useQuery<PayoutResult[]>({
+  const { data: payoutData, isLoading: payoutLoading } = useQuery<{results: PayoutResult[]}>({
     queryKey: ['/api/payout/results'],
     enabled: isAuthenticated,
   });
+
+  const payoutResults = payoutData?.results || [];
 
   const exportMutation = useMutation({
     mutationFn: async () => {
@@ -118,7 +120,7 @@ export default function PayoutCalculation() {
   });
 
   // Calculate filtered results
-  const filteredResults = payoutResults?.filter(result => {
+  const filteredResults = payoutResults.filter(result => {
     return (
       (filters.repId === 'all' || result.repId === filters.repId) &&
       (filters.repName === 'all' || result.repName === filters.repName) &&
@@ -131,11 +133,11 @@ export default function PayoutCalculation() {
       (filters.percentOfTargetPay === 'all' || result.percentOfTargetPay.toString() === filters.percentOfTargetPay) &&
       (filters.anyAdjustment === 'all' || result.anyAdjustment === filters.anyAdjustment)
     );
-  }) || [];
+  });
 
   // Get unique filter options
   const getFilterOptions = () => {
-    if (!payoutResults) return {};
+    if (!payoutResults.length) return {};
     
     return {
       repId: [...new Set(payoutResults.map(r => r.repId))],
@@ -235,7 +237,7 @@ export default function PayoutCalculation() {
           <div className="flex justify-center space-x-4 mb-8">
             <button
               onClick={() => exportMutation.mutate()}
-              disabled={!payoutResults?.length || exportMutation.isPending}
+              disabled={!payoutResults.length || exportMutation.isPending}
               className="gp-btn-secondary"
             >
               {exportMutation.isPending ? (
@@ -261,7 +263,7 @@ export default function PayoutCalculation() {
           </div>
 
           {/* Main Layout */}
-          {payoutResults?.length > 0 && (
+          {payoutResults.length > 0 && (
             <div className="max-w-7xl mx-auto space-y-8">
               {/* Filter Controls */}
               <div className="gp-card">
@@ -452,7 +454,7 @@ export default function PayoutCalculation() {
           )}
 
           {/* No Data Message */}
-          {!payoutResults?.length && (
+          {!payoutResults.length && (
             <div className="max-w-6xl mx-auto">
               <div className="gp-card text-center">
                 <Calculator className="h-12 w-12 mx-auto mb-4" style={{ color: 'var(--gp-content-tertiary)' }} />
