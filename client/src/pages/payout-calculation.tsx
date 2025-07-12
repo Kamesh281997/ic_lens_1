@@ -337,11 +337,11 @@ export default function PayoutCalculation() {
 
           {/* Main Layout - Centered Table with Top Filters */}
           {payoutResults?.length > 0 && (
-            <div className="max-w-6xl mx-auto space-y-6">
+            <div className="max-w-7xl mx-auto space-y-8">
               {/* Filter Controls - Top Section */}
               <Card className="bg-white/90 dark:bg-gray-900/90 backdrop-blur-sm shadow-2xl border border-gray-200 dark:border-gray-700">
-                <CardHeader className="pb-4">
-                  <CardTitle className="text-xl text-gray-900 dark:text-white flex items-center justify-between">
+                <CardHeader className="pb-6">
+                  <CardTitle className="text-2xl text-gray-900 dark:text-white flex items-center justify-between">
                     <div className="flex items-center">
                       <Filter className="h-5 w-5 mr-2 text-blue-600" />
                       Filter Results
@@ -359,16 +359,16 @@ export default function PayoutCalculation() {
                     )}
                   </CardTitle>
                 </CardHeader>
-                <CardContent>
-                  <div className="grid grid-cols-2 md:grid-cols-4 xl:grid-cols-8 gap-4">
+                <CardContent className="px-8 py-6">
+                  <div className="grid grid-cols-2 md:grid-cols-4 xl:grid-cols-8 gap-6">
                     {/* Rep ID Filter */}
-                    <div className="space-y-2">
-                      <label className="text-base font-medium text-gray-700 dark:text-gray-300 flex items-center">
-                        <User className="h-5 w-5 mr-2 text-blue-600" />
+                    <div className="space-y-3">
+                      <label className="text-lg font-medium text-gray-700 dark:text-gray-300 flex items-center">
+                        <User className="h-6 w-6 mr-2 text-blue-600" />
                         Rep ID
                       </label>
                       <Select value={filters.repId} onValueChange={(value) => setFilters(prev => ({ ...prev, repId: value }))}>
-                        <SelectTrigger className="w-full text-base">
+                        <SelectTrigger className="w-full text-lg h-12">
                           <SelectValue placeholder="All Rep IDs" />
                         </SelectTrigger>
                         <SelectContent>
@@ -381,13 +381,13 @@ export default function PayoutCalculation() {
                     </div>
 
                     {/* Rep Name Filter */}
-                    <div className="space-y-2">
-                      <label className="text-base font-medium text-gray-700 dark:text-gray-300 flex items-center">
-                        <User className="h-5 w-5 mr-2 text-green-600" />
+                    <div className="space-y-3">
+                      <label className="text-lg font-medium text-gray-700 dark:text-gray-300 flex items-center">
+                        <User className="h-6 w-6 mr-2 text-green-600" />
                         Rep Name
                       </label>
                       <Select value={filters.repName} onValueChange={(value) => setFilters(prev => ({ ...prev, repName: value }))}>
-                        <SelectTrigger className="w-full text-base">
+                        <SelectTrigger className="w-full text-lg h-12">
                           <SelectValue placeholder="All Rep Names" />
                         </SelectTrigger>
                         <SelectContent>
@@ -400,13 +400,13 @@ export default function PayoutCalculation() {
                     </div>
 
                     {/* Region Filter */}
-                    <div className="space-y-2">
-                      <label className="text-base font-medium text-gray-700 dark:text-gray-300 flex items-center">
-                        <MapPin className="h-5 w-5 mr-2 text-red-600" />
+                    <div className="space-y-3">
+                      <label className="text-lg font-medium text-gray-700 dark:text-gray-300 flex items-center">
+                        <MapPin className="h-6 w-6 mr-2 text-red-600" />
                         Region
                       </label>
                       <Select value={filters.region} onValueChange={(value) => setFilters(prev => ({ ...prev, region: value }))}>
-                        <SelectTrigger className="w-full text-base">
+                        <SelectTrigger className="w-full text-lg h-12">
                           <SelectValue placeholder="All Regions" />
                         </SelectTrigger>
                         <SelectContent>
@@ -419,13 +419,13 @@ export default function PayoutCalculation() {
                     </div>
 
                     {/* Quota Filter */}
-                    <div className="space-y-2">
-                      <label className="text-base font-medium text-gray-700 dark:text-gray-300 flex items-center">
-                        <Target className="h-5 w-5 mr-2 text-purple-600" />
+                    <div className="space-y-3">
+                      <label className="text-lg font-medium text-gray-700 dark:text-gray-300 flex items-center">
+                        <Target className="h-6 w-6 mr-2 text-purple-600" />
                         Quota
                       </label>
                       <Select value={filters.quota} onValueChange={(value) => setFilters(prev => ({ ...prev, quota: value }))}>
-                        <SelectTrigger className="w-full text-base">
+                        <SelectTrigger className="w-full text-lg h-12">
                           <SelectValue placeholder="All Quotas" />
                         </SelectTrigger>
                         <SelectContent>
@@ -438,13 +438,13 @@ export default function PayoutCalculation() {
                     </div>
 
                     {/* Actual Sales Filter */}
-                    <div className="space-y-2">
-                      <label className="text-base font-medium text-gray-700 dark:text-gray-300 flex items-center">
-                        <BarChart3 className="h-5 w-5 mr-2 text-yellow-600" />
+                    <div className="space-y-3">
+                      <label className="text-lg font-medium text-gray-700 dark:text-gray-300 flex items-center">
+                        <BarChart3 className="h-6 w-6 mr-2 text-yellow-600" />
                         Actual Sales
                       </label>
                       <Select value={filters.actualSales} onValueChange={(value) => setFilters(prev => ({ ...prev, actualSales: value }))}>
-                        <SelectTrigger className="w-full text-base">
+                        <SelectTrigger className="w-full text-lg h-12">
                           <SelectValue placeholder="All Sales" />
                         </SelectTrigger>
                         <SelectContent>
@@ -457,13 +457,13 @@ export default function PayoutCalculation() {
                     </div>
 
                     {/* Attainment % Filter */}
-                    <div className="space-y-2">
-                      <label className="text-base font-medium text-gray-700 dark:text-gray-300 flex items-center">
-                        <Percent className="h-5 w-5 mr-2 text-orange-600" />
+                    <div className="space-y-3">
+                      <label className="text-lg font-medium text-gray-700 dark:text-gray-300 flex items-center">
+                        <Percent className="h-6 w-6 mr-2 text-orange-600" />
                         Attainment %
                       </label>
                       <Select value={filters.attainmentPercent} onValueChange={(value) => setFilters(prev => ({ ...prev, attainmentPercent: value }))}>
-                        <SelectTrigger className="w-full text-base">
+                        <SelectTrigger className="w-full text-lg h-12">
                           <SelectValue placeholder="All Attainment %" />
                         </SelectTrigger>
                         <SelectContent>
@@ -476,13 +476,13 @@ export default function PayoutCalculation() {
                     </div>
 
                     {/* Payout Curve Type Filter */}
-                    <div className="space-y-2">
-                      <label className="text-base font-medium text-gray-700 dark:text-gray-300 flex items-center">
-                        <TrendingUp className="h-5 w-5 mr-2 text-indigo-600" />
+                    <div className="space-y-3">
+                      <label className="text-lg font-medium text-gray-700 dark:text-gray-300 flex items-center">
+                        <TrendingUp className="h-6 w-6 mr-2 text-indigo-600" />
                         Payout Curve Type
                       </label>
                       <Select value={filters.payoutCurveType} onValueChange={(value) => setFilters(prev => ({ ...prev, payoutCurveType: value }))}>
-                        <SelectTrigger className="w-full text-base">
+                        <SelectTrigger className="w-full text-lg h-12">
                           <SelectValue placeholder="All Curve Types" />
                         </SelectTrigger>
                         <SelectContent>
@@ -495,13 +495,13 @@ export default function PayoutCalculation() {
                     </div>
 
                     {/* Any Adjustment Filter */}
-                    <div className="space-y-2">
-                      <label className="text-base font-medium text-gray-700 dark:text-gray-300 flex items-center">
-                        <Settings className="h-5 w-5 mr-2 text-gray-600" />
+                    <div className="space-y-3">
+                      <label className="text-lg font-medium text-gray-700 dark:text-gray-300 flex items-center">
+                        <Settings className="h-6 w-6 mr-2 text-gray-600" />
                         Any Adjustment
                       </label>
                       <Select value={filters.anyAdjustment} onValueChange={(value) => setFilters(prev => ({ ...prev, anyAdjustment: value }))}>
-                        <SelectTrigger className="w-full text-base">
+                        <SelectTrigger className="w-full text-lg h-12">
                           <SelectValue placeholder="All Adjustments" />
                         </SelectTrigger>
                         <SelectContent>
@@ -515,8 +515,8 @@ export default function PayoutCalculation() {
                   </div>
                   
                   {/* Filter Results Summary */}
-                  <div className="mt-6 pt-4 border-t dark:border-gray-700">
-                    <p className="text-base text-gray-600 dark:text-gray-400 text-center">
+                  <div className="mt-8 pt-6 border-t dark:border-gray-700">
+                    <p className="text-lg text-gray-600 dark:text-gray-400 text-center font-medium">
                       Showing {filteredResults.length} of {payoutResults.length} results
                       {hasActiveFilters && (
                         <span className="ml-2 text-blue-600 dark:text-blue-400">
@@ -530,16 +530,16 @@ export default function PayoutCalculation() {
 
               {/* Payout Results Table - Centered */}
               <Card className="bg-white/90 dark:bg-gray-900/90 backdrop-blur-sm shadow-2xl border border-gray-200 dark:border-gray-700 w-full">
-                <CardHeader>
-                  <CardTitle className="text-2xl text-gray-900 dark:text-white flex items-center">
-                    <DollarSign className="h-6 w-6 mr-3 text-green-600" />
+                <CardHeader className="pb-6">
+                  <CardTitle className="text-3xl text-gray-900 dark:text-white flex items-center">
+                    <DollarSign className="h-8 w-8 mr-3 text-green-600" />
                     IC Payout Results
                   </CardTitle>
-                  <CardDescription>
+                  <CardDescription className="text-lg text-gray-600 dark:text-gray-400">
                     Detailed payout calculations for all sales representatives
                   </CardDescription>
                 </CardHeader>
-                <CardContent>
+                <CardContent className="px-8 py-6">
                   {payoutLoading ? (
                     <div className="flex items-center justify-center py-12">
                       <RefreshCw className="h-8 w-8 text-blue-600 animate-spin" />
@@ -551,40 +551,40 @@ export default function PayoutCalculation() {
                     <div className="w-full min-w-0">
                       <Table className="w-full table-fixed">
                         <TableHeader>
-                          <TableRow>
-                            <TableHead className="text-base font-semibold w-20">Rep ID</TableHead>
-                            <TableHead className="text-base font-semibold w-28">Rep Name</TableHead>
-                            <TableHead className="text-base font-semibold w-24">Region</TableHead>
-                            <TableHead className="text-right text-base font-semibold w-24">Quota</TableHead>
-                            <TableHead className="text-right text-base font-semibold w-28">Actual Sales</TableHead>
-                            <TableHead className="text-right text-base font-semibold w-24">Attainment %</TableHead>
-                            <TableHead className="text-base font-semibold w-32">Payout Curve Type</TableHead>
-                            <TableHead className="text-right text-base font-semibold w-28">Final Payout ($)</TableHead>
-                            <TableHead className="text-right text-base font-semibold w-24">% of Target Pay</TableHead>
-                            <TableHead className="text-base font-semibold w-24">Any Adjustment</TableHead>
-                            <TableHead className="text-base font-semibold w-28">Notes</TableHead>
+                          <TableRow className="h-14">
+                            <TableHead className="text-lg font-semibold w-24">Rep ID</TableHead>
+                            <TableHead className="text-lg font-semibold w-32">Rep Name</TableHead>
+                            <TableHead className="text-lg font-semibold w-28">Region</TableHead>
+                            <TableHead className="text-right text-lg font-semibold w-28">Quota</TableHead>
+                            <TableHead className="text-right text-lg font-semibold w-32">Actual Sales</TableHead>
+                            <TableHead className="text-right text-lg font-semibold w-28">Attainment %</TableHead>
+                            <TableHead className="text-lg font-semibold w-36">Payout Curve Type</TableHead>
+                            <TableHead className="text-right text-lg font-semibold w-32">Final Payout ($)</TableHead>
+                            <TableHead className="text-right text-lg font-semibold w-28">% of Target Pay</TableHead>
+                            <TableHead className="text-lg font-semibold w-28">Any Adjustment</TableHead>
+                            <TableHead className="text-lg font-semibold w-32">Notes</TableHead>
                           </TableRow>
                         </TableHeader>
                         <TableBody>
                           {filteredResults.map((result) => (
-                            <TableRow key={result.repId}>
-                              <TableCell className="font-medium text-base truncate">{result.repId}</TableCell>
-                              <TableCell className="text-base truncate">{result.repName}</TableCell>
-                              <TableCell className="text-base truncate">{result.region}</TableCell>
-                              <TableCell className="text-right text-base">${result.quota.toLocaleString()}</TableCell>
-                              <TableCell className="text-right text-base">${result.actualSales.toLocaleString()}</TableCell>
+                            <TableRow key={result.repId} className="h-16">
+                              <TableCell className="font-medium text-lg truncate">{result.repId}</TableCell>
+                              <TableCell className="text-lg truncate">{result.repName}</TableCell>
+                              <TableCell className="text-lg truncate">{result.region}</TableCell>
+                              <TableCell className="text-right text-lg">${result.quota.toLocaleString()}</TableCell>
+                              <TableCell className="text-right text-lg">${result.actualSales.toLocaleString()}</TableCell>
                               <TableCell className="text-right">
-                                <Badge variant={result.attainmentPercent >= 100 ? "default" : "secondary"} className="text-sm px-2 py-1">
+                                <Badge variant={result.attainmentPercent >= 100 ? "default" : "secondary"} className="text-base px-3 py-2">
                                   {result.attainmentPercent.toFixed(1)}%
                                 </Badge>
                               </TableCell>
-                              <TableCell className="text-base truncate">{result.payoutCurveType}</TableCell>
-                              <TableCell className="text-right font-semibold text-green-600 text-base">
+                              <TableCell className="text-lg truncate">{result.payoutCurveType}</TableCell>
+                              <TableCell className="text-right font-semibold text-green-600 text-lg">
                                 ${result.finalPayout.toLocaleString()}
                               </TableCell>
-                              <TableCell className="text-right text-base">{result.percentOfTargetPay.toFixed(1)}%</TableCell>
-                              <TableCell className="text-base truncate">{result.anyAdjustment}</TableCell>
-                              <TableCell className="text-base text-gray-600 dark:text-gray-400 truncate">{result.notes}</TableCell>
+                              <TableCell className="text-right text-lg">{result.percentOfTargetPay.toFixed(1)}%</TableCell>
+                              <TableCell className="text-lg truncate">{result.anyAdjustment}</TableCell>
+                              <TableCell className="text-lg text-gray-600 dark:text-gray-400 truncate">{result.notes}</TableCell>
                             </TableRow>
                           ))}
                         </TableBody>
