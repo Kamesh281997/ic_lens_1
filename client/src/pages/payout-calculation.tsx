@@ -351,10 +351,10 @@ export default function PayoutCalculation() {
                   </CardTitle>
                 </CardHeader>
                 <CardContent className="px-8 py-6 pl-[20px] pr-[20px] text-center">
-                  <div className="grid grid-cols-2 md:grid-cols-4 xl:grid-cols-8 gap-6 text-center">
+                  <div className="grid grid-cols-2 md:grid-cols-4 xl:grid-cols-8 gap-6 text-center justify-items-center">
                     {/* Rep ID Filter */}
                     <div className="space-y-3">
-                      <label className="text-lg font-medium text-gray-700 dark:text-gray-300 flex items-center">
+                      <label className="text-lg font-medium text-gray-700 dark:text-gray-300 flex items-center justify-center">
                         <User className="h-6 w-6 mr-2 text-blue-600" />
                         Rep ID
                       </label>
@@ -373,7 +373,7 @@ export default function PayoutCalculation() {
 
                     {/* Rep Name Filter */}
                     <div className="space-y-3">
-                      <label className="text-lg font-medium text-gray-700 dark:text-gray-300 flex items-center">
+                      <label className="text-lg font-medium text-gray-700 dark:text-gray-300 flex items-center justify-center">
                         <User className="h-6 w-6 mr-2 text-green-600" />
                         Rep Name
                       </label>
@@ -392,7 +392,7 @@ export default function PayoutCalculation() {
 
                     {/* Region Filter */}
                     <div className="space-y-3">
-                      <label className="text-lg font-medium text-gray-700 dark:text-gray-300 flex items-center">
+                      <label className="text-lg font-medium text-gray-700 dark:text-gray-300 flex items-center justify-center">
                         <MapPin className="h-6 w-6 mr-2 text-red-600" />
                         Region
                       </label>
@@ -411,7 +411,7 @@ export default function PayoutCalculation() {
 
                     {/* Quota Filter */}
                     <div className="space-y-3">
-                      <label className="text-lg font-medium text-gray-700 dark:text-gray-300 flex items-center">
+                      <label className="text-lg font-medium text-gray-700 dark:text-gray-300 flex items-center justify-center">
                         <Target className="h-6 w-6 mr-2 text-purple-600" />
                         Quota
                       </label>
