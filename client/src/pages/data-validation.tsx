@@ -275,6 +275,24 @@ export default function DataValidation() {
             </p>
           </div>
 
+          {/* Validation Errors Alert - Moved to Top */}
+          {hasErrors && allValidationComplete && (
+            <Card className="bg-red-50 dark:bg-red-900/20 border-red-200 dark:border-red-800 mb-8">
+              <CardHeader>
+                <CardTitle className="text-red-800 dark:text-red-200 flex items-center">
+                  <XCircle className="h-5 w-5 mr-2" />
+                  Validation Errors Detected
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <p className="text-red-700 dark:text-red-300">
+                  Please resolve all validation errors before proceeding to payout calculation. 
+                  You may need to correct your data files and re-upload them.
+                </p>
+              </CardContent>
+            </Card>
+          )}
+
           {/* Validation Summary */}
           <Card className="bg-white dark:bg-gray-900 shadow-xl border border-gray-200 dark:border-gray-700 mb-8">
             <CardHeader>
@@ -583,22 +601,7 @@ export default function DataValidation() {
               </div>
             </div>
 
-          {hasErrors && allValidationComplete && (
-            <Card className="bg-red-50 dark:bg-red-900/20 border-red-200 dark:border-red-800 mt-8">
-              <CardHeader>
-                <CardTitle className="text-red-800 dark:text-red-200 flex items-center">
-                  <XCircle className="h-5 w-5 mr-2" />
-                  Validation Errors Detected
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <p className="text-red-700 dark:text-red-300">
-                  Please resolve all validation errors before proceeding to payout calculation. 
-                  You may need to correct your data files and re-upload them.
-                </p>
-              </CardContent>
-            </Card>
-          )}
+
         </div>
       </main>
     </div>
