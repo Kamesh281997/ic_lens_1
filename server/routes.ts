@@ -645,6 +645,67 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // IC Plan Configuration endpoints
+  app.post("/api/ic-plans", async (req, res) => {
+    try {
+      if (!req.session.userId) {
+        return res.status(401).json({ message: "Not authenticated" });
+      }
+
+      const planConfig = req.body;
+      
+      // In a real implementation, you would save this to the database
+      // For now, we'll just return a success response
+      const savedPlan = {
+        id: Date.now().toString(),
+        userId: req.session.userId,
+        ...planConfig,
+        createdAt: new Date().toISOString(),
+        status: "active"
+      };
+
+      res.json({ 
+        message: "IC plan configuration saved successfully",
+        plan: savedPlan
+      });
+    } catch (error) {
+      console.error("Error saving IC plan:", error);
+      res.status(500).json({ message: "Failed to save IC plan configuration" });
+    }
+  });
+
+  app.get("/api/ic-plans", async (req, res) => {
+    try {
+      if (!req.session.userId) {
+        return res.status(401).json({ message: "Not authenticated" });
+      }
+
+      // In a real implementation, you would fetch from the database
+      // For now, return sample plans
+      const plans = [
+        {
+          id: "1",
+          userId: req.session.userId,
+          planType: "Goal Attainment with Accelerators",
+          payoutCap: true,
+          capPercentage: 150,
+          budgetConstraints: "Total payout should not exceed $2M annually",
+          roleFactors: ["Territory size", "Product complexity"],
+          ethicalPrioritization: true,
+          accelerators: true,
+          acceleratorThreshold: 120,
+          createdAt: new Date().toISOString(),
+          status: "active"
+        }
+      ];
+
+      res.json({ plans });
+    } catch (error) {
+      console.error("Error fetching IC plans:", error);
+      res.status(500).json({ message: "Failed to fetch IC plans" });
+    }
+  });
+
   const httpServer = createServer(app);
   return httpServer;
 }

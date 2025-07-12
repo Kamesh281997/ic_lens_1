@@ -1,0 +1,115 @@
+I want to build a new module titled "IC Plan Configuration" that opens when a user clicks the "IC Configuration" card from the landing page of our existing Incentive Compensation platform.
+
+The overall UI/UX should retain the base design system already implemented in the current tool — including:
+
+Navigation bar, header styling, and page layout
+
+Fonts, buttons, colors, margins, shadows, etc.
+
+Follow the same container/card structure used on pages like “Upload Your Dataset for Processing”
+
+However, this new module will introduce a chatbot-style assistant that interacts with the user to help them design incentive plans through natural conversation. Once the plan is configured, the assistant should display a visual summary with clear justifications for each decision.
+
+🔧 Functional Requirements
+1. Conversational AI Assistant Panel
+Implement a chat-like assistant interface using the tool’s existing component style
+
+The assistant should:
+
+Accept natural language input from the user (e.g., “Create a motivating plan for reps who outperform their targets”)
+
+Ask for missing details:
+
+Payout cap (yes/no)
+
+Budget constraints
+
+Role-specific factors
+
+Ethical prioritization vs. revenue maximization
+
+Store all answers as structured configuration values
+
+2. Configuration Summary (AI Response Preview Panel)
+Alongside the chat, show a summary panel that dynamically updates as the conversation progresses
+
+The summary should follow card-based formatting and match existing design system
+
+Each component should include:
+
+Title
+
+AI-generated config
+
+Justification (why it was selected, based on user inputs)
+
+Example:
+
+vbnet
+Copy
+Edit
+Component: Plan Type - "Goal Attainment"
+Reason: Based on your input to drive overperformance with ethical consideration.
+Configuration: 120% accelerators with capped payouts at 150%
+3. Pay Curve Generator
+Auto-generate a default pay curve (performance % vs payout %)
+
+Allow users to:
+
+Edit via interactive graph (drag to adjust)
+
+Or switch to manual entry
+
+Embed the graph using the existing card layout
+
+4. What-If Simulator
+Add a section within the same page:
+
+Upload historical performance data (CSV or from dataset)
+
+Inputs: quotas, thresholds, component weights
+
+Outputs:
+
+Total payout cost
+
+Per-rep incentive
+
+Comparison with previous plan (visually)
+
+Motivation Score (optional metric with tooltip)
+
+Keep layout consistent with existing “Submit for Analysis” or “Upload Dataset” UI
+
+5. Final Actions
+Finalize Plan button (use existing button style)
+
+Preview Summary (opens a modal or collapsible section)
+
+On save, store all config and push it to the IC Processing module
+
+Make sure saved plans are accessible via backend integration in IC Processing dropdowns or list
+
+📐 Design Notes
+Reuse existing UI framework: use the same top nav, button style, modal, card shadows, fonts, spacing
+
+Split-page layout:
+
+Left Panel: Chatbot (40%)
+
+Right Panel: Configuration summary, pay curve, simulator (60%)
+
+Sticky summary section as conversation grows
+
+Fully responsive (stack sections on mobile)
+
+No need to redesign global navigation or color system — match tool's base theme
+
+🔁 Routing & Integration
+Route: /ic-plan-configuration
+
+On Finalize:
+
+Save config to DB
+
+Plan becomes available in IC Processing module for computation
