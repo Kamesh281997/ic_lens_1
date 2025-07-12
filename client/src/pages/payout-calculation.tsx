@@ -485,24 +485,7 @@ export default function PayoutCalculation() {
                       </Select>
                     </div>
 
-                    {/* Any Adjustment Filter */}
-                    <div className="space-y-3">
-                      <label className="text-lg font-medium text-gray-700 dark:text-gray-300 flex items-center">
-                        <Settings className="h-6 w-6 mr-2 text-gray-600" />
-                        Any Adjustment
-                      </label>
-                      <Select value={filters.anyAdjustment} onValueChange={(value) => setFilters(prev => ({ ...prev, anyAdjustment: value }))}>
-                        <SelectTrigger className="w-full text-lg h-12">
-                          <SelectValue placeholder="All Adjustments" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="all">All Adjustments</SelectItem>
-                          {filterOptions.anyAdjustment?.map(adjustment => (
-                            <SelectItem key={adjustment} value={adjustment}>{adjustment}</SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                    </div>
+                    
                   </div>
                   
                   {/* Filter Results Summary */}
