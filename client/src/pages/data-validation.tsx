@@ -13,11 +13,17 @@ import {
   ArrowLeft, 
   ArrowRight, 
   FileText, 
-  MessageCircle,
-  RefreshCw,
+  Users,
+  MapPin,
+  BarChart3,
   DollarSign,
+  Target,
+  RefreshCw,
   Calculator,
-  BarChart3
+  Database,
+  AlertCircle,
+  Info,
+  Activity
 } from "lucide-react";
 import { useAuth } from "@/hooks/use-auth";
 import { useQuery, useMutation } from "@tanstack/react-query";
@@ -27,8 +33,8 @@ import { useToast } from "@/hooks/use-toast";
 interface ValidationResult {
   fileId: string;
   fileName: string;
-  fileType: string;
-  status: "validating" | "passed" | "failed";
+  fileType: "hierarchy" | "rep_roster" | "rep_territory" | "sales_data" | "target_pay" | "quota_data";
+  status: "validating" | "passed" | "failed" | "not_uploaded";
   errors: Array<{
     row: number;
     column: string;
@@ -37,7 +43,80 @@ interface ValidationResult {
   }>;
   recordsProcessed: number;
   totalRecords: number;
+  validationChecks: {
+    nullChecks: { passed: boolean; issues: number };
+    formatChecks: { passed: boolean; issues: number };
+    dataQuality: { passed: boolean; issues: number };
+    businessRules: { passed: boolean; issues: number };
+  };
 }
+
+interface DatasetConfig {
+  id: "hierarchy" | "rep_roster" | "rep_territory" | "sales_data" | "target_pay" | "quota_data";
+  label: string;
+  icon: any;
+  description: string;
+  mandatory: boolean;
+  expectedColumns: string[];
+  validationRules: string[];
+}
+
+const datasetConfigs: DatasetConfig[] = [
+  {
+    id: "hierarchy",
+    label: "Hierarchy",
+    icon: FileText,
+    description: "Organizational structure and reporting relationships",
+    mandatory: false,
+    expectedColumns: ["TeamID", "TERR_ID", "TERR_NAME", "ROLE_CD", "LEVEL1_PARENT_ID", "LEVEL1_PARENT_NAME", "LEVEL_1_PARENT_ROLE_CD", "LEVEL2_PARENT_ID", "LEVEL2_PARENT_NAME", "LEVEL_2_PARENT_ROLE_CD"],
+    validationRules: ["No null values in key fields", "Valid role codes", "Parent-child relationships consistent", "No circular references"]
+  },
+  {
+    id: "rep_roster",
+    label: "Rep Roster",
+    icon: Users,
+    description: "Sales representative information and details",
+    mandatory: true,
+    expectedColumns: ["REP_ID", "REP_NAME", "EMAIL_ID"],
+    validationRules: ["All REP_ID values unique", "Valid email format", "No null names", "REP_ID format consistency"]
+  },
+  {
+    id: "rep_territory",
+    label: "Rep Territory Assignment",
+    icon: MapPin,
+    description: "Territory assignments for sales representatives",
+    mandatory: true,
+    expectedColumns: ["TERR_ID", "REP_ID", "START_DATE", "END_DATE"],
+    validationRules: ["Valid date formats", "Start date before end date", "No territory overlaps", "REP_ID exists in roster"]
+  },
+  {
+    id: "sales_data",
+    label: "Sales Data",
+    icon: BarChart3,
+    description: "Sales performance and transaction data",
+    mandatory: true,
+    expectedColumns: ["REP_ID", "PRODUCT_1", "PRODUCT_2", "PRODUCT_3", "MARKET_1", "MARKET_2", "MARKET_3", "TOTAL_SALES"],
+    validationRules: ["Numeric values only", "No negative sales", "Product totals consistent", "REP_ID exists in roster"]
+  },
+  {
+    id: "target_pay",
+    label: "Target Pay",
+    icon: DollarSign,
+    description: "Target compensation and quota information",
+    mandatory: false,
+    expectedColumns: ["REP_ID", "TARGET_PAY", "QUOTA_AMOUNT", "TERRITORY_COMPLEXITY"],
+    validationRules: ["Positive pay amounts", "Realistic quota values", "Valid complexity factors", "REP_ID exists in roster"]
+  },
+  {
+    id: "quota_data",
+    label: "Quota Data",
+    icon: Target,
+    description: "Quota targets and performance metrics",
+    mandatory: true,
+    expectedColumns: ["REP_ID", "QUOTA_AMOUNT", "PRODUCT_QUOTA_1", "PRODUCT_QUOTA_2", "PRODUCT_QUOTA_3", "TERRITORY_QUOTA"],
+    validationRules: ["Positive quota values", "Sum of product quotas logical", "Territory alignment", "REP_ID exists in roster"]
+  }
+];
 
 export default function DataValidation() {
   const { user, isAuthenticated } = useAuth();
@@ -45,14 +124,43 @@ export default function DataValidation() {
   const { toast } = useToast();
   const [validationProgress, setValidationProgress] = useState(0);
 
+  // Generate mock validation results based on dataset configurations
+  const generateMockValidationResults = (): ValidationResult[] => {
+    return datasetConfigs.map(config => {
+      const isUploaded = Math.random() > 0.3; // 70% chance of being uploaded
+      const hasErrors = isUploaded ? Math.random() > 0.7 : false; // 30% chance of errors if uploaded
+      
+      return {
+        fileId: `file_${config.id}`,
+        fileName: `${config.label.toLowerCase().replace(/\s+/g, '_')}.csv`,
+        fileType: config.id,
+        status: !isUploaded ? "not_uploaded" : hasErrors ? "failed" : "passed",
+        errors: hasErrors ? [
+          {
+            row: Math.floor(Math.random() * 10) + 1,
+            column: config.expectedColumns[Math.floor(Math.random() * config.expectedColumns.length)],
+            message: config.validationRules[Math.floor(Math.random() * config.validationRules.length)] + " - validation failed",
+            severity: Math.random() > 0.5 ? "error" : "warning"
+          }
+        ] : [],
+        recordsProcessed: isUploaded ? Math.floor(Math.random() * 1000) + 100 : 0,
+        totalRecords: isUploaded ? Math.floor(Math.random() * 1000) + 100 : 0,
+        validationChecks: {
+          nullChecks: { passed: !hasErrors || Math.random() > 0.5, issues: hasErrors ? Math.floor(Math.random() * 5) : 0 },
+          formatChecks: { passed: !hasErrors || Math.random() > 0.5, issues: hasErrors ? Math.floor(Math.random() * 3) : 0 },
+          dataQuality: { passed: !hasErrors || Math.random() > 0.5, issues: hasErrors ? Math.floor(Math.random() * 2) : 0 },
+          businessRules: { passed: !hasErrors || Math.random() > 0.5, issues: hasErrors ? Math.floor(Math.random() * 4) : 0 }
+        }
+      };
+    });
+  };
+
   // Fetch validation results
   const { data: validationResults, isLoading, refetch } = useQuery({
     queryKey: ["/api/validation/results"],
     queryFn: async () => {
-      const response = await fetch("/api/validation/results");
-      if (!response.ok) throw new Error("Failed to fetch validation results");
-      const data = await response.json();
-      return data.results as ValidationResult[];
+      // For now, return mock data. In production, this would fetch from the API
+      return generateMockValidationResults();
     },
     refetchInterval: 5000, // Poll every 5 seconds during validation
   });
@@ -160,12 +268,50 @@ export default function DataValidation() {
           {/* Page Title */}
           <div className="text-center mb-12">
             <h1 className="text-4xl md:text-5xl font-bold text-gray-900 dark:text-white mb-4">
-              Data Validation
+              Data Validation Dashboard
             </h1>
             <p className="text-xl text-gray-600 dark:text-gray-300">
-              Reviewing uploaded data for completeness and accuracy
+              Comprehensive validation of uploaded datasets with detailed quality checks
             </p>
           </div>
+
+          {/* Validation Summary */}
+          <Card className="bg-white dark:bg-gray-900 shadow-xl border border-gray-200 dark:border-gray-700 mb-8">
+            <CardHeader>
+              <CardTitle className="text-2xl text-gray-900 dark:text-white flex items-center">
+                <Database className="h-6 w-6 mr-3 text-blue-600" />
+                Validation Summary
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+                <div className="text-center">
+                  <div className="text-3xl font-bold text-blue-600 mb-2">
+                    {validationResults?.length || 0}
+                  </div>
+                  <div className="text-sm text-gray-600 dark:text-gray-400">Total Datasets</div>
+                </div>
+                <div className="text-center">
+                  <div className="text-3xl font-bold text-green-600 mb-2">
+                    {validationResults?.filter(r => r.status === "passed").length || 0}
+                  </div>
+                  <div className="text-sm text-gray-600 dark:text-gray-400">Passed Validation</div>
+                </div>
+                <div className="text-center">
+                  <div className="text-3xl font-bold text-red-600 mb-2">
+                    {validationResults?.filter(r => r.status === "failed").length || 0}
+                  </div>
+                  <div className="text-sm text-gray-600 dark:text-gray-400">Failed Validation</div>
+                </div>
+                <div className="text-center">
+                  <div className="text-3xl font-bold text-gray-600 dark:text-gray-400 mb-2">
+                    {validationResults?.filter(r => r.status === "not_uploaded").length || 0}
+                  </div>
+                  <div className="text-sm text-gray-600 dark:text-gray-400">Not Uploaded</div>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
 
           {/* Validation Progress */}
           <Card className="bg-white dark:bg-gray-900 shadow-xl border border-gray-200 dark:border-gray-700 mb-8">
@@ -195,7 +341,7 @@ export default function DataValidation() {
             </CardContent>
           </Card>
 
-          {/* Validation Results */}
+          {/* Dataset Validation Cards */}
           {isLoading ? (
             <Card className="bg-white dark:bg-gray-900 shadow-xl border border-gray-200 dark:border-gray-700">
               <CardContent className="flex items-center justify-center py-12">
@@ -208,74 +354,199 @@ export default function DataValidation() {
               </CardContent>
             </Card>
           ) : (
-            <div className="space-y-6">
-              {validationResults?.map((result) => (
-                <Card key={result.fileId} className="bg-white dark:bg-gray-900 shadow-xl border border-gray-200 dark:border-gray-700">
-                  <CardHeader>
-                    <div className="flex items-center justify-between">
-                      <CardTitle className="text-xl text-gray-900 dark:text-white flex items-center">
-                        <FileText className="h-5 w-5 mr-3 text-blue-600" />
-                        {result.fileName}
-                      </CardTitle>
-                      <div className="flex items-center space-x-3">
-                        <Badge variant="outline" className="capitalize">
-                          {result.fileType.replace('_', ' ')}
-                        </Badge>
-                        {result.status === "validating" && (
-                          <Badge variant="secondary" className="flex items-center">
-                            <RefreshCw className="h-3 w-3 mr-1 animate-spin" />
-                            Validating
-                          </Badge>
-                        )}
-                        {result.status === "passed" && (
-                          <Badge variant="default" className="bg-green-600 flex items-center">
-                            <CheckCircle className="h-3 w-3 mr-1" />
-                            Passed
-                          </Badge>
-                        )}
-                        {result.status === "failed" && (
-                          <Badge variant="destructive" className="flex items-center">
-                            <XCircle className="h-3 w-3 mr-1" />
-                            Failed
-                          </Badge>
-                        )}
-                      </div>
-                    </div>
-                    {result.status !== "validating" && (
-                      <CardDescription>
-                        Processed {result.recordsProcessed} of {result.totalRecords} records
-                      </CardDescription>
-                    )}
-                  </CardHeader>
-                  <CardContent>
-                    {result.errors.length > 0 && (
-                      <div className="space-y-3">
-                        <h4 className="font-semibold text-gray-900 dark:text-white flex items-center">
-                          <AlertTriangle className="h-4 w-4 mr-2 text-yellow-500" />
-                          Validation Issues ({result.errors.length})
-                        </h4>
-                        <div className="space-y-2 max-h-48 overflow-y-auto">
-                          {result.errors.map((error, index) => (
-                            <Alert key={index} variant={error.severity === "error" ? "destructive" : "default"}>
-                              <AlertTriangle className="h-4 w-4" />
-                              <AlertTitle>
-                                Row {error.row}, Column: {error.column}
-                              </AlertTitle>
-                              <AlertDescription>{error.message}</AlertDescription>
-                            </Alert>
-                          ))}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {validationResults?.map((result) => {
+                const config = datasetConfigs.find(c => c.id === result.fileType);
+                if (!config) return null;
+                
+                const IconComponent = config.icon;
+                const isUploaded = result.status !== "not_uploaded";
+                const hasPassed = result.status === "passed";
+                const hasFailed = result.status === "failed";
+                
+                return (
+                  <Card key={result.fileId} className={`bg-white dark:bg-gray-900 shadow-xl border-2 transition-all duration-200 hover:shadow-2xl ${
+                    !isUploaded ? 'border-gray-300 dark:border-gray-600' :
+                    hasPassed ? 'border-green-300 dark:border-green-600' :
+                    hasFailed ? 'border-red-300 dark:border-red-600' :
+                    'border-blue-300 dark:border-blue-600'
+                  }`}>
+                    <CardHeader className="pb-3">
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center space-x-3">
+                          <div className={`p-2 rounded-lg ${
+                            !isUploaded ? 'bg-gray-100 dark:bg-gray-800' :
+                            hasPassed ? 'bg-green-100 dark:bg-green-900/30' :
+                            hasFailed ? 'bg-red-100 dark:bg-red-900/30' :
+                            'bg-blue-100 dark:bg-blue-900/30'
+                          }`}>
+                            <IconComponent className={`h-5 w-5 ${
+                              !isUploaded ? 'text-gray-500' :
+                              hasPassed ? 'text-green-600' :
+                              hasFailed ? 'text-red-600' :
+                              'text-blue-600'
+                            }`} />
+                          </div>
+                          <div>
+                            <CardTitle className="text-lg text-gray-900 dark:text-white">
+                              {config.label}
+                            </CardTitle>
+                            <div className="flex items-center space-x-2 mt-1">
+                              {config.mandatory && (
+                                <Badge variant="outline" className="text-xs px-2 py-0.5 bg-red-50 dark:bg-red-900/20 text-red-700 dark:text-red-300 border-red-200 dark:border-red-700">
+                                  Required
+                                </Badge>
+                              )}
+                              {!config.mandatory && (
+                                <Badge variant="outline" className="text-xs px-2 py-0.5 bg-gray-50 dark:bg-gray-800 text-gray-600 dark:text-gray-400">
+                                  Optional
+                                </Badge>
+                              )}
+                            </div>
+                          </div>
+                        </div>
+                        <div className="flex items-center">
+                          {!isUploaded && (
+                            <div className="flex items-center text-gray-500">
+                              <AlertCircle className="h-6 w-6" />
+                            </div>
+                          )}
+                          {hasPassed && (
+                            <div className="flex items-center text-green-600">
+                              <CheckCircle className="h-6 w-6" />
+                            </div>
+                          )}
+                          {hasFailed && (
+                            <div className="flex items-center text-red-600">
+                              <XCircle className="h-6 w-6" />
+                            </div>
+                          )}
+                          {result.status === "validating" && (
+                            <div className="flex items-center text-blue-600">
+                              <RefreshCw className="h-6 w-6 animate-spin" />
+                            </div>
+                          )}
                         </div>
                       </div>
-                    )}
-                    {result.errors.length === 0 && result.status === "passed" && (
-                      <div className="flex items-center text-green-600">
-                        <CheckCircle className="h-5 w-5 mr-2" />
-                        <span className="font-medium">All validation checks passed</span>
+                    </CardHeader>
+                    <CardContent className="space-y-4">
+                      <CardDescription className="text-sm">
+                        {config.description}
+                      </CardDescription>
+                      
+                      {/* Upload Status */}
+                      <div className="space-y-2">
+                        <h4 className="font-semibold text-gray-900 dark:text-white text-sm">Upload Status</h4>
+                        <div className="flex items-center justify-between">
+                          <span className="text-sm text-gray-600 dark:text-gray-400">
+                            {!isUploaded ? "Not Uploaded" : result.fileName}
+                          </span>
+                          {isUploaded && (
+                            <Badge variant="outline" className="text-xs">
+                              {result.recordsProcessed} records
+                            </Badge>
+                          )}
+                        </div>
                       </div>
-                    )}
-                  </CardContent>
-                </Card>
-              ))}
+                      
+                      {/* Validation Checks */}
+                      {isUploaded && (
+                        <div className="space-y-3">
+                          <h4 className="font-semibold text-gray-900 dark:text-white text-sm">Validation Checks</h4>
+                          <div className="grid grid-cols-2 gap-2">
+                            <div className="flex items-center justify-between">
+                              <span className="text-xs text-gray-600 dark:text-gray-400">Null Checks</span>
+                              <div className="flex items-center space-x-1">
+                                {result.validationChecks.nullChecks.passed ? (
+                                  <CheckCircle className="h-3 w-3 text-green-500" />
+                                ) : (
+                                  <XCircle className="h-3 w-3 text-red-500" />
+                                )}
+                                {result.validationChecks.nullChecks.issues > 0 && (
+                                  <span className="text-xs text-red-600">{result.validationChecks.nullChecks.issues}</span>
+                                )}
+                              </div>
+                            </div>
+                            <div className="flex items-center justify-between">
+                              <span className="text-xs text-gray-600 dark:text-gray-400">Format Checks</span>
+                              <div className="flex items-center space-x-1">
+                                {result.validationChecks.formatChecks.passed ? (
+                                  <CheckCircle className="h-3 w-3 text-green-500" />
+                                ) : (
+                                  <XCircle className="h-3 w-3 text-red-500" />
+                                )}
+                                {result.validationChecks.formatChecks.issues > 0 && (
+                                  <span className="text-xs text-red-600">{result.validationChecks.formatChecks.issues}</span>
+                                )}
+                              </div>
+                            </div>
+                            <div className="flex items-center justify-between">
+                              <span className="text-xs text-gray-600 dark:text-gray-400">Data Quality</span>
+                              <div className="flex items-center space-x-1">
+                                {result.validationChecks.dataQuality.passed ? (
+                                  <CheckCircle className="h-3 w-3 text-green-500" />
+                                ) : (
+                                  <XCircle className="h-3 w-3 text-red-500" />
+                                )}
+                                {result.validationChecks.dataQuality.issues > 0 && (
+                                  <span className="text-xs text-red-600">{result.validationChecks.dataQuality.issues}</span>
+                                )}
+                              </div>
+                            </div>
+                            <div className="flex items-center justify-between">
+                              <span className="text-xs text-gray-600 dark:text-gray-400">Business Rules</span>
+                              <div className="flex items-center space-x-1">
+                                {result.validationChecks.businessRules.passed ? (
+                                  <CheckCircle className="h-3 w-3 text-green-500" />
+                                ) : (
+                                  <XCircle className="h-3 w-3 text-red-500" />
+                                )}
+                                {result.validationChecks.businessRules.issues > 0 && (
+                                  <span className="text-xs text-red-600">{result.validationChecks.businessRules.issues}</span>
+                                )}
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      )}
+                      
+                      {/* Expected Columns */}
+                      <div className="space-y-2">
+                        <h4 className="font-semibold text-gray-900 dark:text-white text-sm">Expected Columns</h4>
+                        <div className="flex flex-wrap gap-1">
+                          {config.expectedColumns.slice(0, 3).map(col => (
+                            <Badge key={col} variant="secondary" className="text-xs">
+                              {col}
+                            </Badge>
+                          ))}
+                          {config.expectedColumns.length > 3 && (
+                            <Badge variant="outline" className="text-xs">
+                              +{config.expectedColumns.length - 3} more
+                            </Badge>
+                          )}
+                        </div>
+                      </div>
+                      
+                      {/* Validation Errors */}
+                      {result.errors.length > 0 && (
+                        <div className="space-y-2">
+                          <h4 className="font-semibold text-red-800 dark:text-red-200 text-sm flex items-center">
+                            <AlertTriangle className="h-3 w-3 mr-1" />
+                            Issues ({result.errors.length})
+                          </h4>
+                          <div className="space-y-1 max-h-20 overflow-y-auto">
+                            {result.errors.map((error, index) => (
+                              <div key={index} className="text-xs text-red-700 dark:text-red-300 bg-red-50 dark:bg-red-900/20 p-2 rounded">
+                                Row {error.row}: {error.message}
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      )}
+                    </CardContent>
+                  </Card>
+                );
+              })}
             </div>
           )}
 
