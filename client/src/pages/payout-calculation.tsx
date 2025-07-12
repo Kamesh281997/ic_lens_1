@@ -284,8 +284,8 @@ export default function PayoutCalculation() {
         </div>
       </header>
       {/* Main Content */}
-      <main className="relative px-2 lg:px-4 py-8 pt-[32px] pb-[32px] pl-[8px] pr-[8px] ml-[45px] mr-[45px]">
-        <div className="max-w-full mx-auto ml-[-20px] mr-[-20px]">
+      <main className="relative px-1 lg:px-2 py-8">
+        <div className="max-w-full mx-auto">
           {/* Page Title */}
           <div className="text-center mb-12">
             <h1 className="text-4xl md:text-5xl font-bold text-gray-900 dark:text-white mb-4">

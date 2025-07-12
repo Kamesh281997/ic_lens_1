@@ -216,6 +216,7 @@ Changelog:
 - July 12, 2025. Restructured payout calculation page layout: moved filter controls to top position above table, centered the entire layout (max-w-6xl), created vertical stack layout with filters in horizontal grid (8 columns), moved table to center position with full width display
 - July 12, 2025. Increased size of filter controls and payout table: expanded container to max-w-7xl, enlarged filter section with text-lg labels, h-12 select triggers, increased spacing (space-y-3, gap-6), enhanced table with text-lg headers and cells, h-14 header rows, h-16 data rows, larger icons (h-6 w-6), improved padding and visual hierarchy
 - July 12, 2025. Removed "Calculate Payouts" button from Payout Calculation page and added "Go to Insights" button with purple gradient styling and PieChart icon for navigation to Data Insights page
+- July 12, 2025. Decreased left and right margins of Payout Calculation page by simplifying main content container from complex multi-layer padding/margins to minimal px-1 lg:px-2 for better screen utilization
 ```
 
 ## User Preferences
