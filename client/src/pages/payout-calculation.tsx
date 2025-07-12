@@ -243,19 +243,13 @@ export default function PayoutCalculation() {
 
           {/* Content Tabs */}
           <Tabs defaultValue="results" className="w-full">
-            <TabsList className="grid w-full grid-cols-4 mb-8">
+            <TabsList className="grid w-full grid-cols-2 mb-8">
               <TabsTrigger value="results" className="flex items-center">
                 <DollarSign className="h-4 w-4 mr-2" />
                 Payout Results
               </TabsTrigger>
-              <TabsTrigger value="top-performers" className="flex items-center">
-                <TrendingUp className="h-4 w-4 mr-2" />
-                Top Performers
-              </TabsTrigger>
-              <TabsTrigger value="territory" className="flex items-center">
-                <MapPin className="h-4 w-4 mr-2" />
-                Territory Analysis
-              </TabsTrigger>
+              
+              
               <TabsTrigger value="distribution" className="flex items-center">
                 <PieChart className="h-4 w-4 mr-2" />
                 Distribution
@@ -337,132 +331,9 @@ export default function PayoutCalculation() {
               </Card>
             </TabsContent>
 
-            {/* Top Performers Tab */}
-            <TabsContent value="top-performers">
-              <Card className="bg-white dark:bg-gray-900 shadow-xl border border-gray-200 dark:border-gray-700">
-                <CardHeader>
-                  <CardTitle className="text-2xl text-gray-900 dark:text-white flex items-center">
-                    <TrendingUp className="h-6 w-6 mr-3 text-blue-600" />
-                    Top Performing Reps
-                  </CardTitle>
-                  <CardDescription>
-                    Highest earning sales representatives and their performance metrics
-                  </CardDescription>
-                </CardHeader>
-                <CardContent>
-                  {analyticsLoading ? (
-                    <div className="flex items-center justify-center py-12">
-                      <RefreshCw className="h-8 w-8 text-blue-600 animate-spin" />
-                      <span className="ml-3 text-lg text-gray-600 dark:text-gray-300">
-                        Loading analytics...
-                      </span>
-                    </div>
-                  ) : analyticsData?.topPerformingReps?.length ? (
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                      {analyticsData.topPerformingReps.map((rep, index) => (
-                        <Card key={rep.repId} className="border-2 border-blue-200 dark:border-blue-800">
-                          <CardHeader className="pb-3">
-                            <div className="flex items-center justify-between">
-                              <Badge variant="default" className="bg-blue-600">
-                                #{index + 1}
-                              </Badge>
-                              <Badge variant="outline">
-                                {rep.quotaAttainment.toFixed(1)}% Attainment
-                              </Badge>
-                            </div>
-                          </CardHeader>
-                          <CardContent>
-                            <h3 className="font-semibold text-lg text-gray-900 dark:text-white mb-2">
-                              {rep.repName}
-                            </h3>
-                            <p className="text-sm text-gray-600 dark:text-gray-400 mb-3">
-                              Rep ID: {rep.repId}
-                            </p>
-                            <div className="text-2xl font-bold text-green-600">
-                              ${rep.payoutAmount.toLocaleString()}
-                            </div>
-                          </CardContent>
-                        </Card>
-                      ))}
-                    </div>
-                  ) : (
-                    <div className="text-center py-12">
-                      <TrendingUp className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-                      <p className="text-lg text-gray-600 dark:text-gray-300">
-                        No performance data available.
-                      </p>
-                    </div>
-                  )}
-                </CardContent>
-              </Card>
-            </TabsContent>
+            
 
-            {/* Territory Analysis Tab */}
-            <TabsContent value="territory">
-              <Card className="bg-white dark:bg-gray-900 shadow-xl border border-gray-200 dark:border-gray-700">
-                <CardHeader>
-                  <CardTitle className="text-2xl text-gray-900 dark:text-white flex items-center">
-                    <MapPin className="h-6 w-6 mr-3 text-purple-600" />
-                    Territory Effectiveness
-                  </CardTitle>
-                  <CardDescription>
-                    Performance analysis by sales territory
-                  </CardDescription>
-                </CardHeader>
-                <CardContent>
-                  {analyticsLoading ? (
-                    <div className="flex items-center justify-center py-12">
-                      <RefreshCw className="h-8 w-8 text-blue-600 animate-spin" />
-                      <span className="ml-3 text-lg text-gray-600 dark:text-gray-300">
-                        Loading territory data...
-                      </span>
-                    </div>
-                  ) : analyticsData?.territoryEffectiveness?.length ? (
-                    <div className="overflow-x-auto">
-                      <Table>
-                        <TableHeader>
-                          <TableRow>
-                            <TableHead>Territory</TableHead>
-                            <TableHead className="text-right">Rep Count</TableHead>
-                            <TableHead className="text-right">Avg Quota Attainment</TableHead>
-                            <TableHead className="text-right">Total Payout</TableHead>
-                            <TableHead className="text-right">Avg Payout per Rep</TableHead>
-                          </TableRow>
-                        </TableHeader>
-                        <TableBody>
-                          {analyticsData.territoryEffectiveness.map((territory) => (
-                            <TableRow key={territory.territory}>
-                              <TableCell className="font-medium">{territory.territory}</TableCell>
-                              <TableCell className="text-right">
-                                <Badge variant="outline">{territory.repCount}</Badge>
-                              </TableCell>
-                              <TableCell className="text-right">
-                                <Badge variant={territory.avgQuotaAttainment >= 100 ? "default" : "secondary"}>
-                                  {territory.avgQuotaAttainment.toFixed(1)}%
-                                </Badge>
-                              </TableCell>
-                              <TableCell className="text-right font-semibold text-green-600">
-                                ${territory.totalPayout.toLocaleString()}
-                              </TableCell>
-                              <TableCell className="text-right">
-                                ${Math.round(territory.totalPayout / territory.repCount).toLocaleString()}
-                              </TableCell>
-                            </TableRow>
-                          ))}
-                        </TableBody>
-                      </Table>
-                    </div>
-                  ) : (
-                    <div className="text-center py-12">
-                      <MapPin className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-                      <p className="text-lg text-gray-600 dark:text-gray-300">
-                        No territory data available.
-                      </p>
-                    </div>
-                  )}
-                </CardContent>
-              </Card>
-            </TabsContent>
+            
 
             {/* Distribution Tab */}
             <TabsContent value="distribution">
