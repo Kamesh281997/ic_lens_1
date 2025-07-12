@@ -352,7 +352,7 @@ export default function PayoutCalculation() {
                       Detailed payout calculations for all sales representatives
                     </CardDescription>
                   </CardHeader>
-                  <CardContent>
+                  <CardContent className="p-6 pl-[2px] pr-[2px] pt-[12px] pb-[12px] ml-[-60px] mr-[-60px]">
                     {payoutLoading ? (
                       <div className="flex items-center justify-center py-12">
                         <RefreshCw className="h-8 w-8 text-blue-600 animate-spin" />
