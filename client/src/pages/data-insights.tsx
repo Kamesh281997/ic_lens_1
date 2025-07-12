@@ -98,6 +98,53 @@ export default function DataInsights() {
   const { toast } = useToast();
   const [isChatOpen, setIsChatOpen] = useState(false);
   const [isMinimized, setIsMinimized] = useState(false);
+  
+  // Export insights functionality
+  const handleExportInsights = () => {
+    if (!analyticsData) {
+      toast({
+        title: "Export Failed",
+        description: "No data available to export",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    const exportData = {
+      summary: analyticsData.summary,
+      topPerformingReps: analyticsData.topPerformingReps,
+      territoryEffectiveness: analyticsData.territoryEffectiveness,
+      payoutDistribution: analyticsData.payoutDistribution,
+      salesInsights: analyticsData.salesInsights,
+      exportDate: new Date().toISOString(),
+    };
+
+    const dataStr = JSON.stringify(exportData, null, 2);
+    const dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
+    
+    const exportFileDefaultName = `ic-insights-${new Date().toISOString().split('T')[0]}.json`;
+    
+    const linkElement = document.createElement('a');
+    linkElement.setAttribute('href', dataUri);
+    linkElement.setAttribute('download', exportFileDefaultName);
+    linkElement.click();
+    
+    toast({
+      title: "Export Successful",
+      description: "Analytics data exported successfully",
+      variant: "default",
+    });
+  };
+
+  // Refresh data functionality
+  const handleRefreshData = () => {
+    refetch();
+    toast({
+      title: "Data Refreshed",
+      description: "Analytics data has been refreshed",
+      variant: "default",
+    });
+  };
   const [chatMessages, setChatMessages] = useState<ChatMessage[]>([
     {
       id: '1',
@@ -222,7 +269,7 @@ export default function DataInsights() {
           {/* Action Buttons */}
           <div className="flex justify-center space-x-4 mb-8">
             <Button
-              onClick={() => refetch()}
+              onClick={handleRefreshData}
               disabled={isLoading}
               variant="outline"
               className="px-6 py-3"
@@ -241,6 +288,8 @@ export default function DataInsights() {
             </Button>
 
             <Button
+              onClick={handleExportInsights}
+              disabled={isLoading}
               variant="outline"
               className="px-6 py-3"
             >
@@ -258,26 +307,36 @@ export default function DataInsights() {
             </div>
           ) : analyticsData ? (
             <Tabs defaultValue="overview" className="w-full">
-              <TabsList className="grid w-full grid-cols-5 mb-8">
-                <TabsTrigger value="overview" className="flex items-center">
-                  <BarChart3 className="h-4 w-4 mr-2" />
-                  Overview
+              <TabsList className="grid w-full grid-cols-5 h-16 mb-8 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl">
+                <TabsTrigger value="overview" className="text-lg font-semibold py-4 px-6 data-[state=active]:bg-blue-100 dark:data-[state=active]:bg-blue-900 data-[state=active]:text-blue-900 dark:data-[state=active]:text-blue-100 rounded-xl">
+                  <div className="flex items-center space-x-2">
+                    <BarChart3 className="h-5 w-5" />
+                    <span>Overview</span>
+                  </div>
                 </TabsTrigger>
-                <TabsTrigger value="sales" className="flex items-center">
-                  <ShoppingCart className="h-4 w-4 mr-2" />
-                  Sales Insights
+                <TabsTrigger value="sales" className="text-lg font-semibold py-4 px-6 data-[state=active]:bg-green-100 dark:data-[state=active]:bg-green-900 data-[state=active]:text-green-900 dark:data-[state=active]:text-green-100 rounded-xl">
+                  <div className="flex items-center space-x-2">
+                    <TrendingUp className="h-5 w-5" />
+                    <span>Sales Insights</span>
+                  </div>
                 </TabsTrigger>
-                <TabsTrigger value="performance" className="flex items-center">
-                  <TrendingUp className="h-4 w-4 mr-2" />
-                  Performance
+                <TabsTrigger value="performance" className="text-lg font-semibold py-4 px-6 data-[state=active]:bg-purple-100 dark:data-[state=active]:bg-purple-900 data-[state=active]:text-purple-900 dark:data-[state=active]:text-purple-100 rounded-xl">
+                  <div className="flex items-center space-x-2">
+                    <Award className="h-5 w-5" />
+                    <span>Performance</span>
+                  </div>
                 </TabsTrigger>
-                <TabsTrigger value="territory" className="flex items-center">
-                  <MapPin className="h-4 w-4 mr-2" />
-                  Territory
+                <TabsTrigger value="territory" className="text-lg font-semibold py-4 px-6 data-[state=active]:bg-orange-100 dark:data-[state=active]:bg-orange-900 data-[state=active]:text-orange-900 dark:data-[state=active]:text-orange-100 rounded-xl">
+                  <div className="flex items-center space-x-2">
+                    <MapPin className="h-5 w-5" />
+                    <span>Territory</span>
+                  </div>
                 </TabsTrigger>
-                <TabsTrigger value="distribution" className="flex items-center">
-                  <DollarSign className="h-4 w-4 mr-2" />
-                  Distribution
+                <TabsTrigger value="distribution" className="text-lg font-semibold py-4 px-6 data-[state=active]:bg-pink-100 dark:data-[state=active]:bg-pink-900 data-[state=active]:text-pink-900 dark:data-[state=active]:text-pink-100 rounded-xl">
+                  <div className="flex items-center space-x-2">
+                    <PieChart className="h-5 w-5" />
+                    <span>Distribution</span>
+                  </div>
                 </TabsTrigger>
               </TabsList>
 
@@ -346,7 +405,7 @@ export default function DataInsights() {
                   </Card>
                 </div>
 
-                {/* Payout Distribution */}
+                {/* Payout Distribution with Radial Charts */}
                 <Card className="bg-white dark:bg-gray-900 shadow-xl border border-gray-200 dark:border-gray-700">
                   <CardHeader>
                     <CardTitle className="text-2xl text-gray-900 dark:text-white flex items-center">
@@ -358,23 +417,63 @@ export default function DataInsights() {
                     </CardDescription>
                   </CardHeader>
                   <CardContent>
-                    <div className="space-y-4">
-                      {analyticsData.payoutDistribution.map((item, index) => (
-                        <div key={index} className="flex items-center justify-between">
-                          <div className="flex items-center space-x-3">
-                            <div className="font-medium text-lg text-gray-900 dark:text-white min-w-[120px]">
-                              {item.range}
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                      {analyticsData.payoutDistribution.map((item, index) => {
+                        const colors = ['text-blue-600', 'text-purple-600', 'text-green-600', 'text-orange-600', 'text-red-600'];
+                        const bgColors = ['bg-blue-100 dark:bg-blue-900', 'bg-purple-100 dark:bg-purple-900', 'bg-green-100 dark:bg-green-900', 'bg-orange-100 dark:bg-orange-900', 'bg-red-100 dark:bg-red-900'];
+                        const borderColors = ['border-blue-200 dark:border-blue-800', 'border-purple-200 dark:border-purple-800', 'border-green-200 dark:border-green-800', 'border-orange-200 dark:border-orange-800', 'border-red-200 dark:border-red-800'];
+                        
+                        return (
+                          <div key={index} className={`p-6 border-2 rounded-xl ${borderColors[index % 5]} ${bgColors[index % 5]} relative overflow-hidden`}>
+                            <div className="flex items-center justify-between mb-4">
+                              <div className="font-bold text-xl text-gray-900 dark:text-white">
+                                {item.range}
+                              </div>
+                              <Badge variant="outline" className="text-lg px-3 py-1">
+                                {item.count} reps
+                              </Badge>
                             </div>
-                            <Progress value={item.percentage} className="w-32" />
-                            <span className="text-lg text-gray-600 dark:text-gray-400">
-                              {item.percentage}%
-                            </span>
+                            
+                            {/* Radial Progress Chart */}
+                            <div className="flex items-center justify-center mb-4">
+                              <div className="relative w-24 h-24">
+                                <svg className="w-24 h-24 transform -rotate-90" viewBox="0 0 100 100">
+                                  <circle
+                                    cx="50"
+                                    cy="50"
+                                    r="45"
+                                    stroke="currentColor"
+                                    strokeWidth="6"
+                                    fill="none"
+                                    className="text-gray-300 dark:text-gray-600"
+                                  />
+                                  <circle
+                                    cx="50"
+                                    cy="50"
+                                    r="45"
+                                    stroke="currentColor"
+                                    strokeWidth="6"
+                                    fill="none"
+                                    strokeDasharray={`${item.percentage * 2.827}, 282.7`}
+                                    className={colors[index % 5]}
+                                  />
+                                </svg>
+                                <div className="absolute inset-0 flex items-center justify-center">
+                                  <span className={`text-2xl font-bold ${colors[index % 5]}`}>
+                                    {item.percentage}%
+                                  </span>
+                                </div>
+                              </div>
+                            </div>
+                            
+                            <div className="text-center">
+                              <p className="text-lg text-gray-600 dark:text-gray-400">
+                                {item.percentage}% of total payouts
+                              </p>
+                            </div>
                           </div>
-                          <Badge variant="outline">
-                            {item.count} reps
-                          </Badge>
-                        </div>
-                      ))}
+                        );
+                      })}
                     </div>
                   </CardContent>
                 </Card>
@@ -581,50 +680,139 @@ export default function DataInsights() {
                 </div>
               </TabsContent>
 
-              {/* Performance Tab */}
+              {/* Performance Tab with Enhanced Visual Charts */}
               <TabsContent value="performance">
-                <Card className="bg-white dark:bg-gray-900 shadow-xl border border-gray-200 dark:border-gray-700">
-                  <CardHeader>
-                    <CardTitle className="text-2xl text-gray-900 dark:text-white flex items-center">
-                      <TrendingUp className="h-7 w-7 mr-3 text-blue-600" />
-                      Top Performing Representatives
-                    </CardTitle>
-                    <CardDescription className="text-lg">
-                      Highest earning sales representatives and their performance metrics
-                    </CardDescription>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="space-y-4">
-                      {analyticsData.topPerformingReps.map((rep, index) => (
-                        <div key={rep.repId} className="flex items-center justify-between p-4 border rounded-lg border-gray-200 dark:border-gray-700">
-                          <div className="flex items-center space-x-4">
-                            <div className="flex items-center justify-center w-8 h-8 bg-blue-100 dark:bg-blue-900 rounded-full">
-                              <span className="text-sm font-bold text-blue-600 dark:text-blue-400">
-                                {index + 1}
-                              </span>
-                            </div>
-                            <div>
-                              <div className="font-semibold text-lg text-gray-900 dark:text-white">
-                                {rep.repName}
-                              </div>
-                              <div className="text-base text-gray-600 dark:text-gray-400">
-                                ID: {rep.repId}
-                              </div>
-                            </div>
-                          </div>
-                          <div className="text-right">
-                            <div className="font-bold text-xl text-green-600">
-                              ${rep.payoutAmount.toLocaleString()}
-                            </div>
-                            <Badge variant={rep.quotaAttainment >= 120 ? "default" : "secondary"}>
-                              {rep.quotaAttainment.toFixed(1)}% attainment
-                            </Badge>
-                          </div>
+                <div className="space-y-6">
+                  {/* Performance Overview Cards */}
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <Card className="bg-gradient-to-br from-blue-50 to-blue-100 dark:from-blue-900 dark:to-blue-800 shadow-xl border-2 border-blue-200 dark:border-blue-700">
+                      <CardHeader className="text-center">
+                        <CardTitle className="text-xl text-blue-900 dark:text-blue-100">Top Performers</CardTitle>
+                      </CardHeader>
+                      <CardContent className="text-center">
+                        <div className="text-4xl font-bold text-blue-600 dark:text-blue-300 mb-2">
+                          {analyticsData.topPerformingReps.filter(rep => rep.quotaAttainment >= 120).length}
                         </div>
-                      ))}
-                    </div>
-                  </CardContent>
-                </Card>
+                        <p className="text-blue-700 dark:text-blue-200">≥120% Attainment</p>
+                      </CardContent>
+                    </Card>
+                    
+                    <Card className="bg-gradient-to-br from-green-50 to-green-100 dark:from-green-900 dark:to-green-800 shadow-xl border-2 border-green-200 dark:border-green-700">
+                      <CardHeader className="text-center">
+                        <CardTitle className="text-xl text-green-900 dark:text-green-100">Solid Performers</CardTitle>
+                      </CardHeader>
+                      <CardContent className="text-center">
+                        <div className="text-4xl font-bold text-green-600 dark:text-green-300 mb-2">
+                          {analyticsData.topPerformingReps.filter(rep => rep.quotaAttainment >= 100 && rep.quotaAttainment < 120).length}
+                        </div>
+                        <p className="text-green-700 dark:text-green-200">100-120% Attainment</p>
+                      </CardContent>
+                    </Card>
+                    
+                    <Card className="bg-gradient-to-br from-orange-50 to-orange-100 dark:from-orange-900 dark:to-orange-800 shadow-xl border-2 border-orange-200 dark:border-orange-700">
+                      <CardHeader className="text-center">
+                        <CardTitle className="text-xl text-orange-900 dark:text-orange-100">Improvement Needed</CardTitle>
+                      </CardHeader>
+                      <CardContent className="text-center">
+                        <div className="text-4xl font-bold text-orange-600 dark:text-orange-300 mb-2">
+                          {analyticsData.topPerformingReps.filter(rep => rep.quotaAttainment < 100).length}
+                        </div>
+                        <p className="text-orange-700 dark:text-orange-200">&lt;100% Attainment</p>
+                      </CardContent>
+                    </Card>
+                  </div>
+
+                  {/* Top Performers with Hexagonal Performance Charts */}
+                  <Card className="bg-white dark:bg-gray-900 shadow-xl border border-gray-200 dark:border-gray-700">
+                    <CardHeader>
+                      <CardTitle className="text-2xl text-gray-900 dark:text-white flex items-center">
+                        <Award className="h-7 w-7 mr-3 text-purple-600" />
+                        Top Performing Representatives
+                      </CardTitle>
+                      <CardDescription className="text-lg">
+                        Highest earning sales representatives with performance visualization
+                      </CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                        {analyticsData.topPerformingReps.map((rep, index) => {
+                          const colors = ['from-purple-500 to-pink-500', 'from-blue-500 to-cyan-500', 'from-green-500 to-emerald-500', 'from-orange-500 to-red-500', 'from-indigo-500 to-purple-500'];
+                          const textColors = ['text-purple-600', 'text-blue-600', 'text-green-600', 'text-orange-600', 'text-indigo-600'];
+                          
+                          return (
+                            <div key={rep.repId} className="p-6 border-2 border-gray-200 dark:border-gray-700 rounded-xl bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-800 dark:to-gray-700">
+                              <div className="flex items-center justify-between mb-4">
+                                <div className="flex items-center space-x-4">
+                                  <div className={`w-12 h-12 rounded-full bg-gradient-to-br ${colors[index % 5]} flex items-center justify-center text-white font-bold text-lg`}>
+                                    {index + 1}
+                                  </div>
+                                  <div>
+                                    <div className="font-bold text-xl text-gray-900 dark:text-white">
+                                      {rep.repName}
+                                    </div>
+                                    <div className="text-sm text-gray-600 dark:text-gray-400">
+                                      ID: {rep.repId}
+                                    </div>
+                                  </div>
+                                </div>
+                                <div className="text-right">
+                                  <div className={`font-bold text-2xl ${textColors[index % 5]}`}>
+                                    ${rep.payoutAmount.toLocaleString()}
+                                  </div>
+                                </div>
+                              </div>
+                              
+                              {/* Hexagonal Performance Chart */}
+                              <div className="flex items-center justify-center mb-4">
+                                <div className="relative">
+                                  <svg width="120" height="120" viewBox="0 0 120 120">
+                                    {/* Hexagon Background */}
+                                    <polygon
+                                      points="60,10 90,30 90,70 60,90 30,70 30,30"
+                                      fill="none"
+                                      stroke="currentColor"
+                                      strokeWidth="2"
+                                      className="text-gray-300 dark:text-gray-600"
+                                    />
+                                    {/* Progress Fill */}
+                                    <polygon
+                                      points="60,10 90,30 90,70 60,90 30,70 30,30"
+                                      fill="url(#gradient)"
+                                      fillOpacity={rep.quotaAttainment / 200}
+                                      className={textColors[index % 5]}
+                                    />
+                                    <defs>
+                                      <linearGradient id="gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                                        <stop offset="0%" stopColor="currentColor" stopOpacity="0.3" />
+                                        <stop offset="100%" stopColor="currentColor" stopOpacity="0.8" />
+                                      </linearGradient>
+                                    </defs>
+                                  </svg>
+                                  <div className="absolute inset-0 flex items-center justify-center">
+                                    <div className="text-center">
+                                      <div className={`text-xl font-bold ${textColors[index % 5]}`}>
+                                        {rep.quotaAttainment.toFixed(0)}%
+                                      </div>
+                                      <div className="text-xs text-gray-500">
+                                        Attainment
+                                      </div>
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
+                              
+                              <div className="text-center">
+                                <Badge variant={rep.quotaAttainment >= 120 ? "default" : rep.quotaAttainment >= 100 ? "secondary" : "destructive"} className="px-4 py-2">
+                                  {rep.quotaAttainment >= 120 ? "🏆 Top Performer" : rep.quotaAttainment >= 100 ? "✅ Goal Achieved" : "📈 Needs Focus"}
+                                </Badge>
+                              </div>
+                            </div>
+                          );
+                        })}
+                      </div>
+                    </CardContent>
+                  </Card>
+                </div>
               </TabsContent>
 
               {/* Territory Tab */}
@@ -762,6 +950,24 @@ export default function DataInsights() {
             </div>
           )}
         </div>
+        
+        {/* Navigation Section at Bottom */}
+        <div className="mt-16 py-8 border-t border-gray-200 dark:border-gray-700">
+          <div className="flex justify-center space-x-4">
+            <Link href="/data-validation">
+              <Button variant="outline" className="px-8 py-4 text-lg">
+                <Activity className="h-5 w-5 mr-2" />
+                Go to Data Validation
+              </Button>
+            </Link>
+            <Link href="/payout-calculation">
+              <Button variant="outline" className="px-8 py-4 text-lg">
+                <DollarSign className="h-5 w-5 mr-2" />
+                View Payout Calculation
+              </Button>
+            </Link>
+          </div>
+        </div>
       </main>
 
       {/* AI Assistant Popup Chatbot */}
@@ -776,10 +982,10 @@ export default function DataInsights() {
         </div>
       )}
 
-      {/* AI Assistant Chat Window */}
+      {/* AI Assistant Chat Window - Large Window from Top */}
       {isChatOpen && (
-        <div className={`fixed bottom-6 right-6 z-50 transition-all duration-300 ${
-          isMinimized ? 'w-80 h-16' : 'w-96 h-[500px]'
+        <div className={`fixed top-20 left-1/2 transform -translate-x-1/2 z-50 transition-all duration-300 ${
+          isMinimized ? 'w-80 h-16' : 'w-[90vw] max-w-6xl h-[80vh]'
         }`}>
           <Card className="bg-white dark:bg-gray-900 shadow-2xl border border-gray-200 dark:border-gray-700 h-full flex flex-col">
             {/* Chat Header */}
