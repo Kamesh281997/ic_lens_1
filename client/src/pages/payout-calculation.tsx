@@ -343,7 +343,7 @@ export default function PayoutCalculation() {
               {/* Payout Results Table - Left Side */}
               <div className="xl:col-span-4">
                 <Card className="bg-white/90 dark:bg-gray-900/90 backdrop-blur-sm shadow-2xl border border-gray-200 dark:border-gray-700">
-                  <CardHeader>
+                  <CardHeader className="flex flex-col space-y-1.5 p-6 ml-[-60px] mr-[-60px]">
                     <CardTitle className="text-2xl text-gray-900 dark:text-white flex items-center">
                       <DollarSign className="h-6 w-6 mr-3 text-green-600" />
                       IC Payout Results
