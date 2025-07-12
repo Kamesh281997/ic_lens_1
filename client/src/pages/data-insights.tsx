@@ -269,25 +269,6 @@ export default function DataInsights() {
           {/* Action Buttons */}
           <div className="flex justify-center space-x-4 mb-8">
             <Button
-              onClick={handleRefreshData}
-              disabled={isLoading}
-              variant="outline"
-              className="px-6 py-3"
-            >
-              {isLoading ? (
-                <>
-                  <RefreshCw className="h-4 w-4 mr-2 animate-spin" />
-                  Loading...
-                </>
-              ) : (
-                <>
-                  <RefreshCw className="h-4 w-4 mr-2" />
-                  Refresh Data
-                </>
-              )}
-            </Button>
-
-            <Button
               onClick={handleExportInsights}
               disabled={isLoading}
               variant="outline"
