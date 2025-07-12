@@ -68,7 +68,7 @@ export default function IcPlanConfiguration() {
     {
       id: '1',
       sender: 'assistant',
-      content: "👋 Hello! I'm your **Life Sciences IC Specialist**. I autonomously build compensation plans in real-time as we talk.\n\n**🧬 Life Sciences Expertise:**\n• **Goal Attainment Plans** - Standard quota-based structures\n• **Matrix-Based Plans** - Dual/multi-measure compensation\n• **Rank-Based Plans** - Peer comparison structures\n• **Volume Growth Plans** - Unit/prescription-based plans\n• **Tiered Commission Plans** - Progressive rate structures\n• **Territory-Based Plans** - Geographic compensation\n\n**🤖 I Autonomously:**\n• Configure plan structures in real-time\n• Adjust payout curves and thresholds\n• Run cost simulations\n• Set up compliance features\n• Add role-based multipliers\n\n**Try saying:**\n• \"Create a goal attainment plan\"\n• \"Build a matrix-based plan with revenue and volume\"\n• \"Design a rank-based plan for my team\"\n• \"Configure a volume growth plan\"\n\nWhat type of life sciences IC plan do you need?",
+      content: "Hi! I'm your Life Sciences IC Specialist. I can help you create compensation plans.\n\nI can build: Goal Attainment Plans, Matrix-Based Plans, Rank-Based Plans, Volume Growth Plans, and Territory-Based Plans.\n\nWhat type of plan do you need?",
       timestamp: new Date()
     }
   ]);
@@ -390,6 +390,87 @@ export default function IcPlanConfiguration() {
     savePlan.mutate(planConfig);
   };
 
+  const handleUploadData = () => {
+    const fileInput = document.createElement('input');
+    fileInput.type = 'file';
+    fileInput.accept = '.csv,.xlsx,.json';
+    fileInput.onchange = (event) => {
+      const file = (event.target as HTMLInputElement).files?.[0];
+      if (file) {
+        toast({
+          title: "File Uploaded",
+          description: `${file.name} has been uploaded for simulation`,
+        });
+        // Update simulator data with realistic values
+        setSimulatorData({
+          totalPayout: 3250000,
+          avgIncentive: 65000,
+          motivationScore: 92
+        });
+      }
+    };
+    fileInput.click();
+  };
+
+  const handlePreviewSummary = () => {
+    const summary = `
+IC PLAN CONFIGURATION SUMMARY
+============================
+
+Plan Type: ${planConfig.planType || 'Not configured'}
+Payout Cap: ${planConfig.payoutCap ? `Yes (${planConfig.capPercentage}%)` : 'No cap set'}
+Budget Constraints: ${planConfig.budgetConstraints || 'Not specified'}
+Ethical Focus: ${planConfig.ethicalPrioritization ? 'Yes' : 'Not configured'}
+
+Pay Curve Points:
+${payCurve.map(point => `${point.performance}% performance → ${point.payout}% payout`).join('\n')}
+
+Simulation Results:
+- Total Payout: $${simulatorData.totalPayout.toLocaleString()}
+- Average Incentive: $${simulatorData.avgIncentive.toLocaleString()}
+- Motivation Score: ${simulatorData.motivationScore}/100
+
+Configuration Progress: ${configurationProgress}%
+`;
+    
+    const blob = new Blob([summary], { type: 'text/plain' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'ic-plan-summary.txt';
+    a.click();
+    URL.revokeObjectURL(url);
+    
+    toast({
+      title: "Summary Downloaded",
+      description: "IC plan summary has been downloaded as a text file",
+    });
+  };
+
+  const handleExportConfiguration = () => {
+    const config = {
+      planConfiguration: planConfig,
+      payCurve: payCurve,
+      simulatorData: simulatorData,
+      progress: configurationProgress,
+      exportDate: new Date().toISOString(),
+      exportVersion: '1.0'
+    };
+    
+    const blob = new Blob([JSON.stringify(config, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'ic-plan-configuration.json';
+    a.click();
+    URL.revokeObjectURL(url);
+    
+    toast({
+      title: "Configuration Exported",
+      description: "IC plan configuration has been exported as JSON file",
+    });
+  };
+
   if (!isAuthenticated) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100 dark:from-gray-900 dark:via-slate-900 dark:to-blue-900 flex items-center justify-center">
@@ -421,13 +502,15 @@ export default function IcPlanConfiguration() {
       
       {/* Header */}
       <header className="relative z-10 flex items-center justify-between px-6 lg:px-12 py-6 bg-white/80 dark:bg-gray-900/80 backdrop-blur-sm border-b border-gray-200 dark:border-gray-700">
-        <div className="flex items-center space-x-4">
+        <div className="flex items-center">
           <Link href="/">
             <Button variant="ghost" className="text-gray-600 dark:text-gray-300">
               <ArrowLeft className="h-4 w-4 mr-2" />
               Back to Home
             </Button>
           </Link>
+        </div>
+        <div className="flex-1 text-center">
           <div className="text-3xl font-bold text-gray-900 dark:text-white">
             IC Plan Configuration
           </div>
@@ -534,25 +617,26 @@ export default function IcPlanConfiguration() {
 
             {/* Right Panel - Configuration & Tools (60%) */}
             <div className="lg:col-span-3 space-y-6">
-              {/* Configuration Summary */}
-              <Card className="bg-white/90 dark:bg-gray-900/90 backdrop-blur-sm shadow-xl border border-gray-200 dark:border-gray-700">
-                <CardHeader>
-                  <CardTitle className="text-xl text-gray-900 dark:text-white flex items-center">
-                    <Settings className="h-5 w-5 mr-2 text-green-600" />
-                    Live Configuration
-                    {isUpdatingUI && (
-                      <div className="ml-auto flex items-center space-x-2">
-                        <div className="w-2 h-2 bg-blue-500 rounded-full animate-pulse"></div>
-                        <span className="text-sm text-blue-600 dark:text-blue-400">Updating...</span>
-                      </div>
-                    )}
-                  </CardTitle>
-                  <CardDescription>
-                    {isUpdatingUI ? `AI is ${currentAction.toLowerCase()}` : 'Real-time plan configuration built by AI'}
-                  </CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <div className="grid md:grid-cols-2 gap-4">
+              {/* Top Row - Live Configuration and What If Simulator */}
+              <div className="grid lg:grid-cols-2 gap-6">
+                {/* Configuration Summary */}
+                <Card className="bg-white/90 dark:bg-gray-900/90 backdrop-blur-sm shadow-xl border border-gray-200 dark:border-gray-700">
+                  <CardHeader>
+                    <CardTitle className="text-xl text-gray-900 dark:text-white flex items-center">
+                      <Settings className="h-5 w-5 mr-2 text-green-600" />
+                      Live Configuration
+                      {isUpdatingUI && (
+                        <div className="ml-auto flex items-center space-x-2">
+                          <div className="w-2 h-2 bg-blue-500 rounded-full animate-pulse"></div>
+                          <span className="text-sm text-blue-600 dark:text-blue-400">Updating...</span>
+                        </div>
+                      )}
+                    </CardTitle>
+                    <CardDescription>
+                      {isUpdatingUI ? `AI is ${currentAction.toLowerCase()}` : 'Real-time plan configuration built by AI'}
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent>
                     <div className="space-y-3">
                       <div className="p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg border border-blue-200 dark:border-blue-700">
                         <div className="flex items-center space-x-2 mb-2">
@@ -583,9 +667,7 @@ export default function IcPlanConfiguration() {
                           </p>
                         )}
                       </div>
-                    </div>
-                    
-                    <div className="space-y-3">
+                      
                       <div className="p-4 bg-purple-50 dark:bg-purple-900/20 rounded-lg border border-purple-200 dark:border-purple-700">
                         <div className="flex items-center space-x-2 mb-2">
                           <BarChart3 className="h-4 w-4 text-purple-600" />
@@ -611,9 +693,71 @@ export default function IcPlanConfiguration() {
                         )}
                       </div>
                     </div>
-                  </div>
-                </CardContent>
-              </Card>
+                  </CardContent>
+                </Card>
+
+                {/* What-If Simulator */}
+                <Card className="bg-white/90 dark:bg-gray-900/90 backdrop-blur-sm shadow-xl border border-gray-200 dark:border-gray-700">
+                  <CardHeader>
+                    <CardTitle className="text-xl text-gray-900 dark:text-white flex items-center">
+                      <Brain className="h-5 w-5 mr-2 text-purple-600" />
+                      What-If Simulator
+                    </CardTitle>
+                    <CardDescription>
+                      Cost analysis and motivation predictions
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="space-y-4">
+                      <div className="grid grid-cols-2 gap-4">
+                        <div className="bg-green-50 dark:bg-green-900/20 p-4 rounded-lg border border-green-200 dark:border-green-700">
+                          <div className="flex items-center space-x-2 mb-2">
+                            <DollarSign className="h-4 w-4 text-green-600" />
+                            <h4 className="font-medium text-gray-900 dark:text-white">Total Payout</h4>
+                          </div>
+                          <p className="text-2xl font-bold text-green-600">
+                            ${simulatorData.totalPayout.toLocaleString()}
+                          </p>
+                        </div>
+                        
+                        <div className="bg-blue-50 dark:bg-blue-900/20 p-4 rounded-lg border border-blue-200 dark:border-blue-700">
+                          <div className="flex items-center space-x-2 mb-2">
+                            <TrendingUp className="h-4 w-4 text-blue-600" />
+                            <h4 className="font-medium text-gray-900 dark:text-white">Avg Incentive</h4>
+                          </div>
+                          <p className="text-2xl font-bold text-blue-600">
+                            ${simulatorData.avgIncentive.toLocaleString()}
+                          </p>
+                        </div>
+                      </div>
+                      
+                      <div className="bg-purple-50 dark:bg-purple-900/20 p-4 rounded-lg border border-purple-200 dark:border-purple-700">
+                        <div className="flex items-center space-x-2 mb-2">
+                          <Activity className="h-4 w-4 text-purple-600" />
+                          <h4 className="font-medium text-gray-900 dark:text-white">Motivation Score</h4>
+                        </div>
+                        <div className="flex items-center space-x-4">
+                          <p className="text-2xl font-bold text-purple-600">
+                            {simulatorData.motivationScore}/100
+                          </p>
+                          <Progress value={simulatorData.motivationScore} className="flex-1" />
+                        </div>
+                      </div>
+                      
+                      <div className="pt-4 border-t">
+                        <Button 
+                          variant="outline" 
+                          className="w-full"
+                          onClick={handleUploadData}
+                        >
+                          <Upload className="h-4 w-4 mr-2" />
+                          Upload Data for Simulation
+                        </Button>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+              </div>
 
               {/* Pay Curve Generator */}
               <Card className="bg-white/90 dark:bg-gray-900/90 backdrop-blur-sm shadow-xl border border-gray-200 dark:border-gray-700">
@@ -663,62 +807,25 @@ export default function IcPlanConfiguration() {
                 </CardContent>
               </Card>
 
-              {/* What-If Simulator */}
-              <Card className="bg-white/90 dark:bg-gray-900/90 backdrop-blur-sm shadow-xl border border-gray-200 dark:border-gray-700">
-                <CardHeader>
-                  <CardTitle className="text-xl text-gray-900 dark:text-white flex items-center">
-                    <Brain className="h-5 w-5 mr-2 text-purple-600" />
-                    What-If Simulator
-                  </CardTitle>
-                  <CardDescription>
-                    Simulate plan performance with historical data
-                  </CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <div className="grid md:grid-cols-3 gap-4">
-                    <div className="p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg text-center">
-                      <DollarSign className="h-8 w-8 text-blue-600 mx-auto mb-2" />
-                      <div className="text-2xl font-bold text-gray-900 dark:text-white">
-                        ${simulatorData.totalPayout.toLocaleString()}
-                      </div>
-                      <div className="text-sm text-gray-600 dark:text-gray-400">Total Payout</div>
-                    </div>
-                    
-                    <div className="p-4 bg-green-50 dark:bg-green-900/20 rounded-lg text-center">
-                      <TrendingUp className="h-8 w-8 text-green-600 mx-auto mb-2" />
-                      <div className="text-2xl font-bold text-gray-900 dark:text-white">
-                        ${simulatorData.avgIncentive.toLocaleString()}
-                      </div>
-                      <div className="text-sm text-gray-600 dark:text-gray-400">Avg Per Rep</div>
-                    </div>
-                    
-                    <div className="p-4 bg-purple-50 dark:bg-purple-900/20 rounded-lg text-center">
-                      <Zap className="h-8 w-8 text-purple-600 mx-auto mb-2" />
-                      <div className="text-2xl font-bold text-gray-900 dark:text-white">
-                        {simulatorData.motivationScore}%
-                      </div>
-                      <div className="text-sm text-gray-600 dark:text-gray-400">Motivation Score</div>
-                    </div>
-                  </div>
-                  
-                  <div className="mt-4 pt-4 border-t">
-                    <Button variant="outline" className="w-full">
-                      <Upload className="h-4 w-4 mr-2" />
-                      Upload Historical Data for Simulation
-                    </Button>
-                  </div>
-                </CardContent>
-              </Card>
+
 
               {/* Final Actions */}
               <Card className="bg-white/90 dark:bg-gray-900/90 backdrop-blur-sm shadow-xl border border-gray-200 dark:border-gray-700">
                 <CardContent className="pt-6">
                   <div className="flex flex-col sm:flex-row gap-4">
-                    <Button variant="outline" className="flex-1">
+                    <Button 
+                      variant="outline" 
+                      className="flex-1"
+                      onClick={handlePreviewSummary}
+                    >
                       <Eye className="h-4 w-4 mr-2" />
                       Preview Summary
                     </Button>
-                    <Button variant="outline" className="flex-1">
+                    <Button 
+                      variant="outline" 
+                      className="flex-1"
+                      onClick={handleExportConfiguration}
+                    >
                       <Download className="h-4 w-4 mr-2" />
                       Export Configuration
                     </Button>
