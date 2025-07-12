@@ -339,9 +339,9 @@ export default function PayoutCalculation() {
 
           {/* Main Layout - Table on left, Filters on right */}
           {payoutResults?.length > 0 && (
-            <div className="grid grid-cols-1 xl:grid-cols-5 gap-6">
+            <div className="grid grid-cols-1 xl:grid-cols-10 gap-6">
               {/* Payout Results Table - Left Side */}
-              <div className="xl:col-span-4">
+              <div className="xl:col-span-8">
                 <Card className="bg-white/90 dark:bg-gray-900/90 backdrop-blur-sm shadow-2xl border border-gray-200 dark:border-gray-700">
                   <CardHeader>
                     <CardTitle className="text-2xl text-gray-900 dark:text-white flex items-center">
@@ -361,43 +361,43 @@ export default function PayoutCalculation() {
                         </span>
                       </div>
                     ) : filteredResults.length > 0 ? (
-                      <div className="overflow-x-auto">
+                      <div className="w-full">
                         <Table>
                           <TableHeader>
                             <TableRow>
-                              <TableHead>Rep ID</TableHead>
-                              <TableHead>Rep Name</TableHead>
-                              <TableHead>Region</TableHead>
-                              <TableHead className="text-right">Quota</TableHead>
-                              <TableHead className="text-right">Actual Sales</TableHead>
-                              <TableHead className="text-right">Attainment %</TableHead>
-                              <TableHead>Payout Curve Type</TableHead>
-                              <TableHead className="text-right">Final Payout ($)</TableHead>
-                              <TableHead className="text-right">% of Target Pay</TableHead>
-                              <TableHead>Any Adjustment</TableHead>
-                              <TableHead>Notes</TableHead>
+                              <TableHead className="text-base font-semibold">Rep ID</TableHead>
+                              <TableHead className="text-base font-semibold">Rep Name</TableHead>
+                              <TableHead className="text-base font-semibold">Region</TableHead>
+                              <TableHead className="text-right text-base font-semibold">Quota</TableHead>
+                              <TableHead className="text-right text-base font-semibold">Actual Sales</TableHead>
+                              <TableHead className="text-right text-base font-semibold">Attainment %</TableHead>
+                              <TableHead className="text-base font-semibold">Payout Curve Type</TableHead>
+                              <TableHead className="text-right text-base font-semibold">Final Payout ($)</TableHead>
+                              <TableHead className="text-right text-base font-semibold">% of Target Pay</TableHead>
+                              <TableHead className="text-base font-semibold">Any Adjustment</TableHead>
+                              <TableHead className="text-base font-semibold">Notes</TableHead>
                             </TableRow>
                           </TableHeader>
                           <TableBody>
                             {filteredResults.map((result) => (
                               <TableRow key={result.repId}>
-                                <TableCell className="font-medium">{result.repId}</TableCell>
-                                <TableCell>{result.repName}</TableCell>
-                                <TableCell>{result.region}</TableCell>
-                                <TableCell className="text-right">${result.quota.toLocaleString()}</TableCell>
-                                <TableCell className="text-right">${result.actualSales.toLocaleString()}</TableCell>
+                                <TableCell className="font-medium text-base">{result.repId}</TableCell>
+                                <TableCell className="text-base">{result.repName}</TableCell>
+                                <TableCell className="text-base">{result.region}</TableCell>
+                                <TableCell className="text-right text-base">${result.quota.toLocaleString()}</TableCell>
+                                <TableCell className="text-right text-base">${result.actualSales.toLocaleString()}</TableCell>
                                 <TableCell className="text-right">
-                                  <Badge variant={result.attainmentPercent >= 100 ? "default" : "secondary"}>
+                                  <Badge variant={result.attainmentPercent >= 100 ? "default" : "secondary"} className="text-base px-3 py-1">
                                     {result.attainmentPercent.toFixed(1)}%
                                   </Badge>
                                 </TableCell>
-                                <TableCell>{result.payoutCurveType}</TableCell>
-                                <TableCell className="text-right font-semibold text-green-600">
+                                <TableCell className="text-base">{result.payoutCurveType}</TableCell>
+                                <TableCell className="text-right font-semibold text-green-600 text-base">
                                   ${result.finalPayout.toLocaleString()}
                                 </TableCell>
-                                <TableCell className="text-right">{result.percentOfTargetPay.toFixed(1)}%</TableCell>
-                                <TableCell>{result.anyAdjustment}</TableCell>
-                                <TableCell className="text-sm text-gray-600 dark:text-gray-400">{result.notes}</TableCell>
+                                <TableCell className="text-right text-base">{result.percentOfTargetPay.toFixed(1)}%</TableCell>
+                                <TableCell className="text-base">{result.anyAdjustment}</TableCell>
+                                <TableCell className="text-base text-gray-600 dark:text-gray-400">{result.notes}</TableCell>
                               </TableRow>
                             ))}
                           </TableBody>
@@ -416,7 +416,7 @@ export default function PayoutCalculation() {
               </div>
 
               {/* Filter Controls - Right Side */}
-              <div className="xl:col-span-1">
+              <div className="xl:col-span-2">
                 <Card className="bg-white/90 dark:bg-gray-900/90 backdrop-blur-sm shadow-2xl border border-gray-200 dark:border-gray-700 sticky top-6">
                   <CardHeader className="pb-4">
                     <CardTitle className="text-xl text-gray-900 dark:text-white flex items-center justify-between">
@@ -438,17 +438,17 @@ export default function PayoutCalculation() {
                     </CardTitle>
                   </CardHeader>
                   <CardContent>
-                    <div className="grid grid-cols-2 gap-4">
+                    <div className="grid grid-cols-2 gap-6">
                       {/* Column 1 - First 4 Filters */}
-                      <div className="space-y-4">
+                      <div className="space-y-4 min-h-[500px]">
                         {/* Rep ID Filter */}
                         <div className="space-y-2">
-                          <label className="text-sm font-medium text-gray-700 dark:text-gray-300 flex items-center">
-                            <User className="h-4 w-4 mr-2 text-blue-600" />
+                          <label className="text-base font-medium text-gray-700 dark:text-gray-300 flex items-center">
+                            <User className="h-5 w-5 mr-2 text-blue-600" />
                             Rep ID
                           </label>
                           <Select value={filters.repId} onValueChange={(value) => setFilters(prev => ({ ...prev, repId: value }))}>
-                            <SelectTrigger className="w-full">
+                            <SelectTrigger className="w-full text-base">
                               <SelectValue placeholder="All Rep IDs" />
                             </SelectTrigger>
                             <SelectContent>
@@ -462,12 +462,12 @@ export default function PayoutCalculation() {
 
                         {/* Rep Name Filter */}
                         <div className="space-y-2">
-                          <label className="text-sm font-medium text-gray-700 dark:text-gray-300 flex items-center">
-                            <User className="h-4 w-4 mr-2 text-green-600" />
+                          <label className="text-base font-medium text-gray-700 dark:text-gray-300 flex items-center">
+                            <User className="h-5 w-5 mr-2 text-green-600" />
                             Rep Name
                           </label>
                           <Select value={filters.repName} onValueChange={(value) => setFilters(prev => ({ ...prev, repName: value }))}>
-                            <SelectTrigger className="w-full">
+                            <SelectTrigger className="w-full text-base">
                               <SelectValue placeholder="All Rep Names" />
                             </SelectTrigger>
                             <SelectContent>
@@ -481,12 +481,12 @@ export default function PayoutCalculation() {
 
                         {/* Region Filter */}
                         <div className="space-y-2">
-                          <label className="text-sm font-medium text-gray-700 dark:text-gray-300 flex items-center">
-                            <MapPin className="h-4 w-4 mr-2 text-red-600" />
+                          <label className="text-base font-medium text-gray-700 dark:text-gray-300 flex items-center">
+                            <MapPin className="h-5 w-5 mr-2 text-red-600" />
                             Region
                           </label>
                           <Select value={filters.region} onValueChange={(value) => setFilters(prev => ({ ...prev, region: value }))}>
-                            <SelectTrigger className="w-full">
+                            <SelectTrigger className="w-full text-base">
                               <SelectValue placeholder="All Regions" />
                             </SelectTrigger>
                             <SelectContent>
@@ -500,12 +500,12 @@ export default function PayoutCalculation() {
 
                         {/* Quota Filter */}
                         <div className="space-y-2">
-                          <label className="text-sm font-medium text-gray-700 dark:text-gray-300 flex items-center">
-                            <Target className="h-4 w-4 mr-2 text-purple-600" />
+                          <label className="text-base font-medium text-gray-700 dark:text-gray-300 flex items-center">
+                            <Target className="h-5 w-5 mr-2 text-purple-600" />
                             Quota
                           </label>
                           <Select value={filters.quota} onValueChange={(value) => setFilters(prev => ({ ...prev, quota: value }))}>
-                            <SelectTrigger className="w-full">
+                            <SelectTrigger className="w-full text-base">
                               <SelectValue placeholder="All Quotas" />
                             </SelectTrigger>
                             <SelectContent>
@@ -519,15 +519,15 @@ export default function PayoutCalculation() {
                       </div>
 
                       {/* Column 2 - Next 4 Filters */}
-                      <div className="space-y-4">
+                      <div className="space-y-4 min-h-[500px]">
                         {/* Actual Sales Filter */}
                         <div className="space-y-2">
-                          <label className="text-sm font-medium text-gray-700 dark:text-gray-300 flex items-center">
-                            <BarChart3 className="h-4 w-4 mr-2 text-yellow-600" />
+                          <label className="text-base font-medium text-gray-700 dark:text-gray-300 flex items-center">
+                            <BarChart3 className="h-5 w-5 mr-2 text-yellow-600" />
                             Actual Sales
                           </label>
                           <Select value={filters.actualSales} onValueChange={(value) => setFilters(prev => ({ ...prev, actualSales: value }))}>
-                            <SelectTrigger className="w-full">
+                            <SelectTrigger className="w-full text-base">
                               <SelectValue placeholder="All Sales" />
                             </SelectTrigger>
                             <SelectContent>
@@ -541,12 +541,12 @@ export default function PayoutCalculation() {
 
                         {/* Attainment % Filter */}
                         <div className="space-y-2">
-                          <label className="text-sm font-medium text-gray-700 dark:text-gray-300 flex items-center">
-                            <Percent className="h-4 w-4 mr-2 text-orange-600" />
+                          <label className="text-base font-medium text-gray-700 dark:text-gray-300 flex items-center">
+                            <Percent className="h-5 w-5 mr-2 text-orange-600" />
                             Attainment %
                           </label>
                           <Select value={filters.attainmentPercent} onValueChange={(value) => setFilters(prev => ({ ...prev, attainmentPercent: value }))}>
-                            <SelectTrigger className="w-full">
+                            <SelectTrigger className="w-full text-base">
                               <SelectValue placeholder="All Attainment %" />
                             </SelectTrigger>
                             <SelectContent>
@@ -560,12 +560,12 @@ export default function PayoutCalculation() {
 
                         {/* Payout Curve Type Filter */}
                         <div className="space-y-2">
-                          <label className="text-sm font-medium text-gray-700 dark:text-gray-300 flex items-center">
-                            <TrendingUp className="h-4 w-4 mr-2 text-indigo-600" />
+                          <label className="text-base font-medium text-gray-700 dark:text-gray-300 flex items-center">
+                            <TrendingUp className="h-5 w-5 mr-2 text-indigo-600" />
                             Payout Curve Type
                           </label>
                           <Select value={filters.payoutCurveType} onValueChange={(value) => setFilters(prev => ({ ...prev, payoutCurveType: value }))}>
-                            <SelectTrigger className="w-full">
+                            <SelectTrigger className="w-full text-base">
                               <SelectValue placeholder="All Curve Types" />
                             </SelectTrigger>
                             <SelectContent>
@@ -579,12 +579,12 @@ export default function PayoutCalculation() {
 
                         {/* Any Adjustment Filter */}
                         <div className="space-y-2">
-                          <label className="text-sm font-medium text-gray-700 dark:text-gray-300 flex items-center">
-                            <Settings className="h-4 w-4 mr-2 text-gray-600" />
+                          <label className="text-base font-medium text-gray-700 dark:text-gray-300 flex items-center">
+                            <Settings className="h-5 w-5 mr-2 text-gray-600" />
                             Any Adjustment
                           </label>
                           <Select value={filters.anyAdjustment} onValueChange={(value) => setFilters(prev => ({ ...prev, anyAdjustment: value }))}>
-                            <SelectTrigger className="w-full">
+                            <SelectTrigger className="w-full text-base">
                               <SelectValue placeholder="All Adjustments" />
                             </SelectTrigger>
                             <SelectContent>
@@ -600,7 +600,7 @@ export default function PayoutCalculation() {
                     
                     {/* Filter Results Summary */}
                     <div className="mt-6 pt-4 border-t dark:border-gray-700">
-                      <p className="text-sm text-gray-600 dark:text-gray-400">
+                      <p className="text-base text-gray-600 dark:text-gray-400">
                         Showing {filteredResults.length} of {payoutResults.length} results
                         {hasActiveFilters && (
                           <span className="ml-2 text-blue-600 dark:text-blue-400">
