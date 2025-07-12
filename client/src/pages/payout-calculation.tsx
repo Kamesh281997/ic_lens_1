@@ -285,8 +285,8 @@ export default function PayoutCalculation() {
       </header>
 
       {/* Main Content */}
-      <main className="relative px-6 lg:px-12 py-8">
-        <div className="max-w-7xl mx-auto">
+      <main className="relative px-2 lg:px-4 py-8">
+        <div className="max-w-full mx-auto">
           {/* Page Title */}
           <div className="text-center mb-12">
             <h1 className="text-4xl md:text-5xl font-bold text-gray-900 dark:text-white mb-4">
@@ -339,10 +339,10 @@ export default function PayoutCalculation() {
 
           {/* Main Layout - Table on left, Filters on right */}
           {payoutResults?.length > 0 && (
-            <div className="grid grid-cols-1 xl:grid-cols-10 gap-6">
+            <div className="grid grid-cols-1 xl:grid-cols-12 gap-4">
               {/* Payout Results Table - Left Side */}
-              <div className="xl:col-span-8">
-                <Card className="bg-white/90 dark:bg-gray-900/90 backdrop-blur-sm shadow-2xl border border-gray-200 dark:border-gray-700">
+              <div className="xl:col-span-9">
+                <Card className="bg-white/90 dark:bg-gray-900/90 backdrop-blur-sm shadow-2xl border border-gray-200 dark:border-gray-700 w-full">
                   <CardHeader>
                     <CardTitle className="text-2xl text-gray-900 dark:text-white flex items-center">
                       <DollarSign className="h-6 w-6 mr-3 text-green-600" />
@@ -361,43 +361,43 @@ export default function PayoutCalculation() {
                         </span>
                       </div>
                     ) : filteredResults.length > 0 ? (
-                      <div className="w-full">
-                        <Table>
+                      <div className="w-full min-w-0">
+                        <Table className="w-full table-fixed">
                           <TableHeader>
                             <TableRow>
-                              <TableHead className="text-base font-semibold">Rep ID</TableHead>
-                              <TableHead className="text-base font-semibold">Rep Name</TableHead>
-                              <TableHead className="text-base font-semibold">Region</TableHead>
-                              <TableHead className="text-right text-base font-semibold">Quota</TableHead>
-                              <TableHead className="text-right text-base font-semibold">Actual Sales</TableHead>
-                              <TableHead className="text-right text-base font-semibold">Attainment %</TableHead>
-                              <TableHead className="text-base font-semibold">Payout Curve Type</TableHead>
-                              <TableHead className="text-right text-base font-semibold">Final Payout ($)</TableHead>
-                              <TableHead className="text-right text-base font-semibold">% of Target Pay</TableHead>
-                              <TableHead className="text-base font-semibold">Any Adjustment</TableHead>
-                              <TableHead className="text-base font-semibold">Notes</TableHead>
+                              <TableHead className="text-base font-semibold w-20">Rep ID</TableHead>
+                              <TableHead className="text-base font-semibold w-28">Rep Name</TableHead>
+                              <TableHead className="text-base font-semibold w-24">Region</TableHead>
+                              <TableHead className="text-right text-base font-semibold w-24">Quota</TableHead>
+                              <TableHead className="text-right text-base font-semibold w-28">Actual Sales</TableHead>
+                              <TableHead className="text-right text-base font-semibold w-24">Attainment %</TableHead>
+                              <TableHead className="text-base font-semibold w-32">Payout Curve Type</TableHead>
+                              <TableHead className="text-right text-base font-semibold w-28">Final Payout ($)</TableHead>
+                              <TableHead className="text-right text-base font-semibold w-24">% of Target Pay</TableHead>
+                              <TableHead className="text-base font-semibold w-24">Any Adjustment</TableHead>
+                              <TableHead className="text-base font-semibold w-28">Notes</TableHead>
                             </TableRow>
                           </TableHeader>
                           <TableBody>
                             {filteredResults.map((result) => (
                               <TableRow key={result.repId}>
-                                <TableCell className="font-medium text-base">{result.repId}</TableCell>
-                                <TableCell className="text-base">{result.repName}</TableCell>
-                                <TableCell className="text-base">{result.region}</TableCell>
+                                <TableCell className="font-medium text-base truncate">{result.repId}</TableCell>
+                                <TableCell className="text-base truncate">{result.repName}</TableCell>
+                                <TableCell className="text-base truncate">{result.region}</TableCell>
                                 <TableCell className="text-right text-base">${result.quota.toLocaleString()}</TableCell>
                                 <TableCell className="text-right text-base">${result.actualSales.toLocaleString()}</TableCell>
                                 <TableCell className="text-right">
-                                  <Badge variant={result.attainmentPercent >= 100 ? "default" : "secondary"} className="text-base px-3 py-1">
+                                  <Badge variant={result.attainmentPercent >= 100 ? "default" : "secondary"} className="text-sm px-2 py-1">
                                     {result.attainmentPercent.toFixed(1)}%
                                   </Badge>
                                 </TableCell>
-                                <TableCell className="text-base">{result.payoutCurveType}</TableCell>
+                                <TableCell className="text-base truncate">{result.payoutCurveType}</TableCell>
                                 <TableCell className="text-right font-semibold text-green-600 text-base">
                                   ${result.finalPayout.toLocaleString()}
                                 </TableCell>
                                 <TableCell className="text-right text-base">{result.percentOfTargetPay.toFixed(1)}%</TableCell>
-                                <TableCell className="text-base">{result.anyAdjustment}</TableCell>
-                                <TableCell className="text-base text-gray-600 dark:text-gray-400">{result.notes}</TableCell>
+                                <TableCell className="text-base truncate">{result.anyAdjustment}</TableCell>
+                                <TableCell className="text-base text-gray-600 dark:text-gray-400 truncate">{result.notes}</TableCell>
                               </TableRow>
                             ))}
                           </TableBody>
@@ -416,7 +416,7 @@ export default function PayoutCalculation() {
               </div>
 
               {/* Filter Controls - Right Side */}
-              <div className="xl:col-span-2">
+              <div className="xl:col-span-3">
                 <Card className="bg-white/90 dark:bg-gray-900/90 backdrop-blur-sm shadow-2xl border border-gray-200 dark:border-gray-700 sticky top-6">
                   <CardHeader className="pb-4">
                     <CardTitle className="text-xl text-gray-900 dark:text-white flex items-center justify-between">
