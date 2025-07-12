@@ -815,57 +815,182 @@ export default function DataInsights() {
                 </div>
               </TabsContent>
 
-              {/* Territory Tab */}
+              {/* Territory Tab with Enhanced Visual Charts */}
               <TabsContent value="territory">
-                <Card className="bg-white dark:bg-gray-900 shadow-xl border border-gray-200 dark:border-gray-700">
-                  <CardHeader>
-                    <CardTitle className="text-2xl text-gray-900 dark:text-white flex items-center">
-                      <MapPin className="h-7 w-7 mr-3 text-purple-600" />
-                      Territory Effectiveness
-                    </CardTitle>
-                    <CardDescription className="text-lg">
-                      Performance analysis by territory and region
-                    </CardDescription>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="space-y-4">
-                      {analyticsData.territoryEffectiveness.map((territory, index) => (
-                        <div key={territory.territory} className="p-4 border rounded-lg border-gray-200 dark:border-gray-700">
-                          <div className="flex items-center justify-between mb-2">
-                            <div className="font-semibold text-lg text-gray-900 dark:text-white">
-                              {territory.territory}
-                            </div>
-                            <Badge variant="outline">
-                              {territory.repCount} rep{territory.repCount !== 1 ? 's' : ''}
-                            </Badge>
-                          </div>
-                          <div className="grid grid-cols-2 gap-4">
-                            <div>
-                              <div className="text-base text-gray-600 dark:text-gray-400">
-                                Average Attainment
-                              </div>
-                              <div className="font-bold text-xl text-blue-600">
-                                {territory.avgQuotaAttainment.toFixed(1)}%
-                              </div>
-                            </div>
-                            <div>
-                              <div className="text-base text-gray-600 dark:text-gray-400">
-                                Total Payout
-                              </div>
-                              <div className="font-bold text-xl text-green-600">
-                                ${territory.totalPayout.toLocaleString()}
-                              </div>
-                            </div>
-                          </div>
-                          <Progress 
-                            value={Math.min(territory.avgQuotaAttainment, 150)} 
-                            className="mt-2" 
-                          />
+                <div className="space-y-6">
+                  {/* Territory Overview Stats */}
+                  <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+                    <Card className="bg-gradient-to-br from-emerald-50 to-emerald-100 dark:from-emerald-900 dark:to-emerald-800 shadow-xl border-2 border-emerald-200 dark:border-emerald-700">
+                      <CardContent className="p-6 text-center">
+                        <div className="text-3xl font-bold text-emerald-600 dark:text-emerald-300">
+                          {analyticsData.territoryEffectiveness.length}
                         </div>
-                      ))}
-                    </div>
-                  </CardContent>
-                </Card>
+                        <p className="text-emerald-700 dark:text-emerald-200 font-medium">Active Territories</p>
+                      </CardContent>
+                    </Card>
+                    
+                    <Card className="bg-gradient-to-br from-cyan-50 to-cyan-100 dark:from-cyan-900 dark:to-cyan-800 shadow-xl border-2 border-cyan-200 dark:border-cyan-700">
+                      <CardContent className="p-6 text-center">
+                        <div className="text-3xl font-bold text-cyan-600 dark:text-cyan-300">
+                          {analyticsData.territoryEffectiveness.reduce((sum, t) => sum + t.repCount, 0)}
+                        </div>
+                        <p className="text-cyan-700 dark:text-cyan-200 font-medium">Total Reps</p>
+                      </CardContent>
+                    </Card>
+                    
+                    <Card className="bg-gradient-to-br from-violet-50 to-violet-100 dark:from-violet-900 dark:to-violet-800 shadow-xl border-2 border-violet-200 dark:border-violet-700">
+                      <CardContent className="p-6 text-center">
+                        <div className="text-3xl font-bold text-violet-600 dark:text-violet-300">
+                          {(analyticsData.territoryEffectiveness.reduce((sum, t) => sum + t.avgQuotaAttainment, 0) / analyticsData.territoryEffectiveness.length).toFixed(1)}%
+                        </div>
+                        <p className="text-violet-700 dark:text-violet-200 font-medium">Avg Attainment</p>
+                      </CardContent>
+                    </Card>
+                    
+                    <Card className="bg-gradient-to-br from-amber-50 to-amber-100 dark:from-amber-900 dark:to-amber-800 shadow-xl border-2 border-amber-200 dark:border-amber-700">
+                      <CardContent className="p-6 text-center">
+                        <div className="text-3xl font-bold text-amber-600 dark:text-amber-300">
+                          ${analyticsData.territoryEffectiveness.reduce((sum, t) => sum + t.totalPayout, 0).toLocaleString()}
+                        </div>
+                        <p className="text-amber-700 dark:text-amber-200 font-medium">Total Payout</p>
+                      </CardContent>
+                    </Card>
+                  </div>
+
+                  {/* Territory Performance with Bubble Charts */}
+                  <Card className="bg-white dark:bg-gray-900 shadow-xl border border-gray-200 dark:border-gray-700">
+                    <CardHeader>
+                      <CardTitle className="text-2xl text-gray-900 dark:text-white flex items-center">
+                        <MapPin className="h-7 w-7 mr-3 text-purple-600" />
+                        Territory Performance Dashboard
+                      </CardTitle>
+                      <CardDescription className="text-lg">
+                        Comprehensive performance analysis by territory with visual indicators
+                      </CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                        {analyticsData.territoryEffectiveness.map((territory, index) => {
+                          const gradientColors = [
+                            'from-purple-500 to-pink-500',
+                            'from-blue-500 to-cyan-500', 
+                            'from-green-500 to-emerald-500',
+                            'from-orange-500 to-red-500',
+                            'from-indigo-500 to-purple-500',
+                            'from-teal-500 to-blue-500'
+                          ];
+                          const textColors = [
+                            'text-purple-600',
+                            'text-blue-600',
+                            'text-green-600', 
+                            'text-orange-600',
+                            'text-indigo-600',
+                            'text-teal-600'
+                          ];
+                          const bgColors = [
+                            'bg-purple-50 dark:bg-purple-900/20',
+                            'bg-blue-50 dark:bg-blue-900/20',
+                            'bg-green-50 dark:bg-green-900/20',
+                            'bg-orange-50 dark:bg-orange-900/20',
+                            'bg-indigo-50 dark:bg-indigo-900/20',
+                            'bg-teal-50 dark:bg-teal-900/20'
+                          ];
+                          
+                          return (
+                            <div key={territory.territory} className={`p-6 rounded-xl border-2 ${bgColors[index % 6]} border-gray-200 dark:border-gray-700`}>
+                              {/* Territory Header */}
+                              <div className="flex items-center justify-between mb-6">
+                                <div className="flex items-center space-x-3">
+                                  <div className={`w-12 h-12 rounded-full bg-gradient-to-br ${gradientColors[index % 6]} flex items-center justify-center`}>
+                                    <MapPin className="h-6 w-6 text-white" />
+                                  </div>
+                                  <div>
+                                    <h3 className="font-bold text-xl text-gray-900 dark:text-white">
+                                      {territory.territory}
+                                    </h3>
+                                    <p className="text-sm text-gray-600 dark:text-gray-400">
+                                      {territory.repCount} representative{territory.repCount !== 1 ? 's' : ''}
+                                    </p>
+                                  </div>
+                                </div>
+                                <Badge variant={territory.avgQuotaAttainment >= 110 ? "default" : territory.avgQuotaAttainment >= 90 ? "secondary" : "destructive"}>
+                                  {territory.avgQuotaAttainment >= 110 ? "🏆 Excellent" : territory.avgQuotaAttainment >= 90 ? "✅ Good" : "📈 Needs Focus"}
+                                </Badge>
+                              </div>
+                              
+                              {/* Performance Metrics */}
+                              <div className="grid grid-cols-2 gap-4 mb-6">
+                                <div className="text-center">
+                                  <div className="text-sm text-gray-600 dark:text-gray-400 mb-1">
+                                    Quota Attainment
+                                  </div>
+                                  <div className={`text-3xl font-bold ${textColors[index % 6]}`}>
+                                    {territory.avgQuotaAttainment.toFixed(1)}%
+                                  </div>
+                                </div>
+                                <div className="text-center">
+                                  <div className="text-sm text-gray-600 dark:text-gray-400 mb-1">
+                                    Total Payout
+                                  </div>
+                                  <div className={`text-3xl font-bold ${textColors[index % 6]}`}>
+                                    ${territory.totalPayout.toLocaleString()}
+                                  </div>
+                                </div>
+                              </div>
+                              
+                              {/* Bubble Chart Visualization */}
+                              <div className="relative h-32 bg-gray-100 dark:bg-gray-800 rounded-lg overflow-hidden">
+                                <div className="absolute inset-0 flex items-center justify-center">
+                                  {/* Performance Bubble */}
+                                  <div 
+                                    className={`rounded-full bg-gradient-to-br ${gradientColors[index % 6]} opacity-70 flex items-center justify-center text-white font-bold`}
+                                    style={{
+                                      width: `${Math.min(Math.max(territory.avgQuotaAttainment / 2, 40), 120)}px`,
+                                      height: `${Math.min(Math.max(territory.avgQuotaAttainment / 2, 40), 120)}px`,
+                                      fontSize: '14px'
+                                    }}
+                                  >
+                                    {territory.avgQuotaAttainment.toFixed(0)}%
+                                  </div>
+                                  
+                                  {/* Payout Indicator */}
+                                  <div 
+                                    className={`absolute rounded-full bg-white dark:bg-gray-900 border-4 ${textColors[index % 6].replace('text-', 'border-')} flex items-center justify-center`}
+                                    style={{
+                                      width: `${Math.min(Math.max(territory.totalPayout / 50000, 30), 60)}px`,
+                                      height: `${Math.min(Math.max(territory.totalPayout / 50000, 30), 60)}px`,
+                                      right: '10px',
+                                      top: '10px',
+                                      fontSize: '10px'
+                                    }}
+                                  >
+                                    <DollarSign className="h-4 w-4" />
+                                  </div>
+                                </div>
+                              </div>
+                              
+                              {/* Performance Bar */}
+                              <div className="mt-4">
+                                <div className="flex justify-between items-center mb-2">
+                                  <span className="text-sm text-gray-600 dark:text-gray-400">Performance Score</span>
+                                  <span className={`text-sm font-medium ${textColors[index % 6]}`}>
+                                    {territory.avgQuotaAttainment.toFixed(1)}%
+                                  </span>
+                                </div>
+                                <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-3">
+                                  <div 
+                                    className={`h-3 rounded-full bg-gradient-to-r ${gradientColors[index % 6]} transition-all duration-1000`}
+                                    style={{ width: `${Math.min(territory.avgQuotaAttainment, 100)}%` }}
+                                  />
+                                </div>
+                              </div>
+                            </div>
+                          );
+                        })}
+                      </div>
+                    </CardContent>
+                  </Card>
+                </div>
               </TabsContent>
 
               {/* Distribution Tab */}
