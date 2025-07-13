@@ -68,7 +68,7 @@ export default function IcProcessing() {
 
   if (!isAuthenticated) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-gray-900 dark:to-gray-800 flex items-center justify-center">
+      <div className="min-h-screen bg-black text-white flex items-center justify-center">
         <Card className="w-96">
           <CardHeader>
             <CardTitle className="text-center">Authentication Required</CardTitle>
@@ -87,7 +87,7 @@ export default function IcProcessing() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-gray-900 dark:to-gray-800">
+    <div className="min-h-screen bg-black text-white">
       {/* Header */}
       <header className="flex items-center justify-between px-6 lg:px-12 py-6">
         <Link href="/">
@@ -114,10 +114,10 @@ export default function IcProcessing() {
         <div className="max-w-4xl mx-auto">
           {/* Page Title */}
           <div className="text-center mb-12">
-            <h1 className="text-4xl md:text-5xl font-bold text-gray-900 dark:text-white mb-4">
+            <h1 className="text-4xl md:text-5xl font-bold text-white mb-4">
               IC Processing
             </h1>
-            <p className="text-xl text-gray-600 dark:text-gray-300">
+            <p className="text-xl text-gray-300">
               Configure your incentive compensation plan parameters
             </p>
           </div>
