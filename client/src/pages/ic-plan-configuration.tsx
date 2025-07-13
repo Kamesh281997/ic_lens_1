@@ -504,10 +504,12 @@ Configuration Progress: ${configurationProgress}%
       <header className="relative z-10 flex items-center justify-between px-6 lg:px-12 py-6 bg-black/80 backdrop-blur-sm border-b border-gray-700">
         <div className="flex items-center">
           <Link href="/">
-            <Button variant="ghost" className="text-gray-600 dark:text-gray-300">
-              <ArrowLeft className="h-4 w-4 mr-2" />
-              Back to Home
-            </Button>
+            <div className="flex items-center space-x-2 cursor-pointer">
+              <div className="w-8 h-8 rounded-lg flex items-center justify-center" style={{ backgroundColor: '#ff4f59' }}>
+                <span className="text-white font-bold text-sm">IC</span>
+              </div>
+              <span className="text-3xl font-bold transition-colors" style={{ color: '#ff4f59' }}>Lens</span>
+            </div>
           </Link>
         </div>
         <div className="flex-1 text-center">
@@ -515,7 +517,15 @@ Configuration Progress: ${configurationProgress}%
             IC Plan Configuration
           </div>
         </div>
-        <ThemeToggle />
+        <div className="flex items-center space-x-4">
+          <ThemeToggle />
+          <Link href="/">
+            <Button variant="ghost" className="text-gray-600 dark:text-gray-300">
+              <ArrowLeft className="h-4 w-4 mr-2" />
+              Back to Home
+            </Button>
+          </Link>
+        </div>
       </header>
 
       {/* Main Content */}
