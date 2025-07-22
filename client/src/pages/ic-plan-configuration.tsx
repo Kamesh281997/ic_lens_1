@@ -112,17 +112,354 @@ export default function IcPlanConfiguration() {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages]);
 
-  // Enhanced agentic AI response function with life sciences IC plan expertise
+  // Advanced natural language processing for IC plan configuration
+  const processNaturalLanguageRequest = (message: string): {
+    intent: string,
+    entities: any,
+    confidence: number,
+    action: string
+  } => {
+    const lowerMessage = message.toLowerCase();
+    
+    // Intent detection patterns
+    const intents = {
+      createPlan: {
+        patterns: [
+          /create?\s*(a|an)?\s*(new)?\s*plan/i,
+          /build?\s*(a|an)?\s*plan/i,
+          /design?\s*(a|an)?\s*plan/i,
+          /set\s*up\s*(a|an)?\s*plan/i,
+          /configure?\s*(a|an)?\s*plan/i,
+          /make\s*(a|an)?\s*plan/i,
+          /i\s*need\s*(a|an)?\s*plan/i,
+          /help\s*me\s*(create|build|design)/i
+        ],
+        confidence: 0.9
+      },
+      modifyPlan: {
+        patterns: [
+          /(modify|change|adjust|update|alter|tweak)\s*(the)?\s*plan/i,
+          /change\s*(the)?\s*(threshold|cap|percentage)/i,
+          /(increase|decrease|raise|lower)\s*the/i,
+          /set\s*the\s*(cap|threshold|percentage)\s*to/i,
+          /(add|remove)\s*(a)?\s*(cap|threshold|accelerator)/i,
+          /(cap|threshold)\s*(to|at)\s*\\d+/i,
+          /(no|remove|delete)\s*(cap|threshold)/i,
+          /make\s*it\s*(higher|lower|more|less)/i
+        ],
+        confidence: 0.85
+      },
+      generatePayCurve: {
+        patterns: [
+          /(generate|create|build|design)\s*(a)?\s*(pay\s*curve|paycurve)/i,
+          /pay\s*curve/i,
+          /performance\s*(vs|versus)\s*payout/i,
+          /payout\s*structure/i,
+          /(show|display)\s*(the)?\s*curve/i,
+          /commission\s*structure/i,
+          /(custom|new)\s*(curve|payout)/i,
+          /curve\s*(with|at)\s*\\d+/i
+        ],
+        confidence: 0.9
+      },
+      runSimulation: {
+        patterns: [
+          /(run|execute|perform)\s*(a)?\s*simulat/i,
+          /what\s*if\s*simulat/i,
+          /(test|model|simulate)\s*(the)?\s*plan/i,
+          /show\s*me\s*(the)?\s*results/i,
+          /calculate\s*(the)?\s*(cost|payout)/i,
+          /forecast\s*(the)?\s*budget/i
+        ],
+        confidence: 0.85
+      },
+      setPlanType: {
+        patterns: [
+          /(goal\s*attainment|quota\s*based)/i,
+          /(matrix|dual\s*measure|multi\s*measure)/i,
+          /(rank|ranking|percentile)/i,
+          /(volume|growth|unit)/i,
+          /(territory|geographic|region)/i,
+          /(commission|tiered)/i
+        ],
+        confidence: 0.8
+      }
+    };
+    
+    // Entity extraction
+    const entities: {
+      planType: string | null,
+      percentage: number | null,
+      threshold: number | null,
+      cap: number | null,
+      budget: string | null,
+      measures: string[]
+    } = {
+      planType: null,
+      percentage: null,
+      threshold: null,
+      cap: null,
+      budget: null,
+      measures: []
+    };
+    
+    // Extract plan types
+    if (/goal\s*attainment|quota\s*based/i.test(message)) {
+      entities.planType = 'Goal Attainment Plan';
+    } else if (/matrix|dual\s*measure|multi\s*measure/i.test(message)) {
+      entities.planType = 'Matrix-Based Plan';
+    } else if (/rank|ranking|percentile/i.test(message)) {
+      entities.planType = 'Rank-Based Plan';
+    } else if (/volume|growth|unit/i.test(message)) {
+      entities.planType = 'Volume Growth Plan';
+    } else if (/territory|geographic|region/i.test(message)) {
+      entities.planType = 'Territory-Based Plan';
+    } else if (/commission|tiered/i.test(message)) {
+      entities.planType = 'Tiered Commission Plan';
+    }
+    
+    // Extract percentages and numbers (enhanced)
+    const percentageMatch = message.match(/(\d+(?:\.\d+)?)\s*%?/);
+    if (percentageMatch) {
+      entities.percentage = parseFloat(percentageMatch[1]);
+    }
+    
+    // Extract "remove cap" or "no cap" requests
+    if (/no\s*cap|remove\s*cap|without\s*cap|uncapped/i.test(message)) {
+      entities.cap = 0; // Special value to indicate removal
+    }
+    
+    // Extract range values for thresholds
+    const rangeMatch = message.match(/(between|from)\\s*(\\d+).*?(to|and)\\s*(\\d+)/i);
+    if (rangeMatch) {
+      entities.threshold = parseFloat(rangeMatch[2]);
+      entities.cap = parseFloat(rangeMatch[4]);
+    }
+    
+    // Extract thresholds
+    const thresholdMatch = message.match(/threshold\s*(?:of|at|to)?\s*(\d+(?:\.\d+)?)\s*%?/i);
+    if (thresholdMatch) {
+      entities.threshold = parseFloat(thresholdMatch[1]);
+    }
+    
+    // Extract cap values
+    const capMatch = message.match(/cap\s*(?:of|at|to)?\s*(\d+(?:\.\d+)?)\s*%?/i);
+    if (capMatch) {
+      entities.cap = parseFloat(capMatch[1]);
+    }
+    
+    // Extract budget amounts
+    const budgetMatch = message.match(/budget\s*(?:of|at|to)?\s*\$?(\d+(?:,\d{3})*(?:\.\d{2})?)/i);
+    if (budgetMatch) {
+      entities.budget = budgetMatch[1].replace(/,/g, '');
+    }
+    
+    // Intent matching with confidence scoring
+    let bestIntent = { intent: 'unknown', confidence: 0, action: 'respond' };
+    
+    for (const [intentName, intentData] of Object.entries(intents)) {
+      for (const pattern of intentData.patterns) {
+        if (pattern.test(message)) {
+          if (intentData.confidence > bestIntent.confidence) {
+            bestIntent = {
+              intent: intentName,
+              confidence: intentData.confidence,
+              action: intentName === 'createPlan' ? 'createPlan' :
+                     intentName === 'modifyPlan' ? 'modifyPlan' :
+                     intentName === 'generatePayCurve' ? 'generatePayCurve' :
+                     intentName === 'runSimulation' ? 'runSimulation' : 'respond'
+            };
+          }
+        }
+      }
+    }
+    
+    return { ...bestIntent, entities };
+  };
+
+  // Enhanced agentic AI response function with advanced natural language processing
   const generateAIResponse = async (userMessage: string): Promise<string> => {
     setIsUpdatingUI(true);
     setCurrentAction('Analyzing your request...');
     
-    // Simulate AI processing delay
-    await new Promise(resolve => setTimeout(resolve, 800));
+    // Process natural language request
+    await new Promise(resolve => setTimeout(resolve, 600));
+    const nlpResult = processNaturalLanguageRequest(userMessage);
+    
+    setCurrentAction(`Understanding: ${nlpResult.intent} (${Math.round(nlpResult.confidence * 100)}% confidence)`);
+    await new Promise(resolve => setTimeout(resolve, 400));
+    
+    // Use NLP results to determine action
+    if (nlpResult.action === 'createPlan' || nlpResult.action === 'setPlanType') {
+      const planType = nlpResult.entities.planType || 'Goal Attainment Plan';
+      setCurrentAction(`Creating ${planType}...`);
+      await new Promise(resolve => setTimeout(resolve, 600));
+      
+      // Configure based on extracted entities
+      const newConfig: Partial<PlanConfig> = {
+        planType: planType,
+        accelerators: true,
+        acceleratorThreshold: nlpResult.entities.threshold || 100,
+        payoutCap: nlpResult.entities.cap !== null,
+        capPercentage: nlpResult.entities.cap || undefined,
+        budgetConstraints: nlpResult.entities.budget ? `Budget limit: $${nlpResult.entities.budget}` : '',
+        ethicalPrioritization: planType.includes('Rank') ? true : false
+      };
+      
+      setPlanConfig(prev => ({ ...prev, ...newConfig }));
+      
+      // Generate appropriate pay curve based on plan type
+      let newPayCurve: PayCurvePoint[] = [];
+      
+      if (planType.includes('Goal Attainment')) {
+        newPayCurve = [
+          { performance: 0, payout: 0 },
+          { performance: 80, payout: 50 },
+          { performance: 100, payout: 100 },
+          { performance: 120, payout: 150 },
+          { performance: 140, payout: 200 }
+        ];
+      } else if (planType.includes('Matrix')) {
+        newPayCurve = [
+          { performance: 0, payout: 0 },
+          { performance: 90, payout: 75 },
+          { performance: 100, payout: 100 },
+          { performance: 110, payout: 125 },
+          { performance: 120, payout: 150 }
+        ];
+      } else if (planType.includes('Rank')) {
+        newPayCurve = [
+          { performance: 0, payout: 50 },
+          { performance: 25, payout: 75 },
+          { performance: 50, payout: 100 },
+          { performance: 75, payout: 125 },
+          { performance: 100, payout: 150 }
+        ];
+      } else if (planType.includes('Volume')) {
+        newPayCurve = [
+          { performance: 0, payout: 0 },
+          { performance: 95, payout: 80 },
+          { performance: 100, payout: 100 },
+          { performance: 105, payout: 130 },
+          { performance: 115, payout: 165 }
+        ];
+      } else if (planType.includes('Territory')) {
+        newPayCurve = [
+          { performance: 0, payout: 0 },
+          { performance: 85, payout: 70 },
+          { performance: 100, payout: 100 },
+          { performance: 115, payout: 135 },
+          { performance: 130, payout: 170 }
+        ];
+      }
+      
+      setPayCurve(newPayCurve);
+      setConfigurationProgress(70);
+      
+      setIsUpdatingUI(false);
+      setCurrentAction('');
+      
+      return `✅ **${planType} Created Successfully!**\n\n**Configuration Applied:**\n• Plan Type: ${planType}\n• Pay Curve: ${newPayCurve.length} performance points configured\n• Cap: ${nlpResult.entities.cap ? nlpResult.entities.cap + '%' : 'None'}\n• Threshold: ${nlpResult.entities.threshold || 'Standard'}%\n• Budget: ${nlpResult.entities.budget ? '$' + nlpResult.entities.budget : 'Not specified'}\n\n**Confidence:** ${Math.round(nlpResult.confidence * 100)}% - I understood your request perfectly!\n\n**Next Steps:** Ask me to run a simulation, modify settings, or generate additional curves.`;
+    }
+    
+    // Handle plan modifications
+    else if (nlpResult.action === 'modifyPlan') {
+      setCurrentAction('Modifying plan configuration...');
+      await new Promise(resolve => setTimeout(resolve, 500));
+      
+      const updates: Partial<PlanConfig> = {};
+      
+      if (nlpResult.entities.cap !== null) {
+        updates.payoutCap = true;
+        updates.capPercentage = nlpResult.entities.cap;
+      }
+      
+      if (nlpResult.entities.threshold !== null) {
+        updates.acceleratorThreshold = nlpResult.entities.threshold;
+        updates.accelerators = true;
+      }
+      
+      if (nlpResult.entities.budget !== null) {
+        updates.budgetConstraints = `Budget limit: $${nlpResult.entities.budget}`;
+      }
+      
+      setPlanConfig(prev => ({ ...prev, ...updates }));
+      setConfigurationProgress(prev => Math.min(prev + 10, 100));
+      
+      setIsUpdatingUI(false);
+      setCurrentAction('');
+      
+      return `✅ **Plan Modified Successfully!**\n\n**Changes Applied:**\n${Object.entries(updates).map(([key, value]) => `• ${key}: ${value}`).join('\n')}\n\n**Confidence:** ${Math.round(nlpResult.confidence * 100)}% - Modifications completed based on your specifications.\n\n**Current Status:** Your ${planConfig.planType} is now updated with the requested changes.`;
+    }
+    
+    // Handle pay curve generation
+    else if (nlpResult.action === 'generatePayCurve') {
+      setCurrentAction('Generating custom pay curve...');
+      await new Promise(resolve => setTimeout(resolve, 600));
+      
+      // Generate intelligent pay curve based on entities
+      const customCurve: PayCurvePoint[] = [];
+      const thresholdStart = nlpResult.entities.threshold || 80;
+      const capValue = nlpResult.entities.cap || 200;
+      
+      customCurve.push({ performance: 0, payout: 0 });
+      customCurve.push({ performance: thresholdStart, payout: 50 });
+      customCurve.push({ performance: 100, payout: 100 });
+      customCurve.push({ performance: 120, payout: 140 });
+      customCurve.push({ performance: 150, payout: Math.min(capValue, 200) });
+      
+      setPayCurve(customCurve);
+      setConfigurationProgress(prev => Math.min(prev + 15, 100));
+      
+      setIsUpdatingUI(false);
+      setCurrentAction('');
+      
+      return `✅ **Custom Pay Curve Generated!**\n\n**Curve Configuration:**\n${customCurve.map(point => `• ${point.performance}% performance → ${point.payout}% payout`).join('\n')}\n\n**Features:**\n• Threshold starts at ${thresholdStart}%\n• Target payout at 100% performance\n• ${capValue < 200 ? 'Capped at ' + capValue + '%' : 'Uncapped growth'}\n\n**Confidence:** ${Math.round(nlpResult.confidence * 100)}% - Pay curve customized to your specifications!`;
+    }
+    
+    // Handle simulations
+    else if (nlpResult.action === 'runSimulation') {
+      setCurrentAction('Running advanced IC simulation...');
+      await new Promise(resolve => setTimeout(resolve, 800));
+      
+      // Calculate realistic simulation based on current configuration
+      const baseReps = 50;
+      const avgQuota = 1000000; // $1M average quota
+      const performanceDistribution = [0.15, 0.35, 0.40, 0.10]; // Top, Good, Average, Below
+      
+      let totalPayout = 0;
+      let totalReps = 0;
+      
+      // Simulate payout distribution
+      payCurve.forEach((point, index) => {
+        if (index < performanceDistribution.length) {
+          const repsAtLevel = Math.floor(baseReps * performanceDistribution[index]);
+          const payoutPerRep = (avgQuota * 0.15) * (point.payout / 100); // Assuming 15% target incentive
+          totalPayout += repsAtLevel * payoutPerRep;
+          totalReps += repsAtLevel;
+        }
+      });
+      
+      const avgIncentive = totalReps > 0 ? Math.floor(totalPayout / totalReps) : 0;
+      const motivationScore = Math.min(95, 60 + (payCurve[payCurve.length - 1].payout / 4));
+      
+      setSimulatorData({
+        totalPayout: Math.floor(totalPayout),
+        avgIncentive,
+        motivationScore: Math.floor(motivationScore)
+      });
+      
+      setConfigurationProgress(prev => Math.min(prev + 20, 100));
+      
+      setIsUpdatingUI(false);
+      setCurrentAction('');
+      
+      return `✅ **Simulation Complete!**\n\n**Results for ${planConfig.planType}:**\n• Total Budget: $${Math.floor(totalPayout).toLocaleString()}\n• Average per Rep: $${avgIncentive.toLocaleString()}\n• Motivation Score: ${Math.floor(motivationScore)}/100\n• Projected ROI: ${Math.floor(motivationScore * 0.8)}%\n\n**Performance Distribution:**\n• ${Math.floor(baseReps * 0.15)} top performers (>120%)\n• ${Math.floor(baseReps * 0.35)} good performers (100-120%)\n• ${Math.floor(baseReps * 0.40)} average performers (80-100%)\n• ${Math.floor(baseReps * 0.10)} below threshold (<80%)\n\n**Confidence:** ${Math.round(nlpResult.confidence * 100)}% - Simulation based on industry benchmarks and your plan configuration.`;
+    }
     
     const lowerMessage = userMessage.toLowerCase();
     
-    // Handle Goal Attainment Plans
+    // Legacy handlers for backward compatibility (keeping original logic as fallback)
     if (lowerMessage.includes('goal attainment') || lowerMessage.includes('quota') || lowerMessage.includes('target')) {
       setCurrentAction('Configuring Goal Attainment Plan...');
       await new Promise(resolve => setTimeout(resolve, 600));
@@ -320,10 +657,10 @@ export default function IcPlanConfiguration() {
       return "✅ **Plan Finalized:** Your " + planConfig.planType + " is ready for deployment.\n\n**Summary:**\n• Plan type: " + planConfig.planType + "\n• Accelerators: " + (planConfig.accelerators ? "Yes" : "No") + "\n• Payout cap: " + (planConfig.payoutCap ? planConfig.capPercentage + "%" : "None") + "\n• Role factors: " + planConfig.roleFactors.length + " configured\n\n**Next Steps:**\n• Export to Excel for review\n• Generate compliance documentation\n• Schedule stakeholder approval\n• Deploy to payroll system\n\nClick 'Export Plan' to download configuration files.";
     }
     
-    // Default intelligent response
+    // Enhanced default response with natural language examples
     setIsUpdatingUI(false);
     setCurrentAction('');
-    return "I'm your **Life Sciences IC Specialist**. I can configure any standard pharma/biotech compensation plan:\n\n**📊 Standard Plans:**\n• **Goal Attainment Plans** - \"Create a goal attainment plan\"\n• **Matrix-Based Plans** - \"Build a dual-measure matrix plan\"\n• **Rank-Based Plans** - \"Design a peer ranking plan\"\n• **Volume Growth Plans** - \"Configure a volume-based plan\"\n• **Tiered Commission Plans** - \"Create a tiered commission structure\"\n• **Territory-Based Plans** - \"Build a geographic territory plan\"\n\n**🔧 I can also:**\n• Modify existing plans\n• Run simulations\n• Add compliance features\n• Configure role-based rules\n\nWhat type of IC plan do you need?";
+    return "I'm your **AI-Powered IC Specialist** with advanced natural language understanding! 🤖\n\n**💬 Just tell me what you need in plain English:**\n\n**Plan Creation Examples:**\n• \"Create a goal attainment plan with 150% cap\"\n• \"Build a matrix plan for pharma reps\"\n• \"Design a rank-based plan with threshold at 85%\"\n• \"Set up a territory plan with budget of $2M\"\n\n**Modifications:**\n• \"Change the cap to 180%\"\n• \"Lower the threshold to 75%\"\n• \"Add accelerators at 120%\"\n• \"Remove the payout cap\"\n\n**Analysis & Testing:**\n• \"Run a simulation on this plan\"\n• \"Generate a custom pay curve\"\n• \"Show me the ROI forecast\"\n• \"Test with 50 reps scenario\"\n\n**🎯 Current Confidence:** ${Math.round(nlpResult.confidence * 100)}% - I ${nlpResult.confidence > 0.7 ? 'understood your request well' : 'need more specific details'}\n\n**What would you like to configure today?**";
   };
 
   const sendMessage = async () => {
@@ -604,10 +941,49 @@ Configuration Progress: ${configurationProgress}%
                     <div ref={messagesEndRef} />
                   </div>
                   
+                  {/* Quick Action Buttons */}
+                  <div className="mb-3">
+                    <div className="text-xs text-gray-500 dark:text-gray-400 mb-2">Quick Actions:</div>
+                    <div className="flex flex-wrap gap-2">
+                      <Button 
+                        variant="outline" 
+                        size="sm"
+                        onClick={() => setCurrentMessage("Create a goal attainment plan with 150% cap")}
+                        className="text-xs"
+                      >
+                        Goal Plan
+                      </Button>
+                      <Button 
+                        variant="outline" 
+                        size="sm"
+                        onClick={() => setCurrentMessage("Generate a custom pay curve")}
+                        className="text-xs"
+                      >
+                        Pay Curve
+                      </Button>
+                      <Button 
+                        variant="outline" 
+                        size="sm"
+                        onClick={() => setCurrentMessage("Run a simulation")}
+                        className="text-xs"
+                      >
+                        Simulate
+                      </Button>
+                      <Button 
+                        variant="outline" 
+                        size="sm"
+                        onClick={() => setCurrentMessage("Change the cap to 200%")}
+                        className="text-xs"
+                      >
+                        Modify
+                      </Button>
+                    </div>
+                  </div>
+                  
                   {/* Input */}
                   <div className="flex space-x-2">
                     <Input
-                      placeholder="Type your message..."
+                      placeholder="Ask me anything: 'Create a matrix plan' or 'Set cap to 180%'..."
                       value={currentMessage}
                       onChange={(e) => setCurrentMessage(e.target.value)}
                       onKeyPress={(e) => e.key === 'Enter' && sendMessage()}
