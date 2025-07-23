@@ -1,0 +1,13 @@
+Please implement the following four major enhancements in ic processing module:
+
+1. Build a Multi-Plan, Multi-Period Calculation Engine
+Right now, our system seems to run one calculation at a time. I need it to handle the complexity of a real sales organization where different teams might be on different compensation plans during different times of the year. The engine should be able to process calculations for monthly, quarterly, and annual periods simultaneously without conflict.
+
+2. Introduce Exception Handling and Adjustment Workflows
+We need a formal process for handling the manual adjustments and exceptions that always come up. Please add a feature that allows managers to make specific adjustments to a calculated payout (like adding a bonus or correcting for a data error). This needs to be a full workflow, where an adjustment can be submitted, tracked, and require approval before it officially changes the final payout number.
+
+3. Build a Scalable Engine with Built-in Audit and Traceability
+As we grow, we'll be processing much more data, so the calculation engine needs to be scalable and fast. More importantly, we need total transparency for compliance. For any final payout number, I want to be able to see a complete traceability log that shows every single step of the calculation—from the raw sales data and quota used, to the specific plan rules applied, all the way to the final result.
+
+4. Implement AI-Powered Anomaly Detection with Root Cause Suggestions
+Finally, let's make the system smarter. I want you to build in an AI feature that automatically flags unusual or suspicious payout calculations. For example, if a rep's commission is suddenly 500% higher than their average, the system should detect this anomaly. It shouldn't just flag it; it must also provide intelligent root cause suggestions. For instance, it could say, "This anomaly is driven by a single large deal. Recommend verifying the deal's accuracy." This will help us catch errors and potential issues proactively.

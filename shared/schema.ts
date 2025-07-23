@@ -161,6 +161,105 @@ export const icPlanComponents = pgTable('ic_plan_components', {
   createdAt: timestamp('created_at').defaultNow()
 });
 
+// Multi-Plan Multi-Period Calculation Engine Tables
+export const calculationJobs = pgTable('calculation_jobs', {
+  id: serial('id').primaryKey(),
+  userId: integer('user_id').notNull().references(() => users.id),
+  jobName: varchar('job_name', { length: 255 }).notNull(),
+  description: text('description'),
+  status: varchar('status', { length: 50 }).notNull().default('pending'), // pending, running, completed, failed
+  calculationType: varchar('calculation_type', { length: 50 }).notNull(), // monthly, quarterly, annual, ad_hoc
+  planIds: jsonb('plan_ids').notNull(), // Array of plan IDs to process
+  periodStart: timestamp('period_start').notNull(),
+  periodEnd: timestamp('period_end').notNull(),
+  progress: integer('progress').default(0), // 0-100 percentage
+  totalRecords: integer('total_records').default(0),
+  processedRecords: integer('processed_records').default(0),
+  errorCount: integer('error_count').default(0),
+  warnings: jsonb('warnings'), // Array of warning messages
+  createdAt: timestamp('created_at').defaultNow(),
+  startedAt: timestamp('started_at'),
+  completedAt: timestamp('completed_at')
+});
+
+// Exception Handling and Adjustment Workflows
+export const payoutAdjustments = pgTable('payout_adjustments', {
+  id: serial('id').primaryKey(),
+  userId: integer('user_id').notNull().references(() => users.id),
+  repId: text('rep_id').notNull(),
+  repName: text('rep_name').notNull(),
+  originalPayout: decimal('original_payout', { precision: 15, scale: 2 }).notNull(),
+  adjustmentAmount: decimal('adjustment_amount', { precision: 15, scale: 2 }).notNull(),
+  finalPayout: decimal('final_payout', { precision: 15, scale: 2 }).notNull(),
+  adjustmentType: varchar('adjustment_type', { length: 100 }).notNull(), // bonus, correction, penalty, override
+  adjustmentReason: text('adjustment_reason').notNull(),
+  businessJustification: text('business_justification').notNull(),
+  submittedBy: integer('submitted_by').notNull().references(() => users.id),
+  approvedBy: integer('approved_by').references(() => users.id),
+  status: varchar('status', { length: 50 }).notNull().default('pending'), // pending, approved, rejected, applied
+  priority: varchar('priority', { length: 20 }).notNull().default('normal'), // low, normal, high, urgent
+  submittedAt: timestamp('submitted_at').defaultNow(),
+  reviewedAt: timestamp('reviewed_at'),
+  appliedAt: timestamp('applied_at'),
+  comments: text('comments'),
+  supportingDocuments: jsonb('supporting_documents') // Array of document references
+});
+
+// Calculation Traceability and Audit
+export const calculationTrace = pgTable('calculation_trace', {
+  id: serial('id').primaryKey(),
+  jobId: integer('job_id').notNull().references(() => calculationJobs.id, { onDelete: 'cascade' }),
+  repId: text('rep_id').notNull(),
+  repName: text('rep_name').notNull(),
+  planId: integer('plan_id').notNull(),
+  planName: text('plan_name').notNull(),
+  calculationStep: integer('calculation_step').notNull(), // 1, 2, 3, etc.
+  stepName: varchar('step_name', { length: 255 }).notNull(),
+  stepDescription: text('step_description').notNull(),
+  inputData: jsonb('input_data').notNull(), // Raw input values
+  ruleApplied: text('rule_applied').notNull(),
+  calculation: text('calculation').notNull(), // Mathematical formula used
+  intermediateResult: decimal('intermediate_result', { precision: 15, scale: 2 }),
+  finalStepResult: decimal('final_step_result', { precision: 15, scale: 2 }),
+  metadata: jsonb('metadata'), // Additional context data
+  executedAt: timestamp('executed_at').defaultNow()
+});
+
+// AI Anomaly Detection
+export const anomalyDetection = pgTable('anomaly_detection', {
+  id: serial('id').primaryKey(),
+  jobId: integer('job_id').notNull().references(() => calculationJobs.id, { onDelete: 'cascade' }),
+  repId: text('rep_id').notNull(),
+  repName: text('rep_name').notNull(),
+  anomalyType: varchar('anomaly_type', { length: 100 }).notNull(), // outlier, spike, drop, pattern_break
+  severityLevel: varchar('severity_level', { length: 20 }).notNull(), // low, medium, high, critical
+  currentValue: decimal('current_value', { precision: 15, scale: 2 }).notNull(),
+  expectedValue: decimal('expected_value', { precision: 15, scale: 2 }),
+  variance: decimal('variance', { precision: 10, scale: 4 }),
+  variancePercent: decimal('variance_percent', { precision: 7, scale: 2 }),
+  historicalAverage: decimal('historical_average', { precision: 15, scale: 2 }),
+  standardDeviation: decimal('standard_deviation', { precision: 15, scale: 2 }),
+  confidenceScore: decimal('confidence_score', { precision: 5, scale: 2 }).notNull(), // 0-100
+  rootCause: text('root_cause').notNull(),
+  recommendation: text('recommendation').notNull(),
+  aiAnalysis: jsonb('ai_analysis'), // Detailed AI analysis data
+  flaggedAt: timestamp('flagged_at').defaultNow(),
+  reviewedAt: timestamp('reviewed_at'),
+  status: varchar('status', { length: 50 }).notNull().default('flagged'), // flagged, investigating, resolved, false_positive
+  reviewerNotes: text('reviewer_notes')
+});
+
+// Performance Metrics for Scalability Monitoring
+export const performanceMetrics = pgTable('performance_metrics', {
+  id: serial('id').primaryKey(),
+  jobId: integer('job_id').references(() => calculationJobs.id, { onDelete: 'cascade' }),
+  metricType: varchar('metric_type', { length: 50 }).notNull(), // execution_time, memory_usage, throughput
+  metricValue: decimal('metric_value', { precision: 15, scale: 4 }).notNull(),
+  unit: varchar('unit', { length: 20 }).notNull(), // seconds, mb, records_per_second
+  context: jsonb('context'), // Additional context data
+  recordedAt: timestamp('recorded_at').defaultNow()
+});
+
 export const insertUserSchema = createInsertSchema(users).pick({
   username: true,
   email: true,
@@ -332,6 +431,65 @@ export const insertIcPlanComponentSchema = createInsertSchema(icPlanComponents).
   isActive: true
 });
 
+// Enhanced IC Processing Schemas
+export const insertCalculationJobSchema = createInsertSchema(calculationJobs).pick({
+  jobName: true,
+  description: true,
+  calculationType: true,
+  planIds: true,
+  periodStart: true,
+  periodEnd: true
+});
+
+export const insertPayoutAdjustmentSchema = createInsertSchema(payoutAdjustments).pick({
+  repId: true,
+  repName: true,
+  originalPayout: true,
+  adjustmentAmount: true,
+  finalPayout: true,
+  adjustmentType: true,
+  adjustmentReason: true,
+  businessJustification: true,
+  submittedBy: true,
+  priority: true,
+  supportingDocuments: true
+});
+
+export const insertCalculationTraceSchema = createInsertSchema(calculationTrace).pick({
+  jobId: true,
+  repId: true,
+  repName: true,
+  planId: true,
+  planName: true,
+  calculationStep: true,
+  stepName: true,
+  stepDescription: true,
+  inputData: true,
+  ruleApplied: true,
+  calculation: true,
+  intermediateResult: true,
+  finalStepResult: true,
+  metadata: true
+});
+
+export const insertAnomalyDetectionSchema = createInsertSchema(anomalyDetection).pick({
+  jobId: true,
+  repId: true,
+  repName: true,
+  anomalyType: true,
+  severityLevel: true,
+  currentValue: true,
+  expectedValue: true,
+  variance: true,
+  variancePercent: true,
+  historicalAverage: true,
+  standardDeviation: true,
+  confidenceScore: true,
+  rootCause: true,
+  recommendation: true,
+  aiAnalysis: true
+});
+
 // Enhanced IC Plan Types
 export type EnhancedIcPlan = typeof enhancedIcPlans.$inferSelect;
 export type InsertEnhancedIcPlan = z.infer<typeof insertEnhancedIcPlanSchema>;
@@ -341,6 +499,17 @@ export type IcPlanAuditLog = typeof icPlanAuditLog.$inferSelect;
 export type InsertIcPlanAuditLog = z.infer<typeof insertIcPlanAuditLogSchema>;
 export type IcPlanComponent = typeof icPlanComponents.$inferSelect;
 export type InsertIcPlanComponent = z.infer<typeof insertIcPlanComponentSchema>;
+
+// Enhanced IC Processing Types
+export type CalculationJob = typeof calculationJobs.$inferSelect;
+export type InsertCalculationJob = z.infer<typeof insertCalculationJobSchema>;
+export type PayoutAdjustment = typeof payoutAdjustments.$inferSelect;
+export type InsertPayoutAdjustment = z.infer<typeof insertPayoutAdjustmentSchema>;
+export type CalculationTrace = typeof calculationTrace.$inferSelect;
+export type InsertCalculationTrace = z.infer<typeof insertCalculationTraceSchema>;
+export type AnomalyDetection = typeof anomalyDetection.$inferSelect;
+export type InsertAnomalyDetection = z.infer<typeof insertAnomalyDetectionSchema>;
+export type PerformanceMetrics = typeof performanceMetrics.$inferSelect;
 
 // Rep Roster table
 export const repRoster = pgTable("rep_roster", {

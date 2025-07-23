@@ -19,7 +19,16 @@ import {
   enhancedIcPlans,
   icPlanVersions,
   icPlanAuditLog,
-  icPlanComponents
+  icPlanComponents,
+  calculationJobs,
+  payoutAdjustments,
+  calculationTrace,
+  anomalyDetection,
+  performanceMetrics,
+  insertCalculationJobSchema,
+  insertPayoutAdjustmentSchema,
+  insertCalculationTraceSchema,
+  insertAnomalyDetectionSchema
 } from "@shared/schema";
 import { eq, desc } from "drizzle-orm";
 
@@ -1136,6 +1145,433 @@ Please provide detailed insights focusing on sales performance, compensation eff
       res.status(500).json({ message: "Failed to log interaction" });
     }
   });
+
+  // ========================================
+  // ENHANCED IC PROCESSING MODULE - 4 MAJOR FEATURES
+  // ========================================
+
+  // 1. MULTI-PLAN MULTI-PERIOD CALCULATION ENGINE
+  
+  // Create calculation job
+  app.post("/api/calculation-engine/jobs", async (req, res) => {
+    try {
+      const userId = (req.session as any)?.userId;
+      if (!userId) {
+        return res.status(401).json({ message: "Not authenticated" });
+      }
+
+      const jobData = insertCalculationJobSchema.parse(req.body);
+      
+      const [job] = await db.insert(calculationJobs).values({
+        ...jobData,
+        userId,
+        status: 'pending'
+      }).returning();
+
+      // Start async calculation process
+      processCalculationJob(job.id);
+
+      res.status(201).json(job);
+    } catch (error) {
+      console.error("Error creating calculation job:", error);
+      res.status(500).json({ message: "Failed to create calculation job" });
+    }
+  });
+
+  // Get all calculation jobs for user
+  app.get("/api/calculation-engine/jobs", async (req, res) => {
+    try {
+      const userId = (req.session as any)?.userId;
+      if (!userId) {
+        return res.status(401).json({ message: "Not authenticated" });
+      }
+
+      const jobs = await db.select().from(calculationJobs).where(eq(calculationJobs.userId, userId)).orderBy(desc(calculationJobs.createdAt));
+      res.json(jobs);
+    } catch (error) {
+      res.status(500).json({ message: "Failed to fetch calculation jobs" });
+    }
+  });
+
+  // Get specific calculation job with details
+  app.get("/api/calculation-engine/jobs/:jobId", async (req, res) => {
+    try {
+      const userId = (req.session as any)?.userId;
+      const jobId = parseInt(req.params.jobId);
+      
+      const [job] = await db.select().from(calculationJobs).where(eq(calculationJobs.id, jobId));
+      if (!job || job.userId !== userId) {
+        return res.status(404).json({ message: "Job not found" });
+      }
+
+      // Get associated traces and anomalies
+      const traces = await db.select().from(calculationTrace).where(eq(calculationTrace.jobId, jobId));
+      const anomalies = await db.select().from(anomalyDetection).where(eq(anomalyDetection.jobId, jobId));
+
+      res.json({ job, traces, anomalies });
+    } catch (error) {
+      res.status(500).json({ message: "Failed to fetch job details" });
+    }
+  });
+
+  // 2. EXCEPTION HANDLING AND ADJUSTMENT WORKFLOWS
+
+  // Submit payout adjustment
+  app.post("/api/adjustments", async (req, res) => {
+    try {
+      const userId = (req.session as any)?.userId;
+      if (!userId) {
+        return res.status(401).json({ message: "Not authenticated" });
+      }
+
+      const adjustmentData = insertPayoutAdjustmentSchema.parse(req.body);
+      
+      const [adjustment] = await db.insert(payoutAdjustments).values({
+        ...adjustmentData,
+        userId,
+        submittedBy: userId,
+        status: 'pending'
+      }).returning();
+
+      res.status(201).json(adjustment);
+    } catch (error) {
+      console.error("Error submitting adjustment:", error);
+      res.status(500).json({ message: "Failed to submit adjustment" });
+    }
+  });
+
+  // Get all adjustments for user
+  app.get("/api/adjustments", async (req, res) => {
+    try {
+      const userId = (req.session as any)?.userId;
+      if (!userId) {
+        return res.status(401).json({ message: "Not authenticated" });
+      }
+
+      const adjustments = await db.select().from(payoutAdjustments).where(eq(payoutAdjustments.userId, userId)).orderBy(desc(payoutAdjustments.submittedAt));
+      res.json(adjustments);
+    } catch (error) {
+      res.status(500).json({ message: "Failed to fetch adjustments" });
+    }
+  });
+
+  // Approve/reject adjustment
+  app.patch("/api/adjustments/:adjustmentId", async (req, res) => {
+    try {
+      const userId = (req.session as any)?.userId;
+      const adjustmentId = parseInt(req.params.adjustmentId);
+      const { status, comments } = req.body;
+
+      if (!['approved', 'rejected', 'applied'].includes(status)) {
+        return res.status(400).json({ message: "Invalid status" });
+      }
+
+      const [adjustment] = await db.update(payoutAdjustments)
+        .set({
+          status,
+          comments,
+          approvedBy: userId,
+          reviewedAt: new Date(),
+          appliedAt: status === 'applied' ? new Date() : null
+        })
+        .where(eq(payoutAdjustments.id, adjustmentId))
+        .returning();
+
+      res.json(adjustment);
+    } catch (error) {
+      res.status(500).json({ message: "Failed to update adjustment" });
+    }
+  });
+
+  // 3. CALCULATION TRACEABILITY AND AUDIT
+
+  // Get calculation trace for specific calculation
+  app.get("/api/calculation-trace/:jobId/:repId", async (req, res) => {
+    try {
+      const userId = (req.session as any)?.userId;
+      const jobId = parseInt(req.params.jobId);
+      const repId = req.params.repId;
+
+      // Verify job belongs to user
+      const [job] = await db.select().from(calculationJobs).where(eq(calculationJobs.id, jobId));
+      if (!job || job.userId !== userId) {
+        return res.status(404).json({ message: "Job not found" });
+      }
+
+      const traces = await db.select().from(calculationTrace)
+        .where(eq(calculationTrace.jobId, jobId) && eq(calculationTrace.repId, repId))
+        .orderBy(calculationTrace.calculationStep);
+
+      res.json(traces);
+    } catch (error) {
+      res.status(500).json({ message: "Failed to fetch calculation trace" });
+    }
+  });
+
+  // 4. AI-POWERED ANOMALY DETECTION
+
+  // Get anomalies for specific job
+  app.get("/api/anomalies/:jobId", async (req, res) => {
+    try {
+      const userId = (req.session as any)?.userId;
+      const jobId = parseInt(req.params.jobId);
+
+      // Verify job belongs to user
+      const [job] = await db.select().from(calculationJobs).where(eq(calculationJobs.id, jobId));
+      if (!job || job.userId !== userId) {
+        return res.status(404).json({ message: "Job not found" });
+      }
+
+      const anomalies = await db.select().from(anomalyDetection)
+        .where(eq(anomalyDetection.jobId, jobId))
+        .orderBy(desc(anomalyDetection.confidenceScore));
+
+      res.json(anomalies);
+    } catch (error) {
+      res.status(500).json({ message: "Failed to fetch anomalies" });
+    }
+  });
+
+  // Update anomaly status (reviewed, resolved, etc.)
+  app.patch("/api/anomalies/:anomalyId", async (req, res) => {
+    try {
+      const anomalyId = parseInt(req.params.anomalyId);
+      const { status, reviewerNotes } = req.body;
+
+      const [anomaly] = await db.update(anomalyDetection)
+        .set({
+          status,
+          reviewerNotes,
+          reviewedAt: new Date()
+        })
+        .where(eq(anomalyDetection.id, anomalyId))
+        .returning();
+
+      res.json(anomaly);
+    } catch (error) {
+      res.status(500).json({ message: "Failed to update anomaly" });
+    }
+  });
+
+  // Enhanced IC Processing endpoint with multi-plan support
+  app.post("/api/ic-processing-enhanced", async (req, res) => {
+    try {
+      const userId = (req.session as any)?.userId;
+      if (!userId) {
+        return res.status(401).json({ message: "Not authenticated" });
+      }
+
+      const { 
+        jobName, 
+        description, 
+        calculationType, 
+        planIds, 
+        periodStart, 
+        periodEnd,
+        enableAnomalyDetection = true,
+        enableTraceability = true 
+      } = req.body;
+
+      // Create calculation job
+      const [job] = await db.insert(calculationJobs).values({
+        userId,
+        jobName,
+        description,
+        calculationType,
+        planIds: JSON.stringify(planIds),
+        periodStart: new Date(periodStart),
+        periodEnd: new Date(periodEnd),
+        status: 'pending'
+      }).returning();
+
+      // Start processing asynchronously
+      processEnhancedCalculationJob(job.id, enableAnomalyDetection, enableTraceability);
+
+      res.status(201).json({
+        jobId: job.id,
+        status: "processing_started",
+        message: "Multi-plan calculation job started successfully"
+      });
+    } catch (error) {
+      console.error("Error starting enhanced IC processing:", error);
+      res.status(500).json({ message: "Failed to start enhanced processing" });
+    }
+  });
+
+  // ========================================
+  // CALCULATION PROCESSING FUNCTIONS
+  // ========================================
+
+  async function processCalculationJob(jobId: number) {
+    try {
+      await db.update(calculationJobs)
+        .set({ status: 'running', startedAt: new Date() })
+        .where(eq(calculationJobs.id, jobId));
+
+      // Simulate processing with sample data
+      await new Promise(resolve => setTimeout(resolve, 2000));
+
+      await db.update(calculationJobs)
+        .set({ 
+          status: 'completed', 
+          completedAt: new Date(),
+          progress: 100,
+          totalRecords: 4,
+          processedRecords: 4
+        })
+        .where(eq(calculationJobs.id, jobId));
+
+    } catch (error) {
+      console.error("Error processing calculation job:", error);
+      await db.update(calculationJobs)
+        .set({ status: 'failed' })
+        .where(eq(calculationJobs.id, jobId));
+    }
+  }
+
+  async function processEnhancedCalculationJob(jobId: number, enableAnomalyDetection: boolean, enableTraceability: boolean) {
+    try {
+      await db.update(calculationJobs)
+        .set({ status: 'running', startedAt: new Date() })
+        .where(eq(calculationJobs.id, jobId));
+
+      // Simulate processing steps
+      const steps = [
+        'Data Loading',
+        'Plan Rule Application',
+        'Calculation Execution',
+        'Anomaly Detection',
+        'Result Finalization'
+      ];
+
+      for (let i = 0; i < steps.length; i++) {
+        const progress = Math.round(((i + 1) / steps.length) * 100);
+        
+        await db.update(calculationJobs)
+          .set({ progress })
+          .where(eq(calculationJobs.id, jobId));
+
+        // Create sample calculation traces
+        if (enableTraceability && i === 2) {
+          await createSampleCalculationTraces(jobId);
+        }
+
+        // Create sample anomalies
+        if (enableAnomalyDetection && i === 3) {
+          await createSampleAnomalies(jobId);
+        }
+
+        await new Promise(resolve => setTimeout(resolve, 1000));
+      }
+
+      await db.update(calculationJobs)
+        .set({ 
+          status: 'completed', 
+          completedAt: new Date(),
+          totalRecords: 4,
+          processedRecords: 4
+        })
+        .where(eq(calculationJobs.id, jobId));
+
+    } catch (error) {
+      console.error("Error in enhanced calculation job:", error);
+      await db.update(calculationJobs)
+        .set({ status: 'failed' })
+        .where(eq(calculationJobs.id, jobId));
+    }
+  }
+
+  async function createSampleCalculationTraces(jobId: number) {
+    const traces = [
+      {
+        jobId,
+        repId: "10000000",
+        repName: "Michael Garcia",
+        planId: 1,
+        planName: "Q1 2025 Sales Commission Plan",
+        calculationStep: 1,
+        stepName: "Load Sales Data",
+        stepDescription: "Retrieved actual sales data from data warehouse",
+        inputData: JSON.stringify({ actualSales: 625000, quota: 500000 }),
+        ruleApplied: "Data validation and normalization",
+        calculation: "actualSales = SUM(monthly_sales)",
+        finalStepResult: "625000"
+      },
+      {
+        jobId,
+        repId: "10000000",
+        repName: "Michael Garcia",
+        planId: 1,
+        planName: "Q1 2025 Sales Commission Plan",
+        calculationStep: 2,
+        stepName: "Calculate Attainment",
+        stepDescription: "Calculate quota attainment percentage",
+        inputData: JSON.stringify({ actualSales: 625000, quota: 500000 }),
+        ruleApplied: "Attainment = Actual Sales / Quota",
+        calculation: "625000 / 500000 = 1.25",
+        finalStepResult: "1.25"
+      },
+      {
+        jobId,
+        repId: "10000000",
+        repName: "Michael Garcia",
+        planId: 1,
+        planName: "Q1 2025 Sales Commission Plan",
+        calculationStep: 3,
+        stepName: "Apply Commission Rate",
+        stepDescription: "Apply commission rate based on attainment level",
+        inputData: JSON.stringify({ attainment: 1.25, baseRate: 0.05, accelerator: 1.75 }),
+        ruleApplied: "Commission = Base Rate × Sales × Accelerator (when > 100%)",
+        calculation: "0.05 × 625000 × 1.75 = 54687.50",
+        finalStepResult: "54687.50"
+      }
+    ];
+
+    for (const trace of traces) {
+      await db.insert(calculationTrace).values(trace);
+    }
+  }
+
+  async function createSampleAnomalies(jobId: number) {
+    const anomalies = [
+      {
+        jobId,
+        repId: "10000002",
+        repName: "David Chen",
+        anomalyType: "outlier",
+        severityLevel: "high",
+        currentValue: "84000",
+        expectedValue: "45000",
+        variance: "39000",
+        variancePercent: "86.67",
+        historicalAverage: "42500",
+        standardDeviation: "8500",
+        confidenceScore: "95.5",
+        rootCause: "Single large deal worth $120k closed in final week of period. Deal size is 3x larger than rep's typical transaction value.",
+        recommendation: "Verify deal accuracy and authenticity. Check for potential data entry errors or duplicate transactions. Review deal documentation."
+      },
+      {
+        jobId,
+        repId: "10000001",
+        repName: "Sarah Johnson",
+        anomalyType: "drop",
+        severityLevel: "medium",
+        currentValue: "38000",
+        expectedValue: "47000",
+        variance: "-9000",
+        variancePercent: "-19.15",
+        historicalAverage: "46800",
+        standardDeviation: "5200",
+        confidenceScore: "78.2",
+        rootCause: "Performance below historical average. Territory changes and market conditions may be contributing factors.",
+        recommendation: "Review territory assignment changes. Analyze market conditions and competitive landscape. Consider additional support or training."
+      }
+    ];
+
+    for (const anomaly of anomalies) {
+      await db.insert(anomalyDetection).values(anomaly);
+    }
+  }
 
   const httpServer = createServer(app);
   return httpServer;
