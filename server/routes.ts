@@ -26,6 +26,8 @@ import {
   anomalyDetection,
   performanceMetrics,
   enhancedCalculationDataSchema,
+  insertCalculationJobSchema,
+  insertPayoutAdjustmentSchema,
   type EnhancedCalculationData
 } from "@shared/schema";
 import { eq, desc } from "drizzle-orm";

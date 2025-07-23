@@ -452,7 +452,6 @@ export const insertPayoutAdjustmentSchema = createInsertSchema(payoutAdjustments
   adjustmentType: true,
   adjustmentReason: true,
   businessJustification: true,
-  submittedBy: true,
   priority: true,
   supportingDocuments: true
 });

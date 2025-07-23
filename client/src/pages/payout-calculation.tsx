@@ -23,7 +23,8 @@ import {
   TrendingDown,
   Settings,
   Percent,
-  PieChart
+  PieChart,
+  Edit
 } from "lucide-react";
 import { useAuth } from "@/hooks/use-auth";
 import { useQuery, useMutation } from "@tanstack/react-query";
@@ -327,6 +328,14 @@ export default function PayoutCalculation() {
             >
               <PieChart className="h-4 w-4 mr-2" />
               Go to Insights
+            </Button>
+
+            <Button
+              onClick={() => window.location.href = '/payout-adjustments'}
+              className="px-6 py-3 bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 text-white font-semibold shadow-lg"
+            >
+              <Edit className="h-4 w-4 mr-2" />
+              Manage Adjustments
             </Button>
           </div>
 
