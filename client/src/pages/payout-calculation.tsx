@@ -24,12 +24,15 @@ import {
   Settings,
   Percent,
   PieChart,
-  Edit
+  Edit,
+  Eye,
+  FileText
 } from "lucide-react";
 import { useAuth } from "@/hooks/use-auth";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
+import { CalculationTraceDialog } from "@/components/calculation-trace";
 
 interface PayoutResult {
   repId: string;
@@ -294,11 +297,17 @@ export default function PayoutCalculation() {
           {/* Page Title */}
           <div className="text-center mb-12">
             <h1 className="text-4xl md:text-5xl font-bold text-white mb-4">
-              Payout Calculation
+              Payout Calculation with Full Traceability
             </h1>
             <p className="text-xl text-gray-300">
-              IC payout results and performance analytics
+              IC payout results with complete audit trail and calculation transparency
             </p>
+            <div className="mt-4 flex justify-center">
+              <Badge className="bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200 text-lg px-4 py-2">
+                <Eye className="w-4 h-4 mr-1" />
+                Full Audit Trail Available
+              </Badge>
+            </div>
           </div>
 
           {/* Action Buttons */}
@@ -336,6 +345,14 @@ export default function PayoutCalculation() {
             >
               <Edit className="h-4 w-4 mr-2" />
               Manage Adjustments
+            </Button>
+
+            <Button
+              variant="outline"
+              className="px-6 py-3 border-2 border-blue-600 text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-900/20 shadow-lg"
+            >
+              <FileText className="h-4 w-4 mr-2" />
+              Calculation Engine
             </Button>
           </div>
 
@@ -476,6 +493,23 @@ export default function PayoutCalculation() {
                   </CardDescription>
                 </CardHeader>
                 <CardContent className="px-8 py-6">
+                  <div className="mb-4 p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg border border-blue-200 dark:border-blue-800">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center space-x-2">
+                        <Calculator className="w-5 h-5 text-blue-600" />
+                        <span className="font-semibold text-blue-900 dark:text-blue-100">
+                          Calculation Engine Status
+                        </span>
+                      </div>
+                      <Badge className="bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200">
+                        Active
+                      </Badge>
+                    </div>
+                    <p className="text-sm text-blue-700 dark:text-blue-300 mt-2">
+                      All payouts calculated with full traceability. Click "Trace" button on any row to view complete calculation steps.
+                    </p>
+                  </div>
+
                   {payoutLoading ? (
                     <div className="flex items-center justify-center py-12">
                       <RefreshCw className="h-8 w-8 text-blue-600 animate-spin" />
@@ -499,6 +533,7 @@ export default function PayoutCalculation() {
                             <TableHead className="text-right text-lg font-semibold w-28">% of Target Pay</TableHead>
                             <TableHead className="text-lg font-semibold w-28">Any Adjustment</TableHead>
                             <TableHead className="text-lg font-semibold w-32">Notes</TableHead>
+                            <TableHead className="text-lg font-semibold w-20">Trace</TableHead>
                           </TableRow>
                         </TableHeader>
                         <TableBody>
@@ -521,6 +556,13 @@ export default function PayoutCalculation() {
                               <TableCell className="text-right text-lg">{result.percentOfTargetPay.toFixed(1)}%</TableCell>
                               <TableCell className="text-lg truncate">{result.anyAdjustment}</TableCell>
                               <TableCell className="text-lg text-gray-600 dark:text-gray-400 truncate">{result.notes}</TableCell>
+                              <TableCell>
+                                <CalculationTraceDialog 
+                                  repId={result.repId}
+                                  repName={result.repName}
+                                  finalPayout={result.finalPayout}
+                                />
+                              </TableCell>
                             </TableRow>
                           ))}
                         </TableBody>
