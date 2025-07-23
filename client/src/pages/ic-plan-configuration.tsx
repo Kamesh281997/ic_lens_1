@@ -25,12 +25,26 @@ import {
   Eye,
   Zap,
   Brain,
-  Activity
+  Activity,
+  History,
+  GitBranch,
+  Clock,
+  RotateCcw,
+  FileText,
+  Camera,
+  Shield,
+  Archive,
+  X,
+  Minimize2,
+  Maximize2
 } from "lucide-react";
 import { useAuth } from "@/hooks/use-auth";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { Separator } from "@/components/ui/separator";
 
 // Types
 interface ChatMessage {
@@ -51,6 +65,49 @@ interface PlanConfig {
   acceleratorThreshold?: number;
   decelerators: boolean;
   deceleratorThreshold?: number;
+}
+
+// Versioning and Auditing Types
+interface PlanVersion {
+  id: number;
+  versionNumber: number;
+  versionName?: string;
+  configurationData: PlanConfig;
+  payCurveData?: any;
+  simulationResults?: any;
+  summary?: string;
+  changeDescription?: string;
+  createdBy: number;
+  createdAt: string;
+  isSnapshot: boolean;
+}
+
+interface AuditLogEntry {
+  id: number;
+  planId: number;
+  versionId?: number;
+  userId: number;
+  username: string;
+  action: string;
+  actionCategory: string;
+  fieldChanged?: string;
+  oldValue?: string;
+  newValue?: string;
+  changeSource: string;
+  userMessage?: string;
+  aiResponse?: string;
+  timestamp: string;
+}
+
+interface EnhancedPlan {
+  id: number;
+  planName: string;
+  planType: string;
+  description?: string;
+  currentVersion: number;
+  status: string;
+  createdAt: string;
+  updatedAt: string;
 }
 
 interface PayCurvePoint {
@@ -98,6 +155,15 @@ export default function IcPlanConfiguration() {
     { performance: 150, payout: 150 }
   ]);
 
+  // Versioning and Auditing State
+  const [currentPlan, setCurrentPlan] = useState<EnhancedPlan | null>(null);
+  const [showVersionHistory, setShowVersionHistory] = useState(false);
+  const [showAuditTrail, setShowAuditTrail] = useState(false);
+  const [selectedVersion, setSelectedVersion] = useState<PlanVersion | null>(null);
+  const [versionCompareMode, setVersionCompareMode] = useState(false);
+  const [compareVersions, setCompareVersions] = useState<[PlanVersion | null, PlanVersion | null]>([null, null]);
+  const queryClient = useQueryClient();
+
   // Simulator state
   const [simulatorData, setSimulatorData] = useState({
     totalPayout: 0,
@@ -106,6 +172,122 @@ export default function IcPlanConfiguration() {
   });
 
   const [configurationProgress, setConfigurationProgress] = useState(0);
+
+  // Initialize current plan for demo purposes
+  useEffect(() => {
+    if (!currentPlan && user) {
+      setCurrentPlan({
+        id: 1,
+        planName: "Sample IC Plan",
+        planType: "Goal Attainment Plan",
+        description: "Demo plan for versioning",
+        currentVersion: 1,
+        status: "draft",
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString()
+      });
+    }
+  }, [user, currentPlan]);
+
+  // Versioning API Queries with proper fetch functions
+  const { data: planVersions } = useQuery({
+    queryKey: ['plan-versions', currentPlan?.id],
+    queryFn: async (): Promise<PlanVersion[]> => {
+      const response = await fetch(`/api/plans/${currentPlan?.id}/versions`);
+      if (!response.ok) throw new Error('Failed to fetch versions');
+      return response.json();
+    },
+    enabled: !!currentPlan?.id
+  });
+
+  const { data: auditLog } = useQuery({
+    queryKey: ['audit-log', currentPlan?.id],
+    queryFn: async (): Promise<AuditLogEntry[]> => {
+      const response = await fetch(`/api/plans/${currentPlan?.id}/audit`);
+      if (!response.ok) throw new Error('Failed to fetch audit log');
+      return response.json();
+    },
+    enabled: !!currentPlan?.id
+  });
+
+  // Version management mutations
+  const createSnapshotMutation = useMutation({
+    mutationFn: async (data: { planId: number; versionName: string; description: string }) => {
+      const response = await fetch(`/api/plans/${data.planId}/snapshot`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          versionName: data.versionName,
+          changeDescription: data.description,
+          configurationData: planConfig,
+          payCurveData: payCurve,
+          simulationResults: simulatorData,
+          isSnapshot: true
+        })
+      });
+      if (!response.ok) throw new Error('Failed to create snapshot');
+      return response.json();
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['plan-versions'] });
+      toast({ title: 'Snapshot Created', description: 'Plan version saved successfully' });
+    }
+  });
+
+  const restoreVersionMutation = useMutation({
+    mutationFn: async (versionId: number) => {
+      const response = await fetch(`/api/plans/restore/${versionId}`, { 
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' }
+      });
+      if (!response.ok) throw new Error('Failed to restore version');
+      return response.json();
+    },
+    onSuccess: (data: PlanVersion) => {
+      if (data.configurationData) {
+        setPlanConfig(data.configurationData);
+      }
+      if (data.payCurveData) {
+        setPayCurve(data.payCurveData);
+      }
+      if (data.simulationResults) {
+        setSimulatorData(data.simulationResults);
+      }
+      queryClient.invalidateQueries({ queryKey: ['plan-versions'] });
+      toast({ title: 'Version Restored', description: 'Plan restored to selected version' });
+    }
+  });
+
+  // Auto-save configuration changes and log them for audit trail
+  useEffect(() => {
+    if (currentPlan && user) {
+      const logInteraction = async (field: string, oldValue: any, newValue: any) => {
+        try {
+          await fetch(`/api/plans/${currentPlan.id}/log-interaction`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              action: 'modify',
+              actionCategory: 'plan_config',
+              fieldChanged: field,
+              oldValue: JSON.stringify(oldValue),
+              newValue: JSON.stringify(newValue),
+              userMessage: `Changed ${field}`,
+              aiResponse: `Configuration updated: ${field} changed from ${oldValue} to ${newValue}`
+            })
+          });
+        } catch (error) {
+          console.error('Failed to log interaction:', error);
+        }
+      };
+
+      // Track configuration changes
+      const configStringified = JSON.stringify(planConfig);
+      if (configStringified !== '{"planType":"","payoutCap":false,"budgetConstraints":"","roleFactors":[],"ethicalPrioritization":false,"accelerators":false,"decelerators":false}') {
+        logInteraction('planConfig', 'previous_config', planConfig);
+      }
+    }
+  }, [planConfig, currentPlan, user]);
 
   // Scroll to bottom of messages
   useEffect(() => {
@@ -188,18 +370,13 @@ export default function IcPlanConfiguration() {
     
     // Entity extraction
     const entities: {
-      planType: string | null,
-      percentage: number | null,
-      threshold: number | null,
-      cap: number | null,
-      budget: string | null,
+      planType?: string,
+      percentage?: number,
+      threshold?: number,
+      cap?: number,
+      budget?: string,
       measures: string[]
     } = {
-      planType: null,
-      percentage: null,
-      threshold: null,
-      cap: null,
-      budget: null,
       measures: []
     };
     
@@ -855,6 +1032,185 @@ Configuration Progress: ${configurationProgress}%
           </div>
         </div>
         <div className="flex items-center space-x-4">
+          {/* Versioning Controls */}
+          <div className="flex items-center space-x-2">
+            <Dialog open={showVersionHistory} onOpenChange={setShowVersionHistory}>
+              <DialogTrigger asChild>
+                <Button variant="outline" size="sm" className="bg-purple-600/20 border-purple-500 text-purple-400 hover:bg-purple-600/30">
+                  <History className="h-4 w-4 mr-2" />
+                  Version History
+                </Button>
+              </DialogTrigger>
+              <DialogContent className="max-w-4xl max-h-[80vh] overflow-y-auto">
+                <DialogHeader>
+                  <DialogTitle className="flex items-center">
+                    <GitBranch className="h-5 w-5 mr-2 text-purple-600" />
+                    Complete Version History
+                  </DialogTitle>
+                  <DialogDescription>
+                    View all plan versions, compare changes, and restore any previous version
+                  </DialogDescription>
+                </DialogHeader>
+                <div className="space-y-4">
+                  {planVersions?.map((version) => (
+                    <Card key={version.id} className="border-l-4 border-l-purple-500">
+                      <CardHeader className="pb-3">
+                        <div className="flex items-center justify-between">
+                          <div className="flex items-center space-x-3">
+                            <Badge variant={version.isSnapshot ? "default" : "secondary"}>
+                              v{version.versionNumber}
+                              {version.isSnapshot && <Camera className="h-3 w-3 ml-1" />}
+                            </Badge>
+                            <div>
+                              <h4 className="font-semibold">
+                                {version.versionName || `Version ${version.versionNumber}`}
+                              </h4>
+                              <p className="text-sm text-gray-600 dark:text-gray-400">
+                                {new Date(version.createdAt).toLocaleString()}
+                              </p>
+                            </div>
+                          </div>
+                          <div className="flex items-center space-x-2">
+                            <Button 
+                              variant="outline" 
+                              size="sm"
+                              onClick={() => setSelectedVersion(version)}
+                            >
+                              <Eye className="h-4 w-4 mr-1" />
+                              View
+                            </Button>
+                            <Button 
+                              variant="outline" 
+                              size="sm"
+                              onClick={() => restoreVersionMutation.mutate(version.id)}
+                              disabled={restoreVersionMutation.isPending}
+                            >
+                              <RotateCcw className="h-4 w-4 mr-1" />
+                              Restore
+                            </Button>
+                          </div>
+                        </div>
+                      </CardHeader>
+                      <CardContent className="pt-0">
+                        <p className="text-sm text-gray-700 dark:text-gray-300">
+                          {version.changeDescription || version.summary || "No description provided"}
+                        </p>
+                        {version.configurationData && (
+                          <div className="mt-2 text-xs text-gray-500">
+                            Plan Type: {version.configurationData.planType} | 
+                            Cap: {version.configurationData.payoutCap ? `${version.configurationData.capPercentage}%` : 'None'}
+                          </div>
+                        )}
+                      </CardContent>
+                    </Card>
+                  ))}
+                </div>
+              </DialogContent>
+            </Dialog>
+            
+            <Dialog open={showAuditTrail} onOpenChange={setShowAuditTrail}>
+              <DialogTrigger asChild>
+                <Button variant="outline" size="sm" className="bg-orange-600/20 border-orange-500 text-orange-400 hover:bg-orange-600/30">
+                  <Shield className="h-4 w-4 mr-2" />
+                  Audit Trail
+                </Button>
+              </DialogTrigger>
+              <DialogContent className="max-w-5xl max-h-[80vh] overflow-y-auto">
+                <DialogHeader>
+                  <DialogTitle className="flex items-center">
+                    <FileText className="h-5 w-5 mr-2 text-orange-600" />
+                    Detailed Audit Trail
+                  </DialogTitle>
+                  <DialogDescription>
+                    Complete chronological log of all changes for compliance and transparency
+                  </DialogDescription>
+                </DialogHeader>
+                <ScrollArea className="h-[500px]">
+                  <div className="space-y-3">
+                    {auditLog?.map((entry) => (
+                      <Card key={entry.id} className="border-l-4 border-l-orange-500">
+                        <CardContent className="p-4">
+                          <div className="flex items-start justify-between">
+                            <div className="flex-1">
+                              <div className="flex items-center space-x-2 mb-2">
+                                <Badge variant="outline" className="text-xs">
+                                  {entry.action.toUpperCase()}
+                                </Badge>
+                                <Badge variant="secondary" className="text-xs">
+                                  {entry.actionCategory}
+                                </Badge>
+                                <span className="text-xs text-gray-500">
+                                  by {entry.username}
+                                </span>
+                              </div>
+                              
+                              {entry.fieldChanged && (
+                                <div className="text-sm mb-2">
+                                  <strong>Field:</strong> {entry.fieldChanged}
+                                  {entry.oldValue && entry.newValue && (
+                                    <div className="mt-1 p-2 bg-gray-50 dark:bg-gray-800 rounded text-xs">
+                                      <div className="text-red-600 dark:text-red-400">
+                                        <strong>From:</strong> {entry.oldValue}
+                                      </div>
+                                      <div className="text-green-600 dark:text-green-400">
+                                        <strong>To:</strong> {entry.newValue}
+                                      </div>
+                                    </div>
+                                  )}
+                                </div>
+                              )}
+                              
+                              {entry.userMessage && (
+                                <div className="text-sm mb-1">
+                                  <strong>User Request:</strong> "{entry.userMessage}"
+                                </div>
+                              )}
+                              
+                              {entry.aiResponse && (
+                                <div className="text-sm text-blue-600 dark:text-blue-400">
+                                  <strong>AI Response:</strong> {entry.aiResponse}
+                                </div>
+                              )}
+                            </div>
+                            
+                            <div className="text-right text-xs text-gray-500 ml-4">
+                              <div>{new Date(entry.timestamp).toLocaleString()}</div>
+                              <div className="flex items-center mt-1">
+                                <Clock className="h-3 w-3 mr-1" />
+                                {entry.changeSource}
+                              </div>
+                            </div>
+                          </div>
+                        </CardContent>
+                      </Card>
+                    ))}
+                  </div>
+                </ScrollArea>
+              </DialogContent>
+            </Dialog>
+            
+            <Button
+              variant="outline"
+              size="sm"
+              className="bg-green-600/20 border-green-500 text-green-400 hover:bg-green-600/30"
+              onClick={() => {
+                const versionName = prompt("Enter snapshot name:");
+                const description = prompt("Enter description:");
+                if (versionName && description && currentPlan) {
+                  createSnapshotMutation.mutate({
+                    planId: currentPlan.id,
+                    versionName,
+                    description
+                  });
+                }
+              }}
+            >
+              <Camera className="h-4 w-4 mr-2" />
+              Create Snapshot
+            </Button>
+          </div>
+          
+          <Separator orientation="vertical" className="h-6" />
           <ThemeToggle />
           <Link href="/">
             <Button variant="ghost" className="text-gray-600 dark:text-gray-300">

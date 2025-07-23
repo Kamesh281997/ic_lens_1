@@ -15,9 +15,13 @@ import {
   quotaDataDetailed, 
   payCurveGoalAttainment, 
   payCurveGoalRankAttainment,
-  finalPayoutResults
+  finalPayoutResults,
+  enhancedIcPlans,
+  icPlanVersions,
+  icPlanAuditLog,
+  icPlanComponents
 } from "@shared/schema";
-import { eq } from "drizzle-orm";
+import { eq, desc } from "drizzle-orm";
 
 // Configure multer for file uploads
 const upload = multer({ 
@@ -916,6 +920,220 @@ Please provide detailed insights focusing on sales performance, compensation eff
     } catch (error) {
       console.error("Error fetching IC plans:", error);
       res.status(500).json({ message: "Failed to fetch IC plans" });
+    }
+  });
+
+  // Enhanced IC Plans with Versioning API Endpoints
+  
+  // Get plan versions
+  app.get("/api/plans/:planId/versions", async (req, res) => {
+    try {
+      const userId = (req.session as any)?.userId;
+      if (!userId) {
+        return res.status(401).json({ message: "Not authenticated" });
+      }
+
+      const planId = parseInt(req.params.planId);
+      const versions = await db
+        .select()
+        .from(icPlanVersions)
+        .where(eq(icPlanVersions.planId, planId))
+        .orderBy(desc(icPlanVersions.versionNumber));
+
+      res.json(versions);
+    } catch (error) {
+      console.error("Error fetching plan versions:", error);
+      res.status(500).json({ message: "Failed to fetch plan versions" });
+    }
+  });
+
+  // Get audit log for a plan
+  app.get("/api/plans/:planId/audit", async (req, res) => {
+    try {
+      const userId = (req.session as any)?.userId;
+      if (!userId) {
+        return res.status(401).json({ message: "Not authenticated" });
+      }
+
+      const planId = parseInt(req.params.planId);
+      const auditEntries = await db
+        .select()
+        .from(icPlanAuditLog)
+        .where(eq(icPlanAuditLog.planId, planId))
+        .orderBy(desc(icPlanAuditLog.timestamp));
+
+      res.json(auditEntries);
+    } catch (error) {
+      console.error("Error fetching audit log:", error);
+      res.status(500).json({ message: "Failed to fetch audit log" });
+    }
+  });
+
+  // Create snapshot
+  app.post("/api/plans/:planId/snapshot", async (req, res) => {
+    try {
+      const userId = (req.session as any)?.userId;
+      const username = (req.session as any)?.user?.username;
+      if (!userId) {
+        return res.status(401).json({ message: "Not authenticated" });
+      }
+
+      const planId = parseInt(req.params.planId);
+      const { versionName, changeDescription, configurationData, payCurveData, simulationResults, isSnapshot } = req.body;
+
+      // Get current max version number
+      const currentVersions = await db
+        .select()
+        .from(icPlanVersions)
+        .where(eq(icPlanVersions.planId, planId))
+        .orderBy(desc(icPlanVersions.versionNumber))
+        .limit(1);
+
+      const nextVersionNumber = currentVersions.length > 0 ? currentVersions[0].versionNumber + 1 : 1;
+
+      // Create new version
+      const [newVersion] = await db
+        .insert(icPlanVersions)
+        .values({
+          planId,
+          versionNumber: nextVersionNumber,
+          versionName,
+          configurationData,
+          payCurveData,
+          simulationResults,
+          changeDescription,
+          createdBy: userId,
+          isSnapshot: isSnapshot || true
+        })
+        .returning();
+
+      // Log the snapshot creation in audit trail
+      await db.insert(icPlanAuditLog).values({
+        planId,
+        versionId: newVersion.id,
+        userId,
+        username: username || 'Unknown',
+        action: 'snapshot',
+        actionCategory: 'version_control',
+        changeSource: 'manual_form',
+        userMessage: `Created snapshot: ${versionName}`,
+        aiResponse: `Snapshot "${versionName}" created successfully with version ${nextVersionNumber}`,
+        ipAddress: req.ip,
+        userAgent: req.get('User-Agent') || '',
+        sessionId: req.sessionID
+      });
+
+      res.json(newVersion);
+    } catch (error) {
+      console.error("Error creating snapshot:", error);
+      res.status(500).json({ message: "Failed to create snapshot" });
+    }
+  });
+
+  // Restore version
+  app.post("/api/plans/restore/:versionId", async (req, res) => {
+    try {
+      const userId = (req.session as any)?.userId;
+      const username = (req.session as any)?.user?.username;
+      if (!userId) {
+        return res.status(401).json({ message: "Not authenticated" });
+      }
+
+      const versionId = parseInt(req.params.versionId);
+      
+      // Get the version to restore
+      const [versionToRestore] = await db
+        .select()
+        .from(icPlanVersions)
+        .where(eq(icPlanVersions.id, versionId));
+
+      if (!versionToRestore) {
+        return res.status(404).json({ message: "Version not found" });
+      }
+
+      // Create a new version from the restored one
+      const currentVersions = await db
+        .select()
+        .from(icPlanVersions)
+        .where(eq(icPlanVersions.planId, versionToRestore.planId))
+        .orderBy(desc(icPlanVersions.versionNumber))
+        .limit(1);
+
+      const nextVersionNumber = currentVersions.length > 0 ? currentVersions[0].versionNumber + 1 : 1;
+
+      const [restoredVersion] = await db
+        .insert(icPlanVersions)
+        .values({
+          planId: versionToRestore.planId,
+          versionNumber: nextVersionNumber,
+          versionName: `Restored from v${versionToRestore.versionNumber}`,
+          configurationData: versionToRestore.configurationData,
+          payCurveData: versionToRestore.payCurveData,
+          simulationResults: versionToRestore.simulationResults,
+          changeDescription: `Restored from version ${versionToRestore.versionNumber}: ${versionToRestore.versionName || 'Unnamed version'}`,
+          createdBy: userId,
+          isSnapshot: false
+        })
+        .returning();
+
+      // Log the restoration in audit trail
+      await db.insert(icPlanAuditLog).values({
+        planId: versionToRestore.planId,
+        versionId: restoredVersion.id,
+        userId,
+        username: username || 'Unknown',
+        action: 'restore',
+        actionCategory: 'version_control',
+        oldValue: `Current configuration`,
+        newValue: `Restored to version ${versionToRestore.versionNumber}`,
+        changeSource: 'manual_form',
+        userMessage: `Restore version ${versionToRestore.versionNumber}`,
+        aiResponse: `Successfully restored plan to version ${versionToRestore.versionNumber}`,
+        ipAddress: req.ip,
+        userAgent: req.get('User-Agent') || '',
+        sessionId: req.sessionID
+      });
+
+      res.json(versionToRestore);
+    } catch (error) {
+      console.error("Error restoring version:", error);
+      res.status(500).json({ message: "Failed to restore version" });
+    }
+  });
+
+  // Log AI assistant interactions for audit trail
+  app.post("/api/plans/:planId/log-interaction", async (req, res) => {
+    try {
+      const userId = (req.session as any)?.userId;
+      const username = (req.session as any)?.user?.username;
+      if (!userId) {
+        return res.status(401).json({ message: "Not authenticated" });
+      }
+
+      const planId = parseInt(req.params.planId);
+      const { action, actionCategory, fieldChanged, oldValue, newValue, userMessage, aiResponse } = req.body;
+
+      await db.insert(icPlanAuditLog).values({
+        planId,
+        userId,
+        username: username || 'Unknown',
+        action,
+        actionCategory,
+        fieldChanged,
+        oldValue,
+        newValue,
+        changeSource: 'ai_assistant',
+        userMessage,
+        aiResponse,
+        ipAddress: req.ip,
+        userAgent: req.get('User-Agent') || '',
+        sessionId: req.sessionID
+      });
+
+      res.json({ success: true });
+    } catch (error) {
+      console.error("Error logging interaction:", error);
+      res.status(500).json({ message: "Failed to log interaction" });
     }
   });
 

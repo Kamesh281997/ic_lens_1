@@ -1,4 +1,4 @@
-import { pgTable, text, serial, integer, boolean, timestamp, decimal, jsonb } from "drizzle-orm/pg-core";
+import { pgTable, text, serial, integer, boolean, timestamp, decimal, jsonb, varchar } from "drizzle-orm/pg-core";
 import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod";
 
@@ -96,6 +96,69 @@ export const finalPayoutResults = pgTable("final_payout_results", {
   notes: text("notes").notNull().default(""),
   calculatedAt: timestamp("calculated_at").defaultNow().notNull(),
   createdAt: timestamp("created_at").defaultNow().notNull(),
+});
+
+// Enhanced IC Plans table with versioning
+export const enhancedIcPlans = pgTable('enhanced_ic_plans', {
+  id: serial('id').primaryKey(),
+  userId: integer('user_id').notNull().references(() => users.id),
+  planName: varchar('plan_name', { length: 255 }).notNull(),
+  planType: varchar('plan_type', { length: 100 }).notNull(),
+  description: text('description'),
+  currentVersion: integer('current_version').notNull().default(1),
+  status: varchar('status', { length: 50 }).notNull().default('draft'), // draft, active, archived
+  createdAt: timestamp('created_at').defaultNow(),
+  updatedAt: timestamp('updated_at').defaultNow()
+});
+
+// Version History for IC Plans
+export const icPlanVersions = pgTable('ic_plan_versions', {
+  id: serial('id').primaryKey(),
+  planId: integer('plan_id').notNull().references(() => enhancedIcPlans.id, { onDelete: 'cascade' }),
+  versionNumber: integer('version_number').notNull(),
+  versionName: varchar('version_name', { length: 255 }),
+  configurationData: jsonb('configuration_data').notNull(), // Complete plan configuration
+  payCurveData: jsonb('pay_curve_data'), // Pay curve configuration
+  simulationResults: jsonb('simulation_results'), // What-if simulation results
+  summary: text('summary'), // Human-readable summary of this version
+  changeDescription: text('change_description'), // What changed from previous version
+  createdBy: integer('created_by').notNull().references(() => users.id),
+  createdAt: timestamp('created_at').defaultNow(),
+  isSnapshot: boolean('is_snapshot').default(false) // Manual snapshots vs auto-saves
+});
+
+// Detailed Audit Trail
+export const icPlanAuditLog = pgTable('ic_plan_audit_log', {
+  id: serial('id').primaryKey(),
+  planId: integer('plan_id').notNull().references(() => enhancedIcPlans.id, { onDelete: 'cascade' }),
+  versionId: integer('version_id').references(() => icPlanVersions.id, { onDelete: 'cascade' }),
+  userId: integer('user_id').notNull().references(() => users.id),
+  username: varchar('username', { length: 255 }).notNull(),
+  action: varchar('action', { length: 100 }).notNull(), // create, modify, delete, snapshot, restore
+  actionCategory: varchar('action_category', { length: 50 }).notNull(), // plan_config, pay_curve, simulation, metadata
+  fieldChanged: varchar('field_changed', { length: 255 }), // Specific field that changed
+  oldValue: text('old_value'), // Previous value (JSON string if complex)
+  newValue: text('new_value'), // New value (JSON string if complex)
+  changeSource: varchar('change_source', { length: 50 }).notNull(), // ai_assistant, manual_form, import, api
+  userMessage: text('user_message'), // Original user request that triggered change
+  aiResponse: text('ai_response'), // AI assistant's interpretation/response
+  ipAddress: varchar('ip_address', { length: 45 }), // For security tracking
+  userAgent: text('user_agent'), // Browser/client information
+  sessionId: varchar('session_id', { length: 255 }), // Session tracking
+  timestamp: timestamp('timestamp').defaultNow()
+});
+
+// Plan Configuration Components (for granular tracking)
+export const icPlanComponents = pgTable('ic_plan_components', {
+  id: serial('id').primaryKey(),
+  planId: integer('plan_id').notNull().references(() => enhancedIcPlans.id, { onDelete: 'cascade' }),
+  versionId: integer('version_id').notNull().references(() => icPlanVersions.id, { onDelete: 'cascade' }),
+  componentType: varchar('component_type', { length: 50 }).notNull(), // threshold, cap, accelerator, measure
+  componentName: varchar('component_name', { length: 255 }).notNull(),
+  value: text('value').notNull(), // JSON string for complex values
+  displayOrder: integer('display_order').default(0),
+  isActive: boolean('is_active').default(true),
+  createdAt: timestamp('created_at').defaultNow()
 });
 
 export const insertUserSchema = createInsertSchema(users).pick({
@@ -220,6 +283,64 @@ export type InsertFinalPayoutResult = z.infer<typeof insertFinalPayoutResultSche
 
 export type FileUploadData = z.infer<typeof fileUploadSchema>;
 export type IcPlanSelectionData = z.infer<typeof icPlanSelectionSchema>;
+
+// Enhanced IC Plan Versioning Schemas
+export const insertEnhancedIcPlanSchema = createInsertSchema(enhancedIcPlans).pick({
+  planName: true,
+  planType: true,
+  description: true,
+});
+
+export const insertIcPlanVersionSchema = createInsertSchema(icPlanVersions).pick({
+  planId: true,
+  versionNumber: true,
+  versionName: true,
+  configurationData: true,
+  payCurveData: true,
+  simulationResults: true,
+  summary: true,
+  changeDescription: true,
+  createdBy: true,
+  isSnapshot: true
+});
+
+export const insertIcPlanAuditLogSchema = createInsertSchema(icPlanAuditLog).pick({
+  planId: true,
+  versionId: true,
+  userId: true,
+  username: true,
+  action: true,
+  actionCategory: true,
+  fieldChanged: true,
+  oldValue: true,
+  newValue: true,
+  changeSource: true,
+  userMessage: true,
+  aiResponse: true,
+  ipAddress: true,
+  userAgent: true,
+  sessionId: true
+});
+
+export const insertIcPlanComponentSchema = createInsertSchema(icPlanComponents).pick({
+  planId: true,
+  versionId: true,
+  componentType: true,
+  componentName: true,
+  value: true,
+  displayOrder: true,
+  isActive: true
+});
+
+// Enhanced IC Plan Types
+export type EnhancedIcPlan = typeof enhancedIcPlans.$inferSelect;
+export type InsertEnhancedIcPlan = z.infer<typeof insertEnhancedIcPlanSchema>;
+export type IcPlanVersion = typeof icPlanVersions.$inferSelect;
+export type InsertIcPlanVersion = z.infer<typeof insertIcPlanVersionSchema>;
+export type IcPlanAuditLog = typeof icPlanAuditLog.$inferSelect;
+export type InsertIcPlanAuditLog = z.infer<typeof insertIcPlanAuditLogSchema>;
+export type IcPlanComponent = typeof icPlanComponents.$inferSelect;
+export type InsertIcPlanComponent = z.infer<typeof insertIcPlanComponentSchema>;
 
 // Rep Roster table
 export const repRoster = pgTable("rep_roster", {
