@@ -400,18 +400,18 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Payout calculation endpoints
   app.get("/api/payout/results", async (req, res) => {
     try {
-      if (!req.session.userId) {
+      if (!(req.session as any).userId) {
         return res.status(401).json({ message: "Not authenticated" });
       }
 
       // Get payout results from database
-      const results = await db.select().from(finalPayoutResults).where(eq(finalPayoutResults.userId, req.session.userId));
+      const results = await db.select().from(finalPayoutResults).where(eq(finalPayoutResults.userId, (req.session as any).userId));
       
       // If no results exist, create some sample data
       if (results.length === 0) {
         const sampleData = [
           {
-            userId: req.session.userId,
+            userId: (req.session as any).userId,
             repId: "10000000",
             repName: "Michael Garcia",
             region: "North America",
@@ -425,7 +425,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
             notes: "Exceeded quota by 25%"
           },
           {
-            userId: req.session.userId,
+            userId: (req.session as any).userId,
             repId: "10000001",
             repName: "Sarah Johnson",
             region: "Europe",
@@ -439,7 +439,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
             notes: "Strong performance in challenging market"
           },
           {
-            userId: req.session.userId,
+            userId: (req.session as any).userId,
             repId: "10000002",
             repName: "David Chen",
             region: "Asia Pacific",
@@ -453,7 +453,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
             notes: "Top performer in region"
           },
           {
-            userId: req.session.userId,
+            userId: (req.session as any).userId,
             repId: "10000003",
             repName: "Emily Rodriguez",
             region: "South America",
@@ -469,7 +469,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         ];
 
         await db.insert(finalPayoutResults).values(sampleData);
-        const newResults = await db.select().from(finalPayoutResults).where(eq(finalPayoutResults.userId, req.session.userId));
+        const newResults = await db.select().from(finalPayoutResults).where(eq(finalPayoutResults.userId, (req.session as any).userId));
         
         // Convert to frontend format
         const formattedResults = newResults.map(result => ({
@@ -513,17 +513,17 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.post("/api/payout/calculate", async (req, res) => {
     try {
-      if (!req.session.userId) {
+      if (!(req.session as any).userId) {
         return res.status(401).json({ message: "Not authenticated" });
       }
 
       // Clear existing payout results for this user
-      await db.delete(finalPayoutResults).where(eq(finalPayoutResults.userId, req.session.userId));
+      await db.delete(finalPayoutResults).where(eq(finalPayoutResults.userId, (req.session as any).userId));
 
       // Calculate and insert new payout results
       const sampleCalculatedData = [
         {
-          userId: req.session.userId,
+          userId: (req.session as any).userId,
           repId: "10000000",
           repName: "Michael Garcia",
           region: "North America",
@@ -537,7 +537,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
           notes: "Exceeded quota by 25%"
         },
         {
-          userId: req.session.userId,
+          userId: (req.session as any).userId,
           repId: "10000001",
           repName: "Sarah Johnson",
           region: "Europe",
@@ -551,7 +551,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
           notes: "Strong performance in challenging market"
         },
         {
-          userId: req.session.userId,
+          userId: (req.session as any).userId,
           repId: "10000002",
           repName: "David Chen",
           region: "Asia Pacific",
@@ -565,7 +565,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
           notes: "Top performer in region"
         },
         {
-          userId: req.session.userId,
+          userId: (req.session as any).userId,
           repId: "10000003",
           repName: "Emily Rodriguez",
           region: "South America",
@@ -598,12 +598,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.get("/api/payout/export", async (req, res) => {
     try {
-      if (!req.session.userId) {
+      if (!(req.session as any).userId) {
         return res.status(401).json({ message: "Not authenticated" });
       }
 
       // Fetch payout results from database
-      const results = await db.select().from(finalPayoutResults).where(eq(finalPayoutResults.userId, req.session.userId));
+      const results = await db.select().from(finalPayoutResults).where(eq(finalPayoutResults.userId, (req.session as any).userId));
       
       if (results.length === 0) {
         return res.status(404).json({ message: "No payout results found. Please calculate payouts first." });
@@ -693,19 +693,19 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // AI Chat endpoint for comprehensive RAG analytics using Hugging Face
   app.post("/api/ai/chat", async (req, res) => {
     try {
-      if (!req.session.userId) {
+      if (!(req.session as any).userId) {
         return res.status(401).json({ message: "Not authenticated" });
       }
 
       const { message, context } = req.body;
 
       // Fetch comprehensive data from all tables for RAG context
-      const userPayoutResults = await db.select().from(finalPayoutResults).where(eq(finalPayoutResults.userId, req.session.userId));
-      const userHierarchy = await db.select().from(hierarchy).where(eq(hierarchy.userId, req.session.userId));
-      const userRepRoster = await db.select().from(repRoster).where(eq(repRoster.userId, req.session.userId));
-      const userRepAssignments = await db.select().from(repAssignment).where(eq(repAssignment.userId, req.session.userId));
-      const userSalesData = await db.select().from(salesDataDetailed).where(eq(salesDataDetailed.userId, req.session.userId));
-      const userQuotaData = await db.select().from(quotaDataDetailed).where(eq(quotaDataDetailed.userId, req.session.userId));
+      const userPayoutResults = await db.select().from(finalPayoutResults).where(eq(finalPayoutResults.userId, (req.session as any).userId));
+      const userHierarchy = await db.select().from(hierarchy).where(eq(hierarchy.userId, (req.session as any).userId));
+      const userRepRoster = await db.select().from(repRoster).where(eq(repRoster.userId, (req.session as any).userId));
+      const userRepAssignments = await db.select().from(repAssignment).where(eq(repAssignment.userId, (req.session as any).userId));
+      const userSalesData = await db.select().from(salesDataDetailed).where(eq(salesDataDetailed.userId, (req.session as any).userId));
+      const userQuotaData = await db.select().from(quotaDataDetailed).where(eq(quotaDataDetailed.userId, (req.session as any).userId));
       
       // Create comprehensive RAG context with all available data
       const aiContext = `You are an advanced AI analytics assistant for ICLens, an incentive compensation platform. Analyze this data and provide intelligent insights:
@@ -722,7 +722,7 @@ ${userRepRoster.map(rep =>
 
 TERRITORY HIERARCHY (${userHierarchy.length} records):
 ${userHierarchy.map(h => 
-  `Territory: ${h.terrName} (${h.terrId}) | Role: ${h.roleCode} | L1 Parent: ${h.level1ParentName} | L2 Parent: ${h.level2ParentName}`
+  `Territory: ${h.terrName} (${h.terrId}) | Role: ${h.roleCd} | L1 Parent: ${h.level1ParentName} | L2 Parent: ${h.level2ParentName}`
 ).join('\n')}
 
 REP TERRITORY ASSIGNMENTS (${userRepAssignments.length} records):
@@ -732,12 +732,12 @@ ${userRepAssignments.map(assignment =>
 
 SALES DATA DETAILED (${userSalesData.length} records):
 ${userSalesData.slice(0, 10).map(sale => 
-  `Rep: ${sale.repId} | Prevnar20: $${sale.prevnar20SalesAmount} | Ibrance: $${sale.ibranceSalesAmount} | Eliquis: $${sale.eliquisSalesAmount} | Total: $${sale.totalSales}`
+  `Territory: ${sale.territoryId} | Product: ${sale.productId} | Channel: ${sale.channel} | Prod01: $${sale.prod01 || 0} | Mkt01: $${sale.mkt01 || 0}`
 ).join('\n')}${userSalesData.length > 10 ? `\n... and ${userSalesData.length - 10} more sales records` : ''}
 
 QUOTA DATA DETAILED (${userQuotaData.length} records):
 ${userQuotaData.slice(0, 10).map(quota => 
-  `Rep: ${quota.repId} | Prevnar20 Quota: $${quota.prevnar20QuotaAmount} | Ibrance Quota: $${quota.ibranceQuotaAmount} | Total Quota: $${quota.totalQuota}`
+  `Territory: ${quota.territoryId} | Product: ${quota.productId} | Channel: ${quota.channel} | Prod01 Quota: $${quota.prod01 || 0} | Mkt01 Quota: $${quota.mkt01 || 0}`
 ).join('\n')}${userQuotaData.length > 10 ? `\n... and ${userQuotaData.length - 10} more quota records` : ''}
 
 ANALYTICS INSIGHTS:
@@ -789,7 +789,7 @@ Please provide detailed insights focusing on sales performance, compensation eff
       
       // Fallback to local analysis on any error
       try {
-        const userPayoutResults = await db.select().from(finalPayoutResults).where(eq(finalPayoutResults.userId, req.session.userId));
+        const userPayoutResults = await db.select().from(finalPayoutResults).where(eq(finalPayoutResults.userId, (req.session as any).userId));
         const localAnalysis = generateLocalAnalysis(userPayoutResults, req.body.message, req.body.context);
         res.json({ response: localAnalysis });
       } catch (fallbackError) {
@@ -821,7 +821,7 @@ Please provide detailed insights focusing on sales performance, compensation eff
     }, {} as Record<string, any>);
 
     const topRegion = Object.entries(regionAnalysis)
-      .sort(([,a], [,b]) => (b.totalAttainment / b.count) - (a.totalAttainment / a.count))[0];
+      .sort(([,a], [,b]) => ((b as any).totalAttainment / (b as any).count) - ((a as any).totalAttainment / (a as any).count))[0];
 
     let analysis = `Based on your comprehensive IC data analysis:\n\n`;
     
@@ -834,8 +834,8 @@ Please provide detailed insights focusing on sales performance, compensation eff
 
     if (topRegion) {
       analysis += `🏆 **Top Performing Region:**\n`;
-      analysis += `• ${topRegion[0]} with ${(topRegion[1].totalAttainment / topRegion[1].count).toFixed(1)}% avg attainment\n`;
-      analysis += `• Total payout: $${topRegion[1].totalPayout.toLocaleString()}\n\n`;
+      analysis += `• ${topRegion[0]} with ${((topRegion[1] as any).totalAttainment / (topRegion[1] as any).count).toFixed(1)}% avg attainment\n`;
+      analysis += `• Total payout: $${(topRegion[1] as any).totalPayout.toLocaleString()}\n\n`;
     }
 
     if (message.toLowerCase().includes('trend') || message.toLowerCase().includes('forecast')) {
@@ -848,7 +848,7 @@ Please provide detailed insights focusing on sales performance, compensation eff
     if (message.toLowerCase().includes('territory') || message.toLowerCase().includes('region')) {
       analysis += `🗺️ **Territory Insights:**\n`;
       Object.entries(regionAnalysis).forEach(([region, data]) => {
-        analysis += `• ${region}: ${data.count} reps, ${(data.totalAttainment / data.count).toFixed(1)}% avg attainment\n`;
+        analysis += `• ${region}: ${(data as any).count} reps, ${((data as any).totalAttainment / (data as any).count).toFixed(1)}% avg attainment\n`;
       });
       analysis += `\n`;
     }
@@ -865,7 +865,7 @@ Please provide detailed insights focusing on sales performance, compensation eff
   // IC Plan Configuration endpoints
   app.post("/api/ic-plans", async (req, res) => {
     try {
-      if (!req.session.userId) {
+      if (!(req.session as any).userId) {
         return res.status(401).json({ message: "Not authenticated" });
       }
 
@@ -875,7 +875,7 @@ Please provide detailed insights focusing on sales performance, compensation eff
       // For now, we'll just return a success response
       const savedPlan = {
         id: Date.now().toString(),
-        userId: req.session.userId,
+        userId: (req.session as any).userId,
         ...planConfig,
         createdAt: new Date().toISOString(),
         status: "active"
@@ -893,7 +893,7 @@ Please provide detailed insights focusing on sales performance, compensation eff
 
   app.get("/api/ic-plans", async (req, res) => {
     try {
-      if (!req.session.userId) {
+      if (!(req.session as any).userId) {
         return res.status(401).json({ message: "Not authenticated" });
       }
 
@@ -902,7 +902,7 @@ Please provide detailed insights focusing on sales performance, compensation eff
       const plans = [
         {
           id: "1",
-          userId: req.session.userId,
+          userId: (req.session as any).userId,
           planType: "Goal Attainment with Accelerators",
           payoutCap: true,
           capPercentage: 150,
