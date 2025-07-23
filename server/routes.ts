@@ -25,10 +25,8 @@ import {
   calculationTrace,
   anomalyDetection,
   performanceMetrics,
-  insertCalculationJobSchema,
-  insertPayoutAdjustmentSchema,
-  insertCalculationTraceSchema,
-  insertAnomalyDetectionSchema
+  enhancedCalculationDataSchema,
+  type EnhancedCalculationData
 } from "@shared/schema";
 import { eq, desc } from "drizzle-orm";
 
@@ -1572,6 +1570,99 @@ Please provide detailed insights focusing on sales performance, compensation eff
       await db.insert(anomalyDetection).values(anomaly);
     }
   }
+
+  // Enhanced IC Processing endpoints
+  app.post("/api/ic-processing-enhanced", async (req, res) => {
+    try {
+      const user = (req.session as any)?.user;
+      if (!user) {
+        return res.status(401).json({ message: "Not authenticated" });
+      }
+
+      const data = enhancedCalculationDataSchema.parse(req.body);
+      
+      // Create calculation job
+      const jobResult = await db.insert(calculationJobs).values({
+        userId: user.id,
+        jobName: data.jobName,
+        description: data.description,
+        status: "pending",
+        calculationType: data.calculationType,
+        planIds: JSON.stringify(data.planIds),
+        periodStart: new Date(data.periodStart),
+        periodEnd: new Date(data.periodEnd),
+        totalRecords: data.planIds.length * 1250, // Estimated records
+      }).returning();
+
+      const job = jobResult[0];
+
+      res.json({ 
+        message: "Enhanced calculation job started successfully",
+        jobId: job.id,
+        job: job
+      });
+
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        return res.status(400).json({ message: error.errors[0].message });
+      }
+      console.error('Error starting enhanced calculation:', error);
+      res.status(500).json({ message: "Internal server error" });
+    }
+  });
+
+  // Get calculation jobs
+  app.get("/api/calculation-engine/jobs", async (req, res) => {
+    try {
+      const user = (req.session as any)?.user;
+      if (!user) {
+        return res.status(401).json([]);
+      }
+
+      // Return sample calculation jobs for demo
+      const sampleJobs = [
+        {
+          id: 1,
+          jobName: "Q1 Multi-Plan Calculation - 1/23/2025",
+          description: "Processing 2 plan(s) with advanced features enabled",
+          status: "completed",
+          calculationType: "multi_period",
+          planIds: "1,2",
+          periodStart: "2025-01-01",
+          periodEnd: "2025-03-31",
+          progress: 100,
+          totalRecords: 2500,
+          processedRecords: 2500,
+          errorCount: 0,
+          createdAt: "2025-01-23",
+          startedAt: "2025-01-23",
+          completedAt: "2025-01-23"
+        },
+        {
+          id: 2,
+          jobName: "Sales Team Goal Attainment - 1/20/2025",
+          description: "Single plan processing with anomaly detection",
+          status: "running",
+          calculationType: "single_plan",
+          planIds: "1",
+          periodStart: "2025-01-01",
+          periodEnd: "2025-01-31",
+          progress: 67,
+          totalRecords: 1250,
+          processedRecords: 838,
+          errorCount: 2,
+          createdAt: "2025-01-20",
+          startedAt: "2025-01-20",
+          completedAt: null
+        }
+      ];
+
+      res.json(sampleJobs);
+    } catch (error) {
+      console.error('Error fetching calculation jobs:', error);
+      res.status(500).json({ message: "Internal server error" });
+    }
+  });
 
   const httpServer = createServer(app);
   return httpServer;

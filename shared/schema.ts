@@ -66,6 +66,8 @@ export const salesData = pgTable("sales_data", {
   createdAt: timestamp("created_at").defaultNow().notNull(),
 });
 
+
+
 // Payout Calculations table
 export const payoutCalculations = pgTable("payout_calculations", {
   id: serial("id").primaryKey(),
@@ -510,6 +512,20 @@ export type InsertCalculationTrace = z.infer<typeof insertCalculationTraceSchema
 export type AnomalyDetection = typeof anomalyDetection.$inferSelect;
 export type InsertAnomalyDetection = z.infer<typeof insertAnomalyDetectionSchema>;
 export type PerformanceMetrics = typeof performanceMetrics.$inferSelect;
+
+// Enhanced IC Processing Schema for API
+export const enhancedCalculationDataSchema = z.object({
+  jobName: z.string().min(1, "Job name is required"),
+  description: z.string().optional(),
+  calculationType: z.string().min(1, "Calculation type is required"),
+  planIds: z.array(z.number()).min(1, "At least one plan must be selected"),
+  periodStart: z.string().min(1, "Period start is required"),
+  periodEnd: z.string().min(1, "Period end is required"),
+  enableAnomalyDetection: z.boolean().default(false),
+  enableTraceability: z.boolean().default(false),
+});
+
+export type EnhancedCalculationData = z.infer<typeof enhancedCalculationDataSchema>;
 
 // Rep Roster table
 export const repRoster = pgTable("rep_roster", {
