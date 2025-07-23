@@ -26,13 +26,15 @@ import {
   PieChart,
   Edit,
   Eye,
-  FileText
+  FileText,
+  Brain
 } from "lucide-react";
 import { useAuth } from "@/hooks/use-auth";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
 import { CalculationTraceDialog } from "@/components/calculation-trace";
+import { AnomalyDetectionPanel } from "@/components/anomaly-detection";
 
 interface PayoutResult {
   repId: string;
@@ -349,10 +351,10 @@ export default function PayoutCalculation() {
 
             <Button
               variant="outline"
-              className="px-6 py-3 border-2 border-blue-600 text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-900/20 shadow-lg"
+              className="px-6 py-3 border-2 border-purple-600 text-purple-600 hover:bg-purple-50 dark:hover:bg-purple-900/20 shadow-lg"
             >
-              <FileText className="h-4 w-4 mr-2" />
-              Calculation Engine
+              <Brain className="h-4 w-4 mr-2" />
+              AI Anomaly Detection
             </Button>
           </div>
 
@@ -578,6 +580,13 @@ export default function PayoutCalculation() {
                   )}
                 </CardContent>
               </Card>
+            </div>
+          )}
+
+          {/* AI Anomaly Detection Panel */}
+          {payoutResults?.length > 0 && (
+            <div className="max-w-7xl mx-auto mb-8">
+              <AnomalyDetectionPanel payoutResults={payoutResults} />
             </div>
           )}
 
